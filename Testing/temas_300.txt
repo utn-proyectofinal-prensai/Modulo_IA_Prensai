@@ -1,0 +1,303 @@
+LISTA = [
+    EVENTO / TEMA
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas 
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Mecenazgo
+¡URGENTE!
+¡URGENTE! 
+¡URGENTE!
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Nueva edición del Festival Internacional de Cine de Derechos Humanos
+Actividades programadas
+Bares Notables
+Tango BA 
+“Arte es Teatro”, el programa anual de exposiciones 2025 del museo
+Presentación Libro 
+Presentación Libro 
+Actividades programadas
+Actividades programadas
+Presentación Libro 
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Nuevos Cursos del Cultural, abierta la inscripción
+Actividades programadas
+Actividades programadas
+Red de Bibliotecas Públicas
+Presentación Libro
+Actividades programadas
+FotoGalería Sara Facio
+Actividades programadas
+Actividades programadas
+Actividades programadas
+¡URGENTE!
+¡URGENTE!
+Festival Internacional de Cine de la Universidad de Buenos Aires  (FIC.UBA) 
+Recorrido por eventos y estrenos
+Mecenazgo
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Actividades programadas
+Homenaje a Sara Facio
+Recorrido por eventos y estrenos
+Tango BA
+Red de Bibliotecas Públicas
+Actividades programadas
+Presentación Libro 
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Homenaje a Sara Facio
+Homenaje a Sara Facio
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Actividades programadas
+Recorrido por eventos y estrenos
+Actividades programadas
+Actividades programadas
+Homenaje a Sara Facio
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Mecenazgo
+Jubilaciones bailarines del Teatro Colón
+Recorrido por eventos y estrenos
+Actividades programadas
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Nueva edición del Festival Internacional de Cine de Derechos Humanos
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Semana de Mayo
+Recorrido por eventos y estrenos
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Recorrido por eventos y estrenos
+Semana de Mayo
+Semana de Mayo
+Semana de Mayo
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Recorrido por eventos y estrenos
+Premio Gubbio
+Tango BA
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Semana de Mayo
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Homenaje a Sara Facio
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Tango BA
+Actividades programadas
+Actividades programadas
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Premio Gubbio
+Premio Gubbio
+Tango BA
+Homenaje a Sara Facio
+Bares Notables
+Conexión Buenos Aires-Madrid
+Puesta en valor Museo Casa Carlos Gardel
+Bares Notables
+Residencia Casa Heredia
+Actividades programadas
+Actividades programadas
+Homenaje a Sara Facio
+Actividades programadas
+Mecenazgo
+Recorrido por eventos y estrenos
+La Noche de las Ideas
+BA Producción Internacional
+Actividades programadas
+BA Producción Internacional
+Recorrido por eventos y estrenos
+Tango BA
+Conexión Buenos Aires-Madrid
+Actividades programadas
+Día Internacional de los Museos
+Día Internacional de los Museos
+Actividades programadas
+Actividades programadas
+La Noche de las Ideas
+Actividades programadas
+Elecciones
+Día Internacional de los Museos
+Actividades programadas
+La Noche de las Ideas
+Actividades programadas
+Actividades programadas
+Semana de Mayo
+Actividades programadas
+Elecciones
+Día Internacional de los Museos
+Día Internacional de los Museos
+Elecciones
+Día Internacional de los Museos
+Día Internacional de los Museos
+Elecciones
+Día Internacional de los Museos
+La Noche de las Ideas
+Actividades programadas
+Actividades programadas
+La Noche de las Ideas
+Actividades programadas
+Actividades programadas
+Mecenazgo
+Mecenazgo
+Día Internacional de los Museos
+La Noche de las Ideas
+Actividades programadas
+La Noche de las Ideas
+El teatro público celebra dos grandes regresos: Cyrano y Benito de La Boca
+Actividades programadas
+Mecenazgo
+Actividades programadas
+Actividades programadas
+Opera Studio
+La Noche de las Ideas
+Actividades programadas
+Elecciones
+Tango BA
+Elecciones
+Día Internacional de los Museos
+Día Internacional de los Museos
+Homenaje a Piazzolla y a Ravel
+Actividades programadas
+Actividades programadas
+Actividades programadas
+La Noche de las Ideas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Día Internacional de los Museos
+Mecenazgo
+Actividades programadas
+Opera Studio
+La Noche de las Ideas
+Actividades programadas
+Actividades programadas
+Cursos del Cultural
+Actividades programadas
+Centenario elencos estables
+La Noche de las Ideas
+Tango BA
+Pase Cultural 
+Cursos del Cultural
+Feria de Mataderos
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Biblioteca Digital BA
+Biblioteca Digital BA
+Tango BA
+Tango BA
+Tango BA
+Conexión Buenos Aires-Madrid
+Conexión Buenos Aires-Madrid
+Conexión Buenos Aires-Madrid
+Actividades programadas
+Pase Cultural
+Recorrido por eventos y estrenos
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Recorrido por eventos y estrenos
+Actividades programadas
+Actividades programadas
+Actividades programadas
+Gestión cultural del GCBA
+Campaña Solidaria
+Actividades programadas
+Actividades programadas
+Campaña Solidaria
+Mecenazgo
+Campaña Solidaria
+Campaña Solidaria
+Campaña Solidaria
+Actividades programadas
+Actividades programadas
+Campaña Solidaria
+Campaña Solidaria
+Campaña Solidaria
+Actividades programadas
+Campaña Solidaria
+Campaña Solidaria
+Actividades programadas
+Campaña Solidaria
+Campaña Solidaria
+Actividades programadas
+Actividades programadas
+Homenaje a Esperando la Carroza 
+Actividades programadas
+La Noche de las Ideas
+Actividades programadas
+Tango BA
+Actividades programadas
+Actividades programadas
+Homenaje a Esperando la Carroza
+Conexión Buenos Aires-Madrid
+Actividades programadas
+Actividades programadas
+Mecenazgo
+Actividades programadas
+Puesta en valor Casa de la Cultura
+Mecenazgo
+Actividades programadas
+Actividades programadas
+]

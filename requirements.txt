@@ -1,0 +1,56 @@
+# =============================================================================
+# DEPENDENCIAS PARA EL PROYECTO PRENSAI
+# =============================================================================
+
+# Procesamiento de datos
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Web scraping y parsing HTML
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Detección de encoding
+chardet>=5.2.0
+
+# Procesamiento de texto y regex
+regex>=2023.0.0
+
+# Manejo de archivos Excel
+openpyxl>=3.1.0
+xlrd>=2.0.0
+
+# Logging y utilidades del sistema
+python-dateutil>=2.8.0
+
+# =============================================================================
+# DEPENDENCIAS OPCIONALES (para desarrollo)
+# =============================================================================
+
+# Testing (opcional)
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Linting y formateo (opcional)
+black>=23.0.0
+flake8>=6.0.0
+
+# Jupyter notebooks (si usás notebooks)
+jupyter>=1.0.0
+ipykernel>=6.25.0
+
+# =============================================================================
+# NOTAS DE INSTALACIÓN
+# =============================================================================
+# 
+# Para instalar todas las dependencias:
+# pip install -r requirements.txt
+# 
+# Para instalar solo las dependencias principales (sin opcionales):
+# pip install pandas requests beautifulsoup4 chardet openpyxl
+# 
+# Para desarrollo (con testing y linting):
+# pip install -r requirements.txt
+# 
+# =============================================================================
