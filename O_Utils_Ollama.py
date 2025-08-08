@@ -3,7 +3,32 @@ import logging
 import pandas as pd
 import Z_Utils as Z
 import re
+
+# Modelo por defecto - Opciones disponibles: "llama3:8b", "llama3.1:8b"
+MODELO_OLLAMA = "llama3:8b"  
 OLLAMA_URL = "http://localhost:11434/api/generate"
+
+
+
+def set_modelo_ollama(modelo):
+    """
+    Actualiza el modelo de Ollama globalmente.
+    
+    Args:
+        modelo (str): Nombre del modelo (ej: "llama3:8b", "llama3.1:8b", "mistral:7b")
+    """
+    global MODELO_OLLAMA
+    MODELO_OLLAMA = modelo
+    logging.info(f"Modelo de Ollama actualizado a: {modelo}")
+
+def get_modelo_ollama():
+    """
+    Obtiene el modelo de Ollama actualmente configurado.
+    
+    Returns:
+        str: Nombre del modelo actual
+    """
+    return MODELO_OLLAMA
 
 # ============================================================================
 # FUNCIONES DE VALORACIÓN
@@ -35,7 +60,7 @@ def valorar_noticia_con_ollama_base(texto):
         f"TEXTO A ANALIZAR:\n{texto}\n"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()
@@ -95,7 +120,7 @@ def es_agenda_ollama(texto):
         "Respondé únicamente SI o NO:"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()
@@ -137,7 +162,7 @@ def es_entrevista_ollama(texto):
         "Respondé únicamente SI o NO:"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()
@@ -179,7 +204,7 @@ def es_declaracion_ollama(texto, ministro_actual):
         "Respondé únicamente SI o NO:"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()
@@ -222,7 +247,7 @@ def es_nota_opinion_ollama(texto, ministro_actual, autor=None):
         "Respondé únicamente SI o NO:"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()
@@ -338,7 +363,7 @@ def _consulta_ollama_tema(texto, lista_temas):
         f"TEXTO A ANALIZAR:\n{texto}\n"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()
@@ -373,7 +398,7 @@ def extraer_entrevistado_con_ollama(texto):
         "NOMBRE COMPLETO DEL ENTREVISTADO:"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()
@@ -411,7 +436,7 @@ def detectar_factor_politico_con_ollama(texto):
         f"TEXTO A ANALIZAR:\n{texto}\n"
     )
     
-    data = {"model": "llama3:8b", "prompt": prompt, "stream": False, "options": {"temperature": 0}}
+    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
     try:
         response = requests.post(OLLAMA_URL, json=data, timeout=60)
         result = response.json()

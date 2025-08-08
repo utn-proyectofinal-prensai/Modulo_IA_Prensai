@@ -20,6 +20,7 @@ OLLAMA_URL = "http://localhost:11434/api/generate"
 
 
 
+
 #TODO todo esto ahora HardCodeado luego deberá ser posible configurar en tiempo ejecución
 MINISTRO = "Gabriela Ricardes"
 MINISTERIO = "Ministerio de Cultura"
@@ -27,6 +28,9 @@ LISTA_MENCIONES = [MINISTERIO,"Ministra de Cultura", MINISTRO,"Jorge Macri"]
 MAX_MENCIONES = 5
 USUARIO_CREADOR = 'LUNA'
 USUARIO_REVISOR = 'SOL'
+
+GPT_ACTIVE = False   #ACTIVAR O NO EL GPT (Fallback en su defecto)
+ 
 
 TEMAS_FIJOS = ["Actividades programadas"]
 LISTA_TEMAS = TEMAS_FIJOS + [
@@ -46,10 +50,9 @@ LISTA_TEMAS = TEMAS_FIJOS + [
 ## 
 LIMITE_TEXTO = 14900 #Mas de este valor, parece volverse loca la IA - Ollama. (Caracteres)
 
-#ACTIVAR O NO EL GPT (Fallback en su defecto)
 
-GPT_ACTIVE = False  
-#GPT_ACTIVE = True  
+
+
 
 #Medición tiempo de ejecución
 t0 = time.time()
@@ -124,3 +127,4 @@ print(f"Tiempo total de ejecución: {tiempo_total}")
 
 #TODO AGENDA: puede haber algo... cuando es Agenda (suelen ser muy largas a veces, es Neutra o POS, nunca NEG)
 #TODO CRISIS: bien parece, pero recordar en el futuro integrar con BD para recuperar el HISTORICO DE NOTICIAS
+

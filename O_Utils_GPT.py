@@ -3,36 +3,32 @@ import logging
 import os
 from typing import Optional
 import pandas as pd
+from dotenv import load_dotenv
 
 # Importar la función de Ollama para fallback
 from O_Utils_Ollama import valorar_noticia_con_ollama
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 # Configuración de GPT
 GPT_API_URL = "https://api.openai.com/v1/chat/completions"
 GPT_MODEL = "gpt-3.5-turbo"  # Puedes cambiar a gpt-4 si tienes acceso
 
-def leer_api_key_desde_config() -> Optional[str]:
+def leer_api_key_desde_env() -> Optional[str]:
     """
-    Lee la API key de OpenAI desde el archivo Config.txt
+    Lee la API key de OpenAI desde el archivo .env
     """
     try:
-        with open('Config.txt', 'r') as file:
-            contenido = file.read().strip()
-            # Buscar línea que contenga la API key
-            for linea in contenido.split('\n'):
-                if 'OPENAI_API_KEY' in linea or 'sk-' in linea:
-                    # Extraer la API key
-                    if '=' in linea:
-                        return linea.split('=')[1].strip()
-                    else:
-                        # Si está en una línea separada
-                        return linea.strip()
-        return None
-    except FileNotFoundError:
-        logging.warning("Archivo Config.txt no encontrado")
-        return None
+        api_key = os.getenv('OPENAI_API_KEY')
+        if api_key:
+            logging.info("API key de OpenAI encontrada en .env")
+            return api_key
+        else:
+            logging.warning("Variable OPENAI_API_KEY no encontrada en .env")
+            return None
     except Exception as e:
-        logging.error(f"Error leyendo Config.txt: {e}")
+        logging.error(f"Error leyendo .env: {e}")
         return None
 
 def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Optional[str]:
@@ -48,13 +44,10 @@ def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Option
     """
     # Obtener API key
     if not api_key:
-        api_key = leer_api_key_desde_config()
+        api_key = leer_api_key_desde_env()
     
     if not api_key:
-        api_key = os.getenv('OPENAI_API_KEY')  # Fallback a variable de entorno
-    
-    if not api_key:
-        logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
+        logging.warning("No se encontró API key de OpenAI en .env. Usando fallback a Ollama.")
         return None
     
     # Prompt para GPT
