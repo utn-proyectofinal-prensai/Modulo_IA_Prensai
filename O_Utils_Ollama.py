@@ -3,10 +3,43 @@ import logging
 import pandas as pd
 import Z_Utils as Z
 import re
+from datetime import datetime
 
 # Modelo por defecto - Opciones disponibles: "llama3:8b", "llama3.1:8b"
-MODELO_OLLAMA = "llama3:8b"  
+MODELO_OLLAMA = "llama3.1:8b"  
 OLLAMA_URL = "http://localhost:11434/api/generate"
+
+
+# Control para imprimir el estado del servicio solo una vez
+_ollama_estado_reportado = False
+
+def _verificar_e_imprimir_estado_ollama(timeout_seconds: int = 2) -> bool:
+    """
+    Verifica si el servicio de Ollama está accesible y lo imprime por consola UNA sola vez.
+    Retorna True si responde 200 en /api/tags, False en caso contrario o error.
+    """
+    global _ollama_estado_reportado
+    if _ollama_estado_reportado:
+        # Ya reportado previamente en esta ejecución
+        return True
+    try:
+        tags_url = OLLAMA_URL.replace("/api/generate", "/api/tags")
+        resp = requests.get(tags_url, timeout=timeout_seconds)
+        if resp.status_code == 200:
+            print("[Ollama] Servicio activo (HTTP 200)")
+            logging.info("[Ollama] Servicio activo (HTTP 200)")
+            _ollama_estado_reportado = True
+            return True
+        else:
+            print(f"[Ollama] No disponible (HTTP {resp.status_code})")
+            logging.error(f"[Ollama] No disponible (HTTP {resp.status_code})")
+            _ollama_estado_reportado = True
+            return False
+    except Exception as e:
+        print("[Ollama] No disponible (error de conexión)")
+        logging.error(f"[Ollama] Error verificando servicio: {repr(e)}")
+        _ollama_estado_reportado = True
+        return False
 
 
 
@@ -279,6 +312,9 @@ def clasificar_tipo_publicacion_unificado(texto, ministro_actual="Gabriela Ricar
         str: Tipo de publicación clasificado
     """
     try:
+        # Verificar e informar estado del servicio la primera vez
+        _verificar_e_imprimir_estado_ollama()
+
         if not texto or pd.isnull(texto):
             return "Nota"
         
@@ -314,7 +350,7 @@ def clasificar_tipo_publicacion_unificado(texto, ministro_actual="Gabriela Ricar
 # FUNCIONES DE CLASIFICACIÓN DE TEMAS
 # ============================================================================
 
-def matchear_tema_con_fallback(texto, lista_temas, tipo_publicacion=None):
+def matchear_tema_con_fallback(texto, lista_temas, tipo_publicacion=None, fecha_noticia=None, tema_a_fecha=None):
     """
     Clasifica una noticia en un tema específico usando heurísticas + IA + fallback.
     
@@ -328,7 +364,7 @@ def matchear_tema_con_fallback(texto, lista_temas, tipo_publicacion=None):
     """
     if not texto or not lista_temas:
         return "Revisar Manual"
-    
+    """
     # 1. Heurísticas muy estrictas para coincidencias exactas
     texto_lower = texto.lower()
     for tema in lista_temas:
@@ -336,30 +372,88 @@ def matchear_tema_con_fallback(texto, lista_temas, tipo_publicacion=None):
         # Solo coincidencia exacta o muy cercana
         if tema_lower in texto_lower or texto_lower.count(tema_lower) > 0:
             return tema
-    
+    """
     # 2. Fallback por tipo de publicación
     if tipo_publicacion == "Agenda":
         return "Actividades programadas"
     
-    # 3. Consulta a IA
+    # 3. Consulta a IA (con conocimiento opcional de fechas)
+    return _consulta_ollama_tema(texto, lista_temas, fecha_noticia=fecha_noticia, tema_a_fecha=tema_a_fecha)
+
+
+def matchear_tema_sin_fecha(texto, lista_temas, tipo_publicacion=None):
+    """
+    Variante histórica sin considerar fechas para desempate. Útil para comparar accuracy.
+    """
+    if not texto or not lista_temas:
+        return "Revisar Manual"
+
+    # 1. Heurísticas muy estrictas para coincidencias exactas
+    texto_lower = texto.lower()
+    for tema in lista_temas:
+        tema_lower = tema.lower()
+        if tema_lower in texto_lower or texto_lower.count(tema_lower) > 0:
+            return tema
+
+    # 2. Fallback por tipo de publicación
+    if tipo_publicacion == "Agenda":
+        return "Actividades programadas"
+
+    # 3. Consulta a IA sin señales temporales
     return _consulta_ollama_tema(texto, lista_temas)
 
-def _consulta_ollama_tema(texto, lista_temas):
+def _consulta_ollama_tema(texto, lista_temas, fecha_noticia=None, tema_a_fecha=None):
     """
-    Consulta a Ollama para clasificar el tema usando estrategia de eliminación.
+    Consulta a Ollama para clasificar el tema usando estrategia de eliminación + contexto temporal opcional.
+    - fecha_noticia: str o datetime con formato ISO 'YYYY-MM-DD' cuando esté disponible
+    - tema_a_fecha: dict opcional {tema: 'YYYY-MM-DD'} con fecha de carga del tema
     """
-    temas_str = "\n".join([f"- {tema}" for tema in lista_temas])
-    
+    # Normalizar fecha noticia
+    noticia_dt = None
+    if fecha_noticia:
+        try:
+            noticia_dt = fecha_noticia if isinstance(fecha_noticia, datetime) else datetime.fromisoformat(str(fecha_noticia))
+        except Exception:
+            noticia_dt = None
+
+    # Construir lista textual completa de temas (lista cerrada de elegibles)
+    temas_str = "\n".join([f"- {t}" for t in lista_temas])
+
+    # Calcular top-k cercanos por fecha (contexto no restrictivo)
+    contexto_temporal = []
+    if tema_a_fecha and noticia_dt:
+        def distancia_dias(tema):
+            try:
+                f = tema_a_fecha.get(tema)
+                if not f:
+                    return 999999
+                dt = f if isinstance(f, datetime) else datetime.fromisoformat(str(f))
+                return abs((dt - noticia_dt).days)
+            except Exception:
+                return 999999
+
+        candidatos_ordenados = sorted(lista_temas, key=distancia_dias)
+        # Tomar solo aquellos con fecha válida
+        top_con_fecha = [t for t in candidatos_ordenados if tema_a_fecha.get(t)]
+        for t in top_con_fecha[:7]:
+            contexto_temporal.append(f"- {t} (fecha_carga: {tema_a_fecha[t]})")
+
+    contexto_str = "\n".join(contexto_temporal) if contexto_temporal else "(sin datos temporales relevantes)"
+
+    # Armar prompt con contexto temporal no restrictivo
     prompt = (
-        f"Analizá el siguiente texto y asigná UNO de estos temas:\n{temas_str}\n\n"
-        "ESTRATEGIA DE ELIMINACIÓN:\n"
-        "1. Si el texto NO menciona claramente un tema específico, asigná 'Actividades programadas'\n"
-        "2. Si hay dudas entre múltiples temas, elegí el más específico\n"
-        "3. Si NO corresponde a ningún tema, asigná 'Actividades programadas'\n\n"
-        "IMPORTANTE:\n"
-        "- Respondé ÚNICAMENTE con el nombre exacto del tema\n"
-        "- NO agregues explicaciones ni texto adicional\n"
-        "- Si no estás seguro, asigná 'Actividades programadas'\n\n"
+        f"Asigná UNO y solo UNO de los siguientes temas a la noticia (lista cerrada):\n{temas_str}\n\n"
+        "REGLAS DE DECISIÓN (aplicá en este orden):\n"
+        "A) Coincidencia literal: si el nombre de un tema de la lista aparece en el TÍTULO o CUERPO (sin sensibilidad a mayúsculas/acentos y tolerando signos como °), elegí ese tema.\n"
+        "B) Múltiples coincidencias: elegí el MÁS ESPECÍFICO (el texto más largo) o el que aparezca en el TÍTULO.\n"
+        "C) Sin coincidencia literal: podés elegir un tema por PARÁFRASIS solo si la evidencia es inequívoca (mismo evento/proyecto reconocido). Si hay dudas, NO arriesgues.\n"
+        "D) Contexto temporal NO RESTRICTIVO (abajo): si estás entre 2-3 opciones y ninguna tiene evidencia textual clara, PREFERÍ uno de los temas listados en el contexto temporal (por ser recientes). Si hay coincidencia literal, ignorá esta preferencia.\n"
+        "E) Fallback: si no hay evidencia clara de un tema concreto, asigná 'Actividades programadas - FB'.\n"
+        "F) Nunca inventes ni modifiques nombres: la respuesta debe ser exactamente uno de los provistos.\n\n"
+        f"Contexto temporal (no restrictivo, top recientes):\n{contexto_str}\n\n"
+        "SALIDA:\n"
+        "- Respondé ÚNICAMENTE con el nombre exacto de un tema de la lista.\n"
+        "- Sin comentarios ni explicaciones.\n\n"
         f"TEXTO A ANALIZAR:\n{texto}\n"
     )
     
@@ -373,7 +467,7 @@ def _consulta_ollama_tema(texto, lista_temas):
         if tema_asignado in lista_temas:
             return tema_asignado
         else:
-            return "Actividades programadas"  # Fallback
+            return "Actividades programadas - FB"  # Fallback
             
     except Exception as e:
         logging.error(f"[Ollama] Error clasificando tema: {repr(e)} | Texto: {texto[:120]}...")

@@ -19,8 +19,6 @@ HISTORICO_PATH = "DataCollected/noticias_historicas.xlsx"  # Archivo histórico 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 
-
-
 #TODO todo esto ahora HardCodeado luego deberá ser posible configurar en tiempo ejecución
 MINISTRO = "Gabriela Ricardes"
 MINISTERIO = "Ministerio de Cultura"
@@ -29,30 +27,14 @@ MAX_MENCIONES = 5
 USUARIO_CREADOR = 'LUNA'
 USUARIO_REVISOR = 'SOL'
 
-GPT_ACTIVE = False   #ACTIVAR O NO EL GPT (Fallback en su defecto)
+GPT_ACTIVE = True   #ACTIVAR O NO EL GPT (Fallback en su defecto)
  
 
-TEMAS_FIJOS = ["Actividades programadas"]
-LISTA_TEMAS = TEMAS_FIJOS + [
-    "¡URGENTE!",
-    "Recorrido por eventos y estrenos",
-    "Campaña Solidaria",
-    "Apertura Temporada del Ballet 2025",
-    "Mecenazgo",
-    "Jubilaciones bailarines del Teatro Colón",
-    "Homenaje a Sara Facio",
-    "Gestión cultural del GCBA",
-    "Homenaje a Esperando la Carroza",
-    "Casa Oliverio Girondo",
-    "Anuncio de obras CCGSM"
-]
+TEMAS_TXT_PATH = "DataCollected/temas_app.txt"
+LISTA_TEMAS, TEMA_A_FECHA = Z.cargar_temas_desde_txt(TEMAS_TXT_PATH)
 
 ## 
 LIMITE_TEXTO = 14900 #Mas de este valor, parece volverse loca la IA - Ollama. (Caracteres)
-
-
-
-
 
 #Medición tiempo de ejecución
 t0 = time.time()
@@ -94,14 +76,15 @@ df['FACTOR POLITICO'] = df['TEXTO_PLANO'].apply(lambda x: Z.marcar_o_valorar_con
 # 5. Inferencias con IA unificada - VALORACION (GPT + Ollama + Heurística según GPT_ACTIVE)
 df['VALORACION'] = df['TEXTO_PLANO'].apply(lambda x: Z.marcar_o_valorar_con_ia(x, lambda t: Gpt.valorar_con_ia(t, ministro=MINISTRO, ministerio=MINISTERIO, gpt_active=GPT_ACTIVE), LIMITE_TEXTO))
 
-# Clasificación de temas: heurísticas + IA + fallback por tipo publicación (Agenda → Actividades programadas)
-df['TEMA'] = df.apply(lambda row: Oll.matchear_tema_con_fallback(row['TEXTO_PLANO'], LISTA_TEMAS, row['TIPO PUBLICACION']), axis=1)
+# Clasificación de temas (GPT con fallback a Ollama), usando el mismo wrapper de longitud
+df['TEMA'] = df.apply(lambda row: Z.marcar_o_valorar_con_ia(row['TEXTO_PLANO'], lambda t: Gpt.clasificar_tema_con_ia(texto=t,lista_temas=LISTA_TEMAS,tipo_publicacion=row['TIPO PUBLICACION'],
+                fecha_noticia=row.get('FECHA'),tema_a_fecha=TEMA_A_FECHA,gpt_active=GPT_ACTIVE),LIMITE_TEXTO),axis=1)
 
 # 6. Extraer ENTREVISTADO usando IA (solo para TIPO PUBLICACION = "Entrevista")
 df['ENTREVISTADO'] = df.apply(lambda row: Oll.extraer_entrevistado_con_ollama(row['TEXTO_PLANO']) if row['TIPO PUBLICACION'] == 'Entrevista' else None, axis=1)
 
 # 7. Detectar CRISIS basándose en 5+ noticias del mismo tema con valoración NEGATIVA
-df = Z.procesar_crisis_con_historico(df, HISTORICO_PATH, TEMAS_FIJOS)
+df = Z.procesar_crisis_con_historico(df, HISTORICO_PATH, ["Actividades programadas"])  # temas fijos mínimos
 
 # 8. Detectar MENCIONES de palabras clave HOY EN DIA, HASTA 5 CAMPOS. 
 df = Z.buscar_menciones(df, LISTA_MENCIONES, MAX_MENCIONES)

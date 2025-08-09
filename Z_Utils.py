@@ -6,6 +6,7 @@ import os
 import logging
 import re
 import unicodedata
+from datetime import datetime
 
 # Levantar un logger
 def setup_logger(filename):
@@ -792,5 +793,75 @@ def normalizar_medio(medio):
  
  
  
+
+def _normalizar_fecha_ddmmyyyy(fecha_raw: str) -> str | None:
+    """
+    Convierte 'd/m/yyyy', 'dd-mm-yyyy' o 'dd.mm.yyyy' a 'YYYY-MM-DD'.
+    Acepta año de 2 o 4 dígitos; 2 dígitos se asumen 20xx si <=30, si no 19xx.
+    """
+    if not fecha_raw:
+        return None
+    try:
+        import re
+        txt = fecha_raw.strip().replace(" ", "")
+        txt = re.sub(r"[\-.]", "/", txt)
+        m = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{2}|\d{4})", txt)
+        if not m:
+            # Intento ISO directo
+            try:
+                datetime.fromisoformat(txt)
+                return txt
+            except Exception:
+                return None
+        d, mth, y = m.groups()
+        if len(y) == 2:
+            yi = int(y)
+            y = f"20{y}" if yi <= 30 else f"19{y}"
+        return f"{y}-{mth.zfill(2)}-{d.zfill(2)}"
+    except Exception:
+        return None
+
+
+def cargar_temas_desde_txt(path_txt: str) -> tuple[list, dict]:
+    """
+    Carga temas desde un TXT (uno por línea). Soporta líneas con fecha opcional: 'Tema; dd/mm/yyyy'.
+
+    Returns:
+        (lista_temas, tema_a_fecha_iso)
+    """
+    temas: list[str] = []
+    tema_a_fecha: dict[str, str] = {}
+    try:
+        import os
+        import re
+        if not os.path.exists(path_txt):
+            logging.warning(f"No se encontró {path_txt}. Usando lista mínima.")
+            return ["Actividades programadas"], {}
+
+        pat = re.compile(r"^(?P<tema>.+?)[\s;:|\t\-—–]*?(?P<fecha>\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})?\s*$")
+
+        with open(path_txt, "r", encoding="utf-8") as f:
+            for raw in f:
+                line = raw.strip()
+                if not line:
+                    continue
+                m = pat.match(line)
+                if not m:
+                    continue
+                nombre = m.group("tema").strip()
+                fecha = m.group("fecha")
+
+                if nombre and nombre not in temas:
+                    temas.append(nombre)
+                if fecha:
+                    iso = _normalizar_fecha_ddmmyyyy(fecha)
+                    if iso:
+                        tema_a_fecha[nombre] = iso
+
+        logging.info(f"Temas cargados desde TXT: {len(temas)} | con fecha: {len(tema_a_fecha)}")
+        return temas, tema_a_fecha
+    except Exception as e:
+        logging.error(f"Error cargando temas desde TXT: {e}")
+        return ["Actividades programadas"], {}
  
  
