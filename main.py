@@ -9,7 +9,7 @@ from datetime import timedelta
 CAMPOS_FIJOS = [
     'TITULO', 'TIPO PUBLICACION', 'FECHA', 'SOPORTE', 'MEDIO','SECCION',
     'AUTOR', 'ENTREVISTADO', 'TEMA', 'LINK', 'HTML_OBJ', 'ALCANCE', 'COTIZACION', 'VALORACION',
-    'FACTOR POLITICO','GESTION','TEXTO_PLANO', 'CRISIS', 'MENCION_1','MENCION_2','MENCION_3','MENCION_4','MENCION_5',
+    'FACTOR POLITICO','GESTION','TEXTO_PLANO', 'CRISIS', 'MENCIONES', 'MENCIONES_EXCEL',
     'USR_CREADOR', 'USR_REVISOR'
 ]
 
@@ -25,9 +25,9 @@ MINISTERIO = "Ministerio de Cultura"
 LISTA_MENCIONES = [MINISTERIO,"Ministra de Cultura", MINISTRO,"Jorge Macri"]
 MAX_MENCIONES = 5
 USUARIO_CREADOR = 'LUNA'
-USUARIO_REVISOR = 'SOL'
+USUARIO_REVISOR = 'SOL' #En realidad no sería responsabilidad de este modulo, si un usr edita manual, el back puede agregar esto.
 
-GPT_ACTIVE = True   #ACTIVAR O NO EL GPT (Fallback en su defecto)
+GPT_ACTIVE = False   #ACTIVAR O NO EL GPT (Fallback en su defecto)
  
 
 TEMAS_TXT_PATH = "DataCollected/temas_app.txt"
@@ -86,8 +86,8 @@ df['ENTREVISTADO'] = df.apply(lambda row: Oll.extraer_entrevistado_con_ollama(ro
 # 7. Detectar CRISIS basándose en 5+ noticias del mismo tema con valoración NEGATIVA
 df = Z.procesar_crisis_con_historico(df, HISTORICO_PATH, ["Actividades programadas"])  # temas fijos mínimos
 
-# 8. Detectar MENCIONES de palabras clave HOY EN DIA, HASTA 5 CAMPOS. 
-df = Z.buscar_menciones(df, LISTA_MENCIONES, MAX_MENCIONES)
+# 8. Detectar MENCIONES de palabras clave - ahora en un solo campo como lista
+df = Z.buscar_menciones(df, LISTA_MENCIONES)
 
 # 9. Asignar USUARIO_CREADOR y USUARIO_REVISOR (en el futuro vendrán de la sesión)
 df['USUARIO_CREADOR'] = USUARIO_CREADOR

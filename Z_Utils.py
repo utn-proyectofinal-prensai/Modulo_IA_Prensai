@@ -523,31 +523,53 @@ def detectar_mencion(texto, palabra_clave):
 
 def buscar_menciones(df, lista_menciones, max_menciones=5):
     """
-    Busca menciones en el DataFrame y asigna los resultados a las columnas MENCION_1, MENCION_2, etc.
+    Busca menciones en el DataFrame y asigna los resultados a un solo campo 'MENCIONES' como lista.
     
     Args:
         df (DataFrame): DataFrame con la columna 'TEXTO_PLANO'
         lista_menciones (list): Lista de palabras/entidades a buscar
-        max_menciones (int): Número máximo de menciones a procesar
+        max_menciones (int): Número máximo de menciones a procesar (por compatibilidad, no se usa)
     
     Returns:
-        DataFrame: DataFrame con las columnas MENCION_1 a MENCION_N agregadas
+        DataFrame: DataFrame con la columna 'MENCIONES' agregada
     """
     try:
-        for i in range(max_menciones):
-            if i < len(lista_menciones):
-                df[f'MENCION_{i+1}'] = df['TEXTO_PLANO'].apply(
-                    lambda x: detectar_mencion(x, lista_menciones[i])
-                )
-            else:
-                # Si hay más MAX_MENCIONES que elementos en lista_menciones, llenar con vacío
-                df[f'MENCION_{i+1}'] = ""
+        def encontrar_menciones_en_texto(texto):
+            """
+            Encuentra todas las menciones de la lista en un texto específico
+            """
+            if not texto or pd.isnull(texto):
+                return []
+            
+            menciones_encontradas = []
+            for palabra_clave in lista_menciones:
+                if palabra_clave and not pd.isnull(palabra_clave):
+                    resultado = detectar_mencion(texto, palabra_clave)
+                    if resultado:  # Si se encontró la mención
+                        menciones_encontradas.append(palabra_clave.strip())
+            
+            return menciones_encontradas
         
-        logging.info(f"Procesadas {max_menciones} menciones para {len(df)} noticias")
+        # Aplicar la función a cada texto y crear la columna 'MENCIONES'
+        df['MENCIONES'] = df['TEXTO_PLANO'].apply(encontrar_menciones_en_texto)
+        
+        # Si no hay menciones configuradas, asignar lista vacía a todas las filas
+        if not lista_menciones:
+            df['MENCIONES'] = [[] for _ in range(len(df))]
+            logging.info("No hay menciones configuradas, asignando listas vacías")
+        else:
+            logging.info(f"Procesadas menciones para {len(df)} noticias")
+        
+        # Convertir listas a formato legible para Excel (opcional, solo para visualización)
+        # Para la API esto no es necesario ya que se exporta como JSON
+        df['MENCIONES_EXCEL'] = df['MENCIONES'].apply(lambda x: ', '.join(x) if x else '')
+        
         return df
         
     except Exception as e:
         logging.error(f"Error al buscar menciones en el DataFrame: {e}")
+        # En caso de error, asignar lista vacía
+        df['MENCIONES'] = [[] for _ in range(len(df))]
         return df
 
 def detectar_crisis_por_tema(df_actual, df_historico=None, temas_fijos=None):
