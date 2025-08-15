@@ -807,15 +807,6 @@ def normalizar_medio(medio):
     
     return medio
 
-
-
-
- 
- 
- 
- 
- 
-
 def _normalizar_fecha_ddmmyyyy(fecha_raw: str) -> str | None:
     """
     Convierte 'd/m/yyyy', 'dd-mm-yyyy' o 'dd.mm.yyyy' a 'YYYY-MM-DD'.
@@ -842,7 +833,6 @@ def _normalizar_fecha_ddmmyyyy(fecha_raw: str) -> str | None:
         return f"{y}-{mth.zfill(2)}-{d.zfill(2)}"
     except Exception:
         return None
-
 
 def cargar_temas_desde_txt(path_txt: str) -> tuple[list, dict]:
     """
@@ -885,5 +875,98 @@ def cargar_temas_desde_txt(path_txt: str) -> tuple[list, dict]:
     except Exception as e:
         logging.error(f"Error cargando temas desde TXT: {e}")
         return ["Actividades programadas"], {}
+
+def validar_urls_ejes(urls: list) -> dict:
+    """
+    Valida que las URLs pertenezcan al dominio ejes.com
+    
+    Args:
+        urls (list): Lista de URLs a validar
+        
+    Returns:
+        dict: Diccionario con URLs válidas, no válidas y estadísticas
+        {
+            "validas": [urls_validas],
+            "no_validas": [urls_no_validas],
+            "motivos": {url: motivo},
+            "estadisticas": {
+                "total": int,
+                "validas": int,
+                "no_validas": int
+            }
+        }
+    """
+    try:
+        urls_validas = []
+        urls_no_validas = []
+        motivos = {}
+        
+        for url in urls:
+            # Verificar si es None o string vacío
+            if url is None:
+                urls_no_validas.append(str(url))
+                motivos[str(url)] = "URL es None"
+                continue
+                
+            # Convertir a string si no lo es
+            if not isinstance(url, str):
+                urls_no_validas.append(str(url))
+                motivos[str(url)] = f"URL no es string (tipo: {type(url).__name__})"
+                continue
+            
+            # Verificar si es string vacío
+            if url.strip() == "":
+                urls_no_validas.append(url)
+                motivos[url] = "URL vacía"
+                continue
+            
+            # Verificar que contenga ejes.com (case-insensitive)
+            if 'ejes.com' not in url.lower():
+                urls_no_validas.append(url)
+                motivos[url] = "URL no pertenece a ejes.com"
+                continue
+            
+            # Verificar formato básico de URL
+            if not url.startswith(('http://', 'https://')):
+                urls_no_validas.append(url)
+                motivos[url] = "URL no tiene protocolo http/https"
+                continue
+            
+            # Si pasa todas las validaciones, es válida
+            urls_validas.append(url)
+        
+        estadisticas = {
+            "total": len(urls),
+            "validas": len(urls_validas),
+            "no_validas": len(urls_no_validas)
+        }
+        
+        logging.info(f"Validación de URLs: {estadisticas['validas']}/{estadisticas['total']} válidas")
+        
+        if urls_no_validas:
+            for url in urls_no_validas:
+                logging.warning(f"URL no válida: {url} - Motivo: {motivos[url]}")
+        
+        return {
+            "validas": urls_validas,
+            "no_validas": urls_no_validas,
+            "motivos": motivos,
+            "estadisticas": estadisticas
+        }
+        
+    except Exception as e:
+        logging.error(f"Error en validación de URLs: {e}")
+        # En caso de error, convertir todas las URLs a string para evitar problemas de hash
+        urls_str = [str(url) if url is not None else "None" for url in urls]
+        return {
+            "validas": [],
+            "no_validas": urls_str,
+            "motivos": {url: f"Error en validación: {str(e)}" for url in urls_str},
+            "estadisticas": {
+                "total": len(urls),
+                "validas": 0,
+                "no_validas": len(urls)
+            }
+        }
  
  

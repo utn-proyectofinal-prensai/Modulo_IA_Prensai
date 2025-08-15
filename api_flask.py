@@ -28,7 +28,7 @@ RUNTIME_CONFIG = {
 CAMPOS_FIJOS = [
     'TITULO', 'TIPO PUBLICACION', 'FECHA', 'SOPORTE', 'MEDIO','SECCION',
     'AUTOR', 'ENTREVISTADO', 'TEMA', 'LINK', 'HTML_OBJ', 'ALCANCE', 'COTIZACION', 'VALORACION',
-    'FACTOR POLITICO','GESTION','TEXTO_PLANO', 'CRISIS', 'MENCIONES'
+    'FACTOR POLITICO','GESTION','TEXTO_PLANO','MENCIONES'
 ]
 
 def procesar_noticias_con_ia(
@@ -57,14 +57,39 @@ def procesar_noticias_con_ia(
         
         logging.info(f"Procesando {len(urls)} noticias con API")
         
-        # 1. Configurar DataFrame
-        df = pd.DataFrame(columns=CAMPOS_FIJOS)
-        df['LINK'] = urls
+        # Informar qué modelo de IA se usará
+        modelo_ia = "GPT-4" if gpt_active else "Ollama (llama3.1:8b)"
+        print(f"🤖 Modelo de IA configurado: {modelo_ia}")
+        logging.info(f"Modelo de IA configurado: {modelo_ia}")
+        print(f"📊 Configuración: GPT_ACTIVE={gpt_active}, LIMITE_TEXTO={limite_texto}")
+        logging.info(f"Configuración: GPT_ACTIVE={gpt_active}, LIMITE_TEXTO={limite_texto}")
         
-        # 2. Extraer texto plano para cada link
+        # 1. VALIDAR URLs antes de procesar
+        validacion_urls = Z.validar_urls_ejes(urls)
+        urls_validas = validacion_urls['validas']
+        urls_no_validas = validacion_urls['no_validas']
+        
+        if not urls_validas:
+            logging.warning("No hay URLs válidas para procesar")
+            return {
+                "success": True,
+                "recibidas": len(urls),
+                "procesadas": 0,
+                "urls_no_procesadas": urls_no_validas,
+                "motivos_rechazo": validacion_urls['motivos'],
+                "tiempo_procesamiento": "0:00:00",
+                "noticias_procesadas": 0,
+                "data": []
+            }
+        
+        # 2. Configurar DataFrame solo con URLs válidas
+        df = pd.DataFrame(columns=CAMPOS_FIJOS)
+        df['LINK'] = urls_validas
+        
+        # 3. Extraer texto plano para cada link válido
         df['TEXTO_PLANO'] = df['LINK'].apply(Z.get_texto_plano_from_link)
         
-        # 3. Procesar HTML y rellenar campos
+        # 4. Procesar HTML y rellenar campos
         df['HTML_OBJ'] = df['LINK'].apply(Z.get_html_object_from_link)
         df['TITULO'] = df['HTML_OBJ'].apply(Z.get_titulo_from_html_obj)
         df['FECHA'] = df['HTML_OBJ'].apply(Z.get_fecha_from_html_obj)
@@ -76,7 +101,7 @@ def procesar_noticias_con_ia(
         df['AUTOR'] = df['HTML_OBJ'].apply(Z.get_autor_from_html_obj)
         df['GESTION'] = df['HTML_OBJ'].apply(Z.get_gestion_from_html_obj)
         
-        # 4. Inferencias con IA
+        # 5. Inferencias con IA
         # Clasificación de tipo de publicación
         df['TIPO PUBLICACION'] = df['TEXTO_PLANO'].apply(
             lambda x: Z.marcar_o_valorar_con_ia(
@@ -121,17 +146,14 @@ def procesar_noticias_con_ia(
             axis=1
         )
         
-        # 5. Extraer entrevistado
+        # 6. Extraer entrevistado
         df['ENTREVISTADO'] = df.apply(
             lambda row: Oll.extraer_entrevistado_con_ollama(row['TEXTO_PLANO']) 
             if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
             axis=1
         )
-        
-        # 6. Detectar crisis (sin histórico por ahora)
-        df['CRISIS'] = 'NO'  # Simplificado para la API
-        
-        # 7. Detectar menciones solo si se especificaron
+    
+        # 8. Detectar menciones solo si se especificaron
         if menciones:
             df = Z.buscar_menciones(df, lista_menciones)
         else:
@@ -151,8 +173,13 @@ def procesar_noticias_con_ia(
         # Convertir a JSON
         resultado_json = df_final.to_dict('records')
         
+        #TODO avisar al back como viene esta respuesta.
         return {
             "success": True,
+            "recibidas": len(urls),
+            "procesadas": len(urls_validas),
+            "urls_no_procesadas": urls_no_validas,
+            "motivos_rechazo": validacion_urls['motivos'],
             "tiempo_procesamiento": tiempo_total,
             "noticias_procesadas": len(resultado_json),
             "data": resultado_json
@@ -163,36 +190,38 @@ def procesar_noticias_con_ia(
         return {
             "success": False,
             "error": str(e),
+            "recibidas": len(urls),
+            "procesadas": 0,
+            "urls_no_procesadas": urls,
+            "motivos_rechazo": {url: f"Error en procesamiento: {str(e)}" for url in urls},
             "data": []
         }
 
-@app.route('/procesar-noticias', methods=['POST'])
-def procesar_noticias():
+def validar_parametros_noticias(data):
     """
-    Endpoint principal para procesar noticias
+    Función reutilizable para validar parámetros de entrada en endpoints de noticias
+    Retorna: (success, error_response, datos_validados)
     """
     try:
         # Validar que venga JSON
         if not request.is_json:
-            return jsonify({
+            return False, {
                 "success": False,
                 "error": "Content-Type debe ser application/json"
-            }), 400
-        
-        data = request.get_json()
+            }, None
         
         # Validar campos obligatorios
         if 'urls' not in data:
-            return jsonify({
+            return False, {
                 "success": False,
                 "error": "Campo 'urls' es obligatorio"
-            }), 400
+            }, None
         
         if 'temas' not in data:
-            return jsonify({
+            return False, {
                 "success": False,
                 "error": "Campo 'temas' es obligatorio"
-            }), 400
+            }, None
         
         urls = data.get('urls', [])
         temas = data.get('temas', [])
@@ -202,38 +231,63 @@ def procesar_noticias():
         
         # Validaciones adicionales
         if not urls:
-            return jsonify({
+            return False, {
                 "success": False,
                 "error": "La lista de URLs no puede estar vacía"
-            }), 400
+            }, None
         
         if not temas:
-            return jsonify({
+            return False, {
                 "success": False,
                 "error": "La lista de temas no puede estar vacía"
-            }), 400
+            }, None
         
         # Validar campos obligatorios
         if not ministro:
-            return jsonify({
+            return False, {
                 "success": False,
                 "error": "Campo 'ministro' es obligatorio"
-            }), 400
+            }, None
         
         if not ministerio:
-            return jsonify({
+            return False, {
                 "success": False,
                 "error": "Campo 'ministerio' es obligatorio"
-            }), 400
+            }, None
+        
+        # Si todo está bien, retornar datos validados
+        datos_validados = {
+            'urls': urls,
+            'temas': temas,
+            'menciones': menciones if menciones else None,
+            'ministro': ministro if ministro else None,
+            'ministerio': ministerio if ministerio else None
+        }
+        
+        return True, None, datos_validados
+        
+    except Exception as e:
+        return False, {
+            "success": False,
+            "error": f"Error en validación: {str(e)}"
+        }, None
+
+@app.route('/procesar-noticias', methods=['POST'])
+def procesar_noticias():
+    """
+    Endpoint principal para procesar noticias
+    """
+    try:
+        data = request.get_json()
+        
+        # Usar función de validación reutilizable
+        validacion_ok, error_response, datos_validados = validar_parametros_noticias(data)
+        
+        if not validacion_ok:
+            return jsonify(error_response), 400
         
         # Procesar noticias
-        resultado = procesar_noticias_con_ia(
-            urls=urls,
-            temas=temas,
-            menciones=menciones if menciones else None,
-            ministro=ministro if ministro else None,
-            ministerio=ministerio if ministerio else None
-        )
+        resultado = procesar_noticias_con_ia(**datos_validados)
         
         if resultado["success"]:
             return jsonify(resultado), 200
@@ -351,9 +405,91 @@ def obtener_estado_config():
         "configuracion": RUNTIME_CONFIG
     }), 200
 
+@app.route('/procesar-noticias-export-excel', methods=['POST'])
+def procesar_noticias_export_excel():
+    """
+    Endpoint para procesar noticias y exportar directamente a Excel
+    """
+    try:
+        data = request.get_json()
+        
+        # Usar función de validación reutilizable
+        validacion_ok, error_response, datos_validados = validar_parametros_noticias(data)
+        
+        if not validacion_ok:
+            return jsonify(error_response), 400
+        
+        # Procesar noticias usando la función existente
+        resultado = procesar_noticias_con_ia(**datos_validados)
+        
+        if not resultado['success']:
+            return jsonify(resultado), 500
+        
+        # Si no hay noticias procesadas, no exportar
+        if resultado['procesadas'] == 0:
+            return jsonify({
+                "success": True,
+                "message": "No hay noticias para exportar",
+                "recibidas": resultado['recibidas'],
+                "procesadas": 0,
+                "urls_no_procesadas": resultado['urls_no_procesadas'],
+                "motivos_rechazo": resultado['motivos_rechazo'],
+                "tiempo_procesamiento": resultado['tiempo_procesamiento'],
+                "archivo_excel": None
+            }), 200
+        
+        # Crear DataFrame para exportar (incluyendo MENCIONES_EXCEL)
+        df_export = pd.DataFrame(resultado['data'])
+        
+        # Agregar campos adicionales para Excel
+        df_export['USR_CREADOR'] = 'SOL'
+        df_export['USR_REVISOR'] = 'LUNA'
+        df_export['CRISIS'] = 'NO'
+        
+        # Generar nombre de archivo con modelo de IA (se sobrescribe cada vez)
+        modelo_ia = "GPT" if RUNTIME_CONFIG['gpt_active'] else "Ollama"
+        nombre_archivo = f"Noticias_Procesadas_{modelo_ia}.xlsx"
+        ruta_archivo = f"Data_Results/{nombre_archivo}"
+        
+        # Crear directorio si no existe
+        import os
+        os.makedirs("Data_Results", exist_ok=True)
+        
+        # Exportar a Excel
+        df_export.to_excel(ruta_archivo, index=False, engine='openpyxl')
+        
+        logging.info(f"Archivo Excel exportado: {ruta_archivo}")
+        
+        return jsonify({
+            "success": True,
+            "message": f"Noticias procesadas y exportadas exitosamente a Excel",
+            "recibidas": resultado['recibidas'],
+            "procesadas": resultado['procesadas'],
+            "urls_no_procesadas": resultado['urls_no_procesadas'],
+            "motivos_rechazo": resultado['motivos_rechazo'],
+            "tiempo_procesamiento": resultado['tiempo_procesamiento'],
+            "noticias_procesadas": resultado['noticias_procesadas'],
+            "archivo_excel": nombre_archivo,
+            "ruta_completa": ruta_archivo,
+            "registros_exportados": len(df_export)
+        }), 200
+        
+    except Exception as e:
+        logging.error(f"Error en exportación a Excel: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": f"Error interno del servidor: {str(e)}",
+            "recibidas": len(datos_validados['urls']) if 'datos_validados' in locals() else 0,
+            "procesadas": 0,
+            "urls_no_procesadas": datos_validados['urls'] if 'datos_validados' in locals() else [],
+            "motivos_rechazo": {url: f"Error en exportación: {str(e)}" for url in (datos_validados['urls'] if 'datos_validados' in locals() else [])},
+            "archivo_excel": None
+        }), 500
+
 if __name__ == '__main__':
     print("🚀 Iniciando API de Prensai IA...")
     print("📡 Endpoint principal: POST /procesar-noticias")
+    print("📊 Exportar a Excel: POST /procesar-noticias-export-excel")
     print("🏥 Health check: GET /health")
     print("⚙️  Configuración: POST /config/limite-texto, POST /config/gpt-active")
     print("📊 Estado config: GET /config/estado")
