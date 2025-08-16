@@ -363,7 +363,7 @@ def clasificar_tema_con_ia(
 def es_entrevista_con_gpt(texto: str) -> bool:
     """
     Función auxiliar para determinar si una noticia es entrevista usando GPT.
-    Basada en el análisis de patrones de 20 entrevistas confirmadas vs 9 no entrevistas.
+    Con fallback automático a Ollama si GPT falla por cualquier motivo.
     
     Args:
         texto (str): Texto plano de la noticia
@@ -376,83 +376,37 @@ def es_entrevista_con_gpt(texto: str) -> bool:
         
         if not api_key:
             logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
-            return None
+            return _fallback_a_ollama_entrevista(texto)
         
-        # Prompt específico para entrevistas basado en el análisis de patrones reales
+        # Prompt refinado y simplificado para entrevistas
         prompt = f"""
-        TAREA: Determinar si la siguiente noticia es una ENTREVISTA o NO.
+        Eres un experto en clasificar noticias periodísticas. Tu tarea es determinar si un texto es una ENTREVISTA o NO.
 
         TEXTO DE LA NOTICIA:
         {texto}
 
-        ✅ SÍ ES ENTREVISTA si:
-        1. Formato directo de pregunta-respuesta entre periodista y entrevistado:
-           - Con guiones largos (—) seguidos de preguntas y respuestas
-           - Con guiones medios (-) seguidos de preguntas y respuestas  
-           - Con formato "NA - JB -" o similar
-           - Con preguntas que empiezan con guión (—¿Cómo...? o -¿Cómo...?)
-           - Con preguntas que empiezan con guión (—En este difícil presente... o -En este difícil presente...)
-           - Con preguntas que empiezan con guión (—¿Es tu proyecto...? o -¿Es tu proyecto...?)
-           - Con preguntas que empiezan con guión (—¿Qué significa...? o -¿Qué significa...?)
-           - Con preguntas que empiezan con guión (—¿El arte sigue...? o -¿El arte sigue...?)
-        2. "En diálogo con [medio]" + contenido conversacional real
-        3. "charló con [persona]" + intercambio real
-        4. "recibió la visita de [persona]" + contenido conversacional
-        5. "contado por una protagonista clave" + citas extensas
-        6. Citas extensas (más de 2-3 frases) entre comillas que reflejan intercambio real
-        7. Estructura conversacional clara con preguntas y respuestas
-        8. "En 'Dos horas con la actualidad', [persona] recibió a [otra persona]"
-        9. "En entrevista con [medio], [persona] dijo..."
-        10. Preguntas que empiezan con guión (—) seguidas de respuestas del entrevistado
-        
-        **IMPORTANTE: Si encuentras guiones (—) seguidos de preguntas, es MUY PROBABLE que sea una entrevista**
+        CRITERIOS PARA ENTREVISTA:
+        ✅ Formato pregunta-respuesta con guiones (–) seguidos de preguntas o respuestas extensas
+        ✅ Intercambio directo entre periodista y entrevistado
+        ✅ Preguntas del periodista seguidas de respuestas del entrevistado
+        ✅ Patrón repetitivo de guión + contenido conversacional
 
-        ❌ NO ES ENTREVISTA si:
-        1. Solo tiene citas breves o referencias sin intercambio real
-        2. Declaraciones mencionadas de terceros sin diálogo
-        3. Información narrativa estándar sin estructura conversacional
-        4. Citas referidas sin intercambio directo
-        5. Solo contexto informativo sin preguntas-respuestas
-        6. "en diálogo con [medio]" pero sin contenido conversacional real
-        7. Solo citas entre comillas sin estructura de entrevista
-        8. Solo citas extensas entre comillas sin preguntas-respuestas
-        9. Notas informativas sobre programas o eventos
-        10. Declaraciones políticas o institucionales sin formato de entrevista
+        NO ES ENTREVISTA:
+        ❌ Solo citas entre comillas sin formato pregunta-respuesta
+        ❌ Solo declaraciones en primera persona sin intercambio
+        ❌ Solo texto narrativo sin estructura conversacional
+        ❌ Resúmenes periodísticos de lo que dijo alguien (aunque tengan "en diálogo con...")
+        ❌ Fragmentos de declaraciones recopiladas sin intercambio directo
+        ❌ Citas con contexto como "Consultado por..." pero sin guiones conversacionales
+        ❌ Notas que compilan respuestas a diferentes preguntas sin formato pregunta-respuesta
 
-        PATRONES CLAVE:
-        - Buscar formato pregunta-respuesta real
-        - Verificar si hay intercambio conversacional
-        - Distinguir entre citas mencionadas y diálogo real
-        - Los guiones seguidos de preguntas son un indicador MUY FUERTE de entrevista:
-          * Guión largo (—) seguido de pregunta: "—¿Cómo explicas..."
-          * Guión medio (-) seguido de pregunta: "-¿Cómo explicas..."
-          * Guión seguido de texto que parece pregunta: "—En este difícil presente..."
-          * Guión seguido de pregunta: "—¿Es tu proyecto..."
-          * Guión seguido de pregunta: "—¿Qué significa..."
-          * Guión seguido de pregunta: "—¿El arte sigue..."
-        - Si ves "—¿" o "-¿" o "—" seguido de texto que parece pregunta, es casi seguro una entrevista
-        - IMPORTANTE: Las citas extensas SOLAS no son entrevistas, necesitan preguntas-respuestas
+        IMPORTANTE: 
+        - Analiza TODO el texto completo, no solo el inicio
+        - Las entrevistas reales tienen formato pregunta-respuesta con guiones (–)
+        - Solo citas extensas NO son suficientes para ser entrevista
+        - Debe haber intercambio conversacional real, no solo declaraciones
 
-        EJEMPLOS DE ENTREVISTA:
-        - "—¿Cómo explicas estos éxitos tan seguidos del cine brasileño?" (guión largo)
-        - "—¿Cuánto de este boom se explica por la inversión estatal?" (guión largo)
-        - "—He leído que tu historia familiar es parecida..." (guión largo)
-        - "—En este difícil presente dónde el diálogo se volvió muy difícil..." (guión largo)
-        - "—El West-Eastern Divan Ensemble nace como una extensión..." (guión largo)
-        - "—¿Qué solución imaginás o deseás para este largo conflicto?" (guión largo)
-        - "-¿Cómo explicas estos éxitos?" (guión medio)
-        - "-¿Cuánto de este boom se explica?" (guión medio)
-        - "—¿Es tu proyecto de que se vuelva un teatro popular?" (guión largo)
-        - "—¿Qué significa para vos este cargo?" (guión largo)
-        - "—¿El arte sigue siendo un refugio?" (guión largo)
-
-        INSTRUCCIÓN FINAL:
-        - Si encuentras guiones (— o -) seguidos de preguntas o texto que parece pregunta, responde "SI"
-        - Si solo encuentras citas extensas entre comillas SIN preguntas-respuestas, responde "NO"
-        - Si no encuentras este patrón, analiza los otros criterios
-        - RECUERDA: Los guiones seguidos de preguntas son un indicador MUY FUERTE de entrevista
-        
-        Responde ÚNICAMENTE con: "SI" o "NO"
+        RESPONDE SOLO: "SI" si es entrevista, "NO" si no lo es.
         """
         
         # Preparar request para GPT
@@ -467,7 +421,7 @@ def es_entrevista_con_gpt(texto: str) -> bool:
                 {"role": "system", "content": "Eres un clasificador especializado en identificar entrevistas periodísticas. Responde solo con SI o NO."},
                 {"role": "user", "content": prompt}
             ],
-            "temperature": 0.1,  # Baja temperatura para respuestas más consistentes
+            "temperature": 0,  # Baja temperatura para respuestas más consistentes
             "max_tokens": 10
         }
         
@@ -484,16 +438,200 @@ def es_entrevista_con_gpt(texto: str) -> bool:
                 return False
             else:
                 # Si GPT devuelve algo inesperado, usar fallback
-                logging.warning(f"GPT devolvió respuesta inesperada: '{content}'. Usando fallback.")
-                return None
+                logging.warning(f"GPT devolvió respuesta inesperada: '{content}'. Usando fallback a Ollama.")
+                return _fallback_a_ollama_entrevista(texto)
                 
         else:
-            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback.")
-            return None
+            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback a Ollama.")
+            return _fallback_a_ollama_entrevista(texto)
             
     except Exception as e:
-        logging.error(f"Error en es_entrevista_con_gpt: {e}. Usando fallback.")
-        return None
+        logging.error(f"Error en es_entrevista_con_gpt: {e}. Usando fallback a Ollama.")
+        return _fallback_a_ollama_entrevista(texto)
+
+
+def _fallback_a_ollama_entrevista(texto: str) -> bool:
+    """
+    Función de fallback que usa Ollama cuando GPT falla.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+    
+    Returns:
+        bool: True si es entrevista, False si no
+    """
+    try:
+        logging.info("🔄 Usando fallback a Ollama para clasificación de entrevistas...")
+        
+        # Importar aquí para evitar dependencias circulares
+        from O_Utils_Ollama import es_entrevista_ollama
+        
+        resultado_ollama = es_entrevista_ollama(texto)
+        logging.info(f"✅ Fallback a Ollama completado: {resultado_ollama}")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"❌ Fallback a Ollama también falló: {e}")
+        # En caso extremo, devolver False (ante la duda, NO es entrevista)
+        logging.warning("⚠️ Devolviendo False por defecto (ante la duda, NO es entrevista)")
+        return False
+
+
+def es_agenda_con_gpt(texto: str) -> bool:
+    """
+    Función auxiliar para determinar si una noticia es agenda usando GPT.
+    Con fallback automático a Ollama si GPT falla por cualquier motivo.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+    
+    Returns:
+        bool: True si es agenda, False si no
+    """
+    try:
+        api_key = leer_api_key_desde_env()
+        
+        if not api_key:
+            logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
+            return _fallback_a_ollama_agenda(texto)
+        
+        # Prompt para detectar agendas
+        prompt = f"""
+        Eres un experto en clasificar noticias periodísticas. Tu tarea es determinar si un texto es una AGENDA o NO.
+
+        TEXTO DE LA NOTICIA:
+        {texto}
+
+        CRITERIOS PARA AGENDA:
+        ✅ Anuncios de eventos, actividades o actividades programadas
+        ✅ Información sobre fechas, horarios y lugares específicos
+        ✅ Programación de espectáculos, exposiciones, conciertos
+        ✅ Calendario de actividades culturales o institucionales
+        ✅ Anuncios de inauguraciones, presentaciones o lanzamientos
+        ✅ Información sobre fechas límite, inscripciones o convocatorias
+        ✅ Programación de festivales, ferias o eventos masivos
+
+        NO ES AGENDA:
+        ❌ Noticias sobre eventos que ya sucedieron
+        ❌ Crónicas o reseñas de actividades pasadas
+        ❌ Entrevistas o declaraciones sobre eventos
+        ❌ Análisis o opiniones sobre programación
+        ❌ Notas informativas sin fechas específicas
+        ❌ Reportajes sobre eventos en general
+
+        IMPORTANTE: 
+        - Analiza TODO el texto completo, no solo el inicio
+        - Las agendas tienen fechas, horarios o información programática
+        - Debe haber información sobre eventos futuros o programados
+        - No solo menciones de eventos, sino información programática
+
+        RESPONDE SOLO: "SI" si es agenda, "NO" si no lo es.
+        """
+        
+        # Preparar request para GPT
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": GPT_MODEL,
+            "messages": [
+                {"role": "system", "content": "Eres un clasificador especializado en identificar agendas periodísticas. Responde solo con SI o NO."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0,  # Baja temperatura para respuestas más consistentes
+            "max_tokens": 10
+        }
+        
+        response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=15)
+        
+        if response.status_code == 200:
+            result = response.json()
+            content = result['choices'][0]['message']['content'].strip().upper()
+            
+            # Normalizar respuesta
+            if content in ['SI', 'SÍ', 'YES', 'TRUE', 'VERDADERO']:
+                return True
+            elif content in ['NO', 'FALSE', 'FALSO']:
+                return False
+            else:
+                # Si GPT devuelve algo inesperado, usar fallback
+                logging.warning(f"GPT devolvió respuesta inesperada: '{content}'. Usando fallback a Ollama.")
+                return _fallback_a_ollama_agenda(texto)
+                
+        else:
+            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback a Ollama.")
+            return _fallback_a_ollama_agenda(texto)
+            
+    except Exception as e:
+        logging.error(f"Error en es_agenda_con_gpt: {e}. Usando fallback a Ollama.")
+        return _fallback_a_ollama_agenda(texto)
+
+
+def _fallback_a_ollama_agenda(texto: str) -> bool:
+    """
+    Función de fallback que usa Ollama cuando GPT falla para agenda.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+    
+    Returns:
+        bool: True si es agenda, False si no
+    """
+    try:
+        logging.info("🔄 Usando fallback a Ollama para clasificación de agenda...")
+        
+        # Importar aquí para evitar dependencias circulares
+        from O_Utils_Ollama import es_agenda_ollama
+        
+        resultado_ollama = es_agenda_ollama(texto)
+        logging.info(f"✅ Fallback a Ollama completado: {resultado_ollama}")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"❌ Fallback a Ollama también falló: {e}")
+        # En caso extremo, devolver False (ante la duda, NO es agenda)
+        logging.warning("⚠️ Devolviendo False por defecto (ante la duda, NO es agenda)")
+        return False
+
+
+def clasificar_tipo_publicacion_con_gpt(texto: str) -> str:
+    """
+    Clasifica el tipo de publicación usando funciones GPT especializadas.
+    Procesa secuencialmente: Agenda → Entrevista → Nota (por defecto)
+    
+    Args:
+        texto (str): Texto plano de la noticia
+    
+    Returns:
+        str: Tipo de publicación clasificado
+    """
+    try:
+        logging.info("🔍 Clasificando tipo de publicación con GPT...")
+        
+        # 1. AGENDA (primera prioridad - más usual)
+        logging.info("📅 Verificando si es Agenda...")
+        if es_agenda_con_gpt(texto):
+            logging.info("✅ Clasificado como: Agenda")
+            return "Agenda"
+        
+        # 2. ENTREVISTA (segunda prioridad)
+        logging.info("🎤 Verificando si es Entrevista...")
+        if es_entrevista_con_gpt(texto):
+            logging.info("✅ Clasificado como: Entrevista")
+            return "Entrevista"
+        
+        # 3. Por defecto (si no es Agenda ni Entrevista)
+        logging.info("📰 No es Agenda ni Entrevista, clasificando como: Nota")
+        return "Nota"
+        
+    except Exception as e:
+        logging.error(f"❌ Error en clasificar_tipo_publicacion_con_gpt: {e}")
+        # En caso de error, devolver "Nota" como fallback seguro
+        return "Nota"
 
 
 def clasificar_tipo_publicacion_con_ia(texto: str, ministro_actual: str = "Gabriela Ricardes", gpt_active: bool = False) -> str:
@@ -514,9 +652,9 @@ def clasificar_tipo_publicacion_con_ia(texto: str, ministro_actual: str = "Gabri
         
         if gpt_active:
             logging.info("Intentando clasificar tipo de publicación con GPT...")
-            resultado_gpt = clasificar_tipo_publicacion_con_gpt(texto, ministro_actual)
+            resultado_gpt = clasificar_tipo_publicacion_con_gpt(texto)
             
-            # GPT siempre devuelve algo (o "Nota" si no puede clasificar claramente)
+            # GPT siempre devuelve algo (Agenda, Entrevista, o Nota)
             # Solo fallback a Ollama si hay error de API o excepción
             if resultado_gpt is not None:
                 logging.info(f"GPT clasificó como: {resultado_gpt}")
