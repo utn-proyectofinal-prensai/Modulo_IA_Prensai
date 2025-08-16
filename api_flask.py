@@ -13,6 +13,7 @@ import O_Utils_GPT as Gpt
 import time
 from datetime import timedelta
 import logging
+import os
 
 app = Flask(__name__)
 
@@ -86,11 +87,11 @@ def procesar_noticias_con_ia(
         df = pd.DataFrame(columns=CAMPOS_FIJOS)
         df['LINK'] = urls_validas
         
-        # 3. Extraer texto plano para cada link válido
-        df['TEXTO_PLANO'] = df['LINK'].apply(Z.get_texto_plano_from_link)
+        # 3. Extraer texto plano para cada link válido (con reintentos)
+        df['TEXTO_PLANO'] = df['LINK'].apply(lambda x: Z.procesar_link_robusto(x, 'texto', 3))
         
-        # 4. Procesar HTML y rellenar campos
-        df['HTML_OBJ'] = df['LINK'].apply(Z.get_html_object_from_link)
+        # 4. Procesar HTML y rellenar campos (con reintentos)
+        df['HTML_OBJ'] = df['LINK'].apply(lambda x: Z.procesar_link_robusto(x, 'html', 3))
         df['TITULO'] = df['HTML_OBJ'].apply(Z.get_titulo_from_html_obj)
         df['FECHA'] = df['HTML_OBJ'].apply(Z.get_fecha_from_html_obj)
         df['MEDIO'] = df['HTML_OBJ'].apply(Z.get_medio_from_html_obj).apply(Z.normalizar_medio)
@@ -102,11 +103,11 @@ def procesar_noticias_con_ia(
         df['GESTION'] = df['HTML_OBJ'].apply(Z.get_gestion_from_html_obj)
         
         # 5. Inferencias con IA
-        # Clasificación de tipo de publicación
+        # Clasificación de tipo de publicación (GPT con fallback a Ollama)
         df['TIPO PUBLICACION'] = df['TEXTO_PLANO'].apply(
             lambda x: Z.marcar_o_valorar_con_ia(
                 x, 
-                lambda t: Oll.clasificar_tipo_publicacion_unificado(t, ministro), 
+                lambda t: Gpt.clasificar_tipo_publicacion_con_ia(t, ministro, gpt_active), 
                 limite_texto
             )
         )
@@ -405,6 +406,36 @@ def obtener_estado_config():
         "configuracion": RUNTIME_CONFIG
     }), 200
 
+@app.route('/logs', methods=['GET'])
+def obtener_logs():
+    """
+    Obtiene todo el contenido del archivo de logs de la API
+    """
+    try:
+        log_path = 'Logs/Procesamiento_Noticias_API.log'
+        
+        if not os.path.exists(log_path):
+            return jsonify({
+                'success': False,
+                'error': 'Archivo de logs no encontrado'
+            }), 404
+            
+        with open(log_path, 'r', encoding='utf-8') as f:
+            contenido = f.read()
+            
+        return jsonify({
+            'success': True,
+            'archivo': 'Procesamiento_Noticias_API.log',
+            'contenido': contenido,
+            'lineas': len(contenido.split('\n'))
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Error al leer logs: {str(e)}'
+        }), 500
+
 @app.route('/procesar-noticias-export-excel', methods=['POST'])
 def procesar_noticias_export_excel():
     """
@@ -492,6 +523,7 @@ if __name__ == '__main__':
     print("📊 Exportar a Excel: POST /procesar-noticias-export-excel")
     print("🏥 Health check: GET /health")
     print("⚙️  Configuración: POST /config/limite-texto, POST /config/gpt-active")
+    print("📋 Consultar logs: GET /logs")
     print("📊 Estado config: GET /config/estado")
     print("🔧 Puerto: 5000")
     

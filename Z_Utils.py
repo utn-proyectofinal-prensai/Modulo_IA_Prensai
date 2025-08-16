@@ -6,6 +6,7 @@ import os
 import logging
 import re
 import unicodedata
+import time
 from datetime import datetime
 
 # Levantar un logger
@@ -177,6 +178,43 @@ def obtener_links_del_usuario_desde_excel(EXCEL_URL_PATH):
         logging.error(f"Error al leer Excel {EXCEL_URL_PATH}: {e}")
         return None
 
+def procesar_link_robusto(link, tipo='texto', max_reintentos=3):
+    """
+    Procesa un link de forma robusta con reintentos automáticos
+    
+    Args:
+        link: URL a procesar
+        tipo: 'texto' o 'html'
+        max_reintentos: número máximo de intentos (default: 3)
+    
+    Returns:
+        - Si tipo='texto': texto plano extraído
+        - Si tipo='html': objeto BeautifulSoup parseado
+        - None si falla definitivamente después de todos los intentos
+    """
+    for intento in range(max_reintentos):
+        try:
+            if tipo == 'texto':
+                return get_texto_plano_from_link(link)
+            elif tipo == 'html':
+                return get_html_object_from_link(link)
+            else:
+                logging.error(f"Tipo '{tipo}' no válido. Debe ser 'texto' o 'html'")
+                return None
+                
+        except Exception as e:
+            if intento < max_reintentos - 1:
+                delay = (2 ** intento) * 2  # 2, 4, 8 segundos
+                logging.warning(f"Intento {intento + 1} falló para {link}, reintentando en {delay}s... Error: {e}")
+                time.sleep(delay)
+            else:
+                error_msg = f"Link {link} falló definitivamente después de {max_reintentos} intentos. Error: {e}"
+                logging.error(error_msg)
+                print(f"❌ {error_msg}")  # Imprimir por pantalla
+                return None
+    
+    return None
+
 #Función para obtener el HTML de un link y devolerlo como un "objetito" para luego poder procesarlo y rellenar los campos de mi DF. 
 def get_html_object_from_link(link):
     """
@@ -307,7 +345,7 @@ def get_soporte_from_html_obj(soup):
         logging.error(f"Error al determinar soporte del HTML: {e}")
         return None
 
-#Sección @TODO ver si se puede mejorar, quizás con un regex más robusto.
+#Sección
 def get_seccion_from_html_obj(soup):
     """
     Extrae la sección del <span class='canal'> si está disponible,

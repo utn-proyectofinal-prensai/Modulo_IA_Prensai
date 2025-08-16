@@ -358,3 +358,283 @@ def clasificar_tema_con_ia(
     except Exception as e:
         logging.error(f"clasificar_tema_con_ia error: {e}")
         return "Actividades programadas"
+
+
+def es_entrevista_con_gpt(texto: str) -> bool:
+    """
+    Función auxiliar para determinar si una noticia es entrevista usando GPT.
+    Basada en el análisis de patrones de 20 entrevistas confirmadas vs 9 no entrevistas.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+    
+    Returns:
+        bool: True si es entrevista, False si no
+    """
+    try:
+        api_key = leer_api_key_desde_env()
+        
+        if not api_key:
+            logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
+            return None
+        
+        # Prompt específico para entrevistas basado en el análisis de patrones reales
+        prompt = f"""
+        TAREA: Determinar si la siguiente noticia es una ENTREVISTA o NO.
+
+        TEXTO DE LA NOTICIA:
+        {texto}
+
+        ✅ SÍ ES ENTREVISTA si:
+        1. Formato directo de pregunta-respuesta entre periodista y entrevistado:
+           - Con guiones largos (—) seguidos de preguntas y respuestas
+           - Con guiones medios (-) seguidos de preguntas y respuestas  
+           - Con formato "NA - JB -" o similar
+           - Con preguntas que empiezan con guión (—¿Cómo...? o -¿Cómo...?)
+           - Con preguntas que empiezan con guión (—En este difícil presente... o -En este difícil presente...)
+           - Con preguntas que empiezan con guión (—¿Es tu proyecto...? o -¿Es tu proyecto...?)
+           - Con preguntas que empiezan con guión (—¿Qué significa...? o -¿Qué significa...?)
+           - Con preguntas que empiezan con guión (—¿El arte sigue...? o -¿El arte sigue...?)
+        2. "En diálogo con [medio]" + contenido conversacional real
+        3. "charló con [persona]" + intercambio real
+        4. "recibió la visita de [persona]" + contenido conversacional
+        5. "contado por una protagonista clave" + citas extensas
+        6. Citas extensas (más de 2-3 frases) entre comillas que reflejan intercambio real
+        7. Estructura conversacional clara con preguntas y respuestas
+        8. "En 'Dos horas con la actualidad', [persona] recibió a [otra persona]"
+        9. "En entrevista con [medio], [persona] dijo..."
+        10. Preguntas que empiezan con guión (—) seguidas de respuestas del entrevistado
+        
+        **IMPORTANTE: Si encuentras guiones (—) seguidos de preguntas, es MUY PROBABLE que sea una entrevista**
+
+        ❌ NO ES ENTREVISTA si:
+        1. Solo tiene citas breves o referencias sin intercambio real
+        2. Declaraciones mencionadas de terceros sin diálogo
+        3. Información narrativa estándar sin estructura conversacional
+        4. Citas referidas sin intercambio directo
+        5. Solo contexto informativo sin preguntas-respuestas
+        6. "en diálogo con [medio]" pero sin contenido conversacional real
+        7. Solo citas entre comillas sin estructura de entrevista
+        8. Solo citas extensas entre comillas sin preguntas-respuestas
+        9. Notas informativas sobre programas o eventos
+        10. Declaraciones políticas o institucionales sin formato de entrevista
+
+        PATRONES CLAVE:
+        - Buscar formato pregunta-respuesta real
+        - Verificar si hay intercambio conversacional
+        - Distinguir entre citas mencionadas y diálogo real
+        - Los guiones seguidos de preguntas son un indicador MUY FUERTE de entrevista:
+          * Guión largo (—) seguido de pregunta: "—¿Cómo explicas..."
+          * Guión medio (-) seguido de pregunta: "-¿Cómo explicas..."
+          * Guión seguido de texto que parece pregunta: "—En este difícil presente..."
+          * Guión seguido de pregunta: "—¿Es tu proyecto..."
+          * Guión seguido de pregunta: "—¿Qué significa..."
+          * Guión seguido de pregunta: "—¿El arte sigue..."
+        - Si ves "—¿" o "-¿" o "—" seguido de texto que parece pregunta, es casi seguro una entrevista
+        - IMPORTANTE: Las citas extensas SOLAS no son entrevistas, necesitan preguntas-respuestas
+
+        EJEMPLOS DE ENTREVISTA:
+        - "—¿Cómo explicas estos éxitos tan seguidos del cine brasileño?" (guión largo)
+        - "—¿Cuánto de este boom se explica por la inversión estatal?" (guión largo)
+        - "—He leído que tu historia familiar es parecida..." (guión largo)
+        - "—En este difícil presente dónde el diálogo se volvió muy difícil..." (guión largo)
+        - "—El West-Eastern Divan Ensemble nace como una extensión..." (guión largo)
+        - "—¿Qué solución imaginás o deseás para este largo conflicto?" (guión largo)
+        - "-¿Cómo explicas estos éxitos?" (guión medio)
+        - "-¿Cuánto de este boom se explica?" (guión medio)
+        - "—¿Es tu proyecto de que se vuelva un teatro popular?" (guión largo)
+        - "—¿Qué significa para vos este cargo?" (guión largo)
+        - "—¿El arte sigue siendo un refugio?" (guión largo)
+
+        INSTRUCCIÓN FINAL:
+        - Si encuentras guiones (— o -) seguidos de preguntas o texto que parece pregunta, responde "SI"
+        - Si solo encuentras citas extensas entre comillas SIN preguntas-respuestas, responde "NO"
+        - Si no encuentras este patrón, analiza los otros criterios
+        - RECUERDA: Los guiones seguidos de preguntas son un indicador MUY FUERTE de entrevista
+        
+        Responde ÚNICAMENTE con: "SI" o "NO"
+        """
+        
+        # Preparar request para GPT
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": GPT_MODEL,
+            "messages": [
+                {"role": "system", "content": "Eres un clasificador especializado en identificar entrevistas periodísticas. Responde solo con SI o NO."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.1,  # Baja temperatura para respuestas más consistentes
+            "max_tokens": 10
+        }
+        
+        response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=15)
+        
+        if response.status_code == 200:
+            result = response.json()
+            content = result['choices'][0]['message']['content'].strip().upper()
+            
+            # Normalizar respuesta
+            if content in ['SI', 'SÍ', 'YES', 'TRUE', 'VERDADERO']:
+                return True
+            elif content in ['NO', 'FALSE', 'FALSO']:
+                return False
+            else:
+                # Si GPT devuelve algo inesperado, usar fallback
+                logging.warning(f"GPT devolvió respuesta inesperada: '{content}'. Usando fallback.")
+                return None
+                
+        else:
+            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback.")
+            return None
+            
+    except Exception as e:
+        logging.error(f"Error en es_entrevista_con_gpt: {e}. Usando fallback.")
+        return None
+
+
+def clasificar_tipo_publicacion_con_ia(texto: str, ministro_actual: str = "Gabriela Ricardes", gpt_active: bool = False) -> str:
+    """
+    Función unificada para clasificar tipo de publicación con GPT y fallback a Ollama.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+        ministro_actual (str): Nombre del ministro actual
+        gpt_active (bool): Si usar GPT o ir directo a Ollama
+    
+    Returns:
+        str: Tipo de publicación clasificado
+    """
+    try:
+        # Importar aquí para evitar dependencias circulares
+        from O_Utils_Ollama import clasificar_tipo_publicacion_unificado
+        
+        if gpt_active:
+            logging.info("Intentando clasificar tipo de publicación con GPT...")
+            resultado_gpt = clasificar_tipo_publicacion_con_gpt(texto, ministro_actual)
+            
+            # GPT siempre devuelve algo (o "Nota" si no puede clasificar claramente)
+            # Solo fallback a Ollama si hay error de API o excepción
+            if resultado_gpt is not None:
+                logging.info(f"GPT clasificó como: {resultado_gpt}")
+                return resultado_gpt
+            else:
+                logging.info("GPT falló por error de API, usando fallback a Ollama...")
+        
+        # Fallback a Ollama (cuando gpt_active=False o GPT falló por error)
+        logging.info("Clasificando tipo de publicación con Ollama...")
+        resultado_ollama = clasificar_tipo_publicacion_unificado(texto, ministro_actual)
+        logging.info(f"Ollama clasificó como: {resultado_ollama}")
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"Error en clasificar_tipo_publicacion_con_ia: {e}")
+        # Fallback seguro
+        return "Nota"
+
+
+def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_actual: str = "Gabriela Ricardes") -> Optional[str]:
+    """
+    Clasifica el tipo de publicación usando GPT con fallback a Ollama.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+        ministro_actual (str): Nombre del ministro actual
+    
+    Returns:
+        str: Tipo de publicación clasificado o None si falla
+    """
+    try:
+        api_key = leer_api_key_desde_env()
+        
+        if not api_key:
+            logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
+            return None
+        
+        # Prompt para GPT basado en la lógica de Ollama
+        prompt = f"""
+        TAREA: Clasificar el tipo de publicación de la siguiente noticia.
+
+        TEXTO DE LA NOTICIA:
+        {texto}
+
+        MINISTRO ACTUAL: {ministro_actual}
+
+        INSTRUCCIONES:
+        Analiza el contenido y clasifica como UNO de estos tipos:
+
+        1. "Agenda" - Si es información sobre eventos, actividades, programación, horarios, fechas, lugares, actividades culturales, espectáculos, festivales, inauguraciones, etc.
+
+        2. "Entrevista" - Si contiene preguntas y respuestas, formato de entrevista, diálogo con periodista, citas entrecomilladas extensas, formato "pregunta-respuesta"
+
+        3. "Declaración" - Si contiene citas específicas del ministro {ministro_actual} o autoridades, declaraciones oficiales, comunicados, anuncios de políticas, pero NO en formato de entrevista
+
+        4. "Nota de opinión" - Si es un artículo de opinión, editorial, análisis personal, crítica subjetiva, columna de opinión (muy raro, <1%)
+
+        5. "Nota" - Si es información general, noticia estándar, reportaje, crónica, información que no cabe claramente en las categorías anteriores
+
+        CRITERIOS DE PRIORIDAD:
+        - PRIORIDAD ALTA: Agenda (más frecuente, eventos y actividades)
+        - PRIORIDAD MEDIA: Entrevista (formato distintivo de preguntas-respuestas)
+        - PRIORIDAD MEDIA: Declaración (citas específicas del ministro)
+        - PRIORIDAD BAJA: Nota de opinión (muy rara)
+        - DEFAULT: Nota (lo que no cabe claramente en otras categorías)
+
+        Responde ÚNICAMENTE con: Agenda, Entrevista, Declaración, Nota de opinión, o Nota
+        """
+        
+        # Preparar request para GPT
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": GPT_MODEL,
+            "messages": [
+                {"role": "system", "content": "Eres un clasificador especializado en tipos de publicaciones periodísticas. Responde solo con el tipo exacto."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.1,  # Baja temperatura para respuestas más consistentes
+            "max_tokens": 20
+        }
+        
+        response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=15)
+        
+        if response.status_code == 200:
+            result = response.json()
+            content = result['choices'][0]['message']['content'].strip()
+            
+            # Normalizar respuesta
+            content_lower = content.lower()
+            if 'agenda' in content_lower:
+                return "Agenda"
+            elif 'entrevista' in content_lower:
+                return "Entrevista"
+            elif 'declaración' in content_lower or 'declaracion' in content_lower or 'declaración' in content_lower:
+                return "Declaración"
+            elif 'opinión' in content_lower or 'opinion' in content_lower:
+                return "Nota de opinión"
+            elif 'nota' in content_lower:
+                return "Nota"
+            else:
+                # GPT funcionó pero no pudo clasificar claramente - usar "Nota" como default
+                logging.warning(f"GPT devolvió respuesta inesperada: '{content}'. Usando 'Nota' como default.")
+                return "Nota"
+                
+        else:
+            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback.")
+            return None
+            
+    except Exception as e:
+        logging.error(f"Error en clasificación GPT: {e}. Usando fallback.")
+        return None
+
+if __name__ == "__main__":
+    # Test básico de la función
+    print("Testing clasificar_tipo_publicacion_con_gpt...")
+    resultado = clasificar_tipo_publicacion_con_gpt("Esta es una noticia sobre un evento cultural que se realizará el próximo fin de semana")
+    print(f"Resultado: {resultado}")

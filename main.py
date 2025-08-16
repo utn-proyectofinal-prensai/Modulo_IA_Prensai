@@ -49,7 +49,7 @@ df = pd.DataFrame(columns=CAMPOS_FIJOS)
 df['LINK'] = Z.obtener_links_del_usuario_desde_excel(EXCEL_URL_PATH)
 
 # 2. EXTRAER TEXTO PLANO PARA CADA LINK SUBIDO POR EL USER.
-df['TEXTO_PLANO'] = df['LINK'].apply(Z.get_texto_plano_from_link)
+df['TEXTO_PLANO'] = df['LINK'].apply(lambda x: Z.procesar_link_robusto(x, 'texto', 3))
 
 # 3. Procesar HTML y rellenar campos
 df['HTML_OBJ'] = df['LINK'].apply(Z.get_html_object_from_link)
