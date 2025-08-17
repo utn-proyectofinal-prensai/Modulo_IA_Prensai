@@ -29,7 +29,7 @@ RUNTIME_CONFIG = {
 CAMPOS_FIJOS = [
     'TITULO', 'TIPO PUBLICACION', 'FECHA', 'SOPORTE', 'MEDIO','SECCION',
     'AUTOR', 'ENTREVISTADO', 'TEMA', 'LINK', 'HTML_OBJ', 'ALCANCE', 'COTIZACION', 'VALORACION',
-    'FACTOR POLITICO','GESTION','TEXTO_PLANO','MENCIONES'
+    'FACTOR POLITICO','TEXTO_PLANO','MENCIONES'
 ]
 
 def procesar_noticias_con_ia(
@@ -100,7 +100,6 @@ def procesar_noticias_con_ia(
         df['COTIZACION'] = df['HTML_OBJ'].apply(Z.get_cotizacion_from_html_obj)
         df['ALCANCE'] = df['HTML_OBJ'].apply(Z.get_alcance_from_html_obj)
         df['AUTOR'] = df['HTML_OBJ'].apply(Z.get_autor_from_html_obj)
-        df['GESTION'] = df['HTML_OBJ'].apply(Z.get_gestion_from_html_obj)
         
         # 5. Inferencias con IA
         # Clasificación de tipo de publicación (GPT con fallback a Ollama)

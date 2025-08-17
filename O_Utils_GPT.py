@@ -1,6 +1,7 @@
 import requests
 import logging
 import os
+import time
 from typing import Optional, Dict, List
 import pandas as pd
 from dotenv import load_dotenv
@@ -14,6 +15,60 @@ load_dotenv()
 # Configuración de GPT
 GPT_API_URL = "https://api.openai.com/v1/chat/completions"
 GPT_MODEL = "gpt-3.5-turbo"  # Puedes cambiar a gpt-4 si tienes acceso
+
+def _gpt_request_with_retry(headers: Dict, data: Dict, max_retries: int = 3, timeout: int = 15):
+    """
+    Función auxiliar para hacer requests a GPT con retry automático.
+    
+    Args:
+        headers (Dict): Headers para la request
+        data (Dict): Data para la request
+        max_retries (int): Número máximo de reintentos
+        timeout (int): Timeout en segundos para cada request
+    
+    Returns:
+        requests.Response: Response exitosa o None si falló definitivamente
+    """
+    for intento in range(max_retries):
+        try:
+            response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=timeout)
+            
+            # Si la request fue exitosa, devolver la respuesta
+            if response.status_code == 200:
+                return response
+            
+            # RETRY: Solo para códigos específicos que indican problemas temporales
+            if response.status_code in [429, 500, 502, 503, 504]:
+                if intento < max_retries - 1:
+                    delay = (2 ** intento) * 2  # 2s, 4s, 8s
+                    logging.warning(f"GPT error {response.status_code}, reintento {intento + 1} en {delay}s...")
+                    time.sleep(delay)
+                    continue
+                else:
+                    logging.error(f"GPT error {response.status_code} después de {max_retries} intentos")
+                    return None
+            
+            # Si no es retryable, no reintentar
+            logging.warning(f"GPT error {response.status_code} no es retryable: {response.text}")
+            return None
+            
+        except (requests.Timeout, requests.ConnectionError) as e:
+            # RETRY: Solo para errores de red/conexión
+            if intento < max_retries - 1:
+                delay = (2 ** intento) * 2
+                logging.warning(f"GPT timeout/conexión, reintento {intento + 1} en {delay}s... Error: {e}")
+                time.sleep(delay)
+                continue
+            else:
+                logging.error(f"GPT timeout/conexión después de {max_retries} intentos: {e}")
+                return None
+                
+        except Exception as e:
+            # Otros errores no son retryable
+            logging.error(f"GPT error inesperado: {e}")
+            return None
+    
+    return None
 
 def leer_api_key_desde_env() -> Optional[str]:
     """
@@ -86,33 +141,22 @@ def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Option
         "max_tokens": 10
     }
     
-    try:
-        response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=15)
+    response = _gpt_request_with_retry(headers, data)
+    
+    if response:
+        result = response.json()
+        content = result['choices'][0]['message']['content'].strip().upper()
         
-        if response.status_code == 200:
-            result = response.json()
-            content = result['choices'][0]['message']['content'].strip().upper()
-            
-            # Normalizar respuesta
-            if content in ['NEGATIVO', 'NEGATIVA']:
-                return "NEGATIVA"
-            elif content in ['NO_NEGATIVO', 'NO NEGATIVO', 'NO_NEGATIVA', 'POSITIVO', 'POSITIVA', 'NEUTRAL']:
-                return "NO_NEGATIVA"
-            else:
-                # Si no reconoce la respuesta, asumir NO_NEGATIVA (más conservador)
-                return "NO_NEGATIVA"
+        # Normalizar respuesta
+        if content in ['NEGATIVO', 'NEGATIVA']:
+            return "NEGATIVA"
+        elif content in ['NO_NEGATIVO', 'NO NEGATIVO', 'NO_NEGATIVA', 'POSITIVO', 'POSITIVA', 'NEUTRAL']:
+            return "NO_NEGATIVA"
         else:
-            logging.error(f"Error en API de GPT: {response.status_code} - {response.text}")
-            return None
-            
-    except requests.exceptions.Timeout:
-        logging.warning("Timeout en API de GPT. Usando fallback a Ollama.")
-        return None
-    except requests.exceptions.ConnectionError:
-        logging.warning("Error de conexión con API de GPT. Usando fallback a Ollama.")
-        return None
-    except Exception as e:
-        logging.error(f"Error inesperado con API de GPT: {e}")
+            # Si no reconoce la respuesta, asumir NO_NEGATIVA (más conservador)
+            return "NO_NEGATIVA"
+    else:
+        logging.warning("GPT falló al valorar noticia. Usando fallback a Ollama.")
         return None
 
 def valorar_con_ia(texto: str, api_key: Optional[str] = None, ministro: Optional[str] = None, ministerio: Optional[str] = None, gpt_active: bool = True) -> str:
@@ -274,29 +318,26 @@ def clasificar_tema_con_gpt(
                     "max_tokens": 16,
                 }
 
-                try:
-                    response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=20)
-                    if response.status_code == 200:
-                        result = response.json()
-                        content = result["choices"][0]["message"]["content"].strip()
+                response = _gpt_request_with_retry(headers, data)
+                if response:
+                    result = response.json()
+                    content = result["choices"][0]["message"]["content"].strip()
 
-                        # Saneo mínimo de salida (quitar comillas/puntos sueltos)
-                        content = content.strip().strip('"').strip("'").rstrip(".").strip()
+                    # Saneo mínimo de salida (quitar comillas/puntos sueltos)
+                    content = content.strip().strip('"').strip("'").rstrip(".").strip()
 
-                        # Validación estricta
-                        if content in lista_temas:
-                            return content
+                    # Validación estricta
+                    if content in lista_temas:
+                        return content
 
-                        # Intento de match por casefold (sin alterar la decisión final)
-                        mapeo_lower = {t.casefold(): t for t in lista_temas}
-                        if content.casefold() in mapeo_lower:
-                            return mapeo_lower[content.casefold()]
+                    # Intento de match por casefold (sin alterar la decisión final)
+                    mapeo_lower = {t.casefold(): t for t in lista_temas}
+                    if content.casefold() in mapeo_lower:
+                        return mapeo_lower[content.casefold()]
 
-                        # Si no es válido → fallback a Ollama
-                    else:
-                        logging.warning(f"GPT tema status {response.status_code}: {response.text}")
-                except Exception as e:
-                    logging.warning(f"GPT tema error: {e}")
+                    # Si no es válido → fallback a Ollama
+                else:
+                    logging.warning(f"GPT tema falló al clasificar tema.")
 
         # Fallback a Ollama (misma lógica que el proyecto usa hoy)
         try:
@@ -425,9 +466,9 @@ def es_entrevista_con_gpt(texto: str) -> bool:
             "max_tokens": 10
         }
         
-        response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=15)
+        response = _gpt_request_with_retry(headers, data)
         
-        if response.status_code == 200:
+        if response:
             result = response.json()
             content = result['choices'][0]['message']['content'].strip().upper()
             
@@ -442,7 +483,7 @@ def es_entrevista_con_gpt(texto: str) -> bool:
                 return _fallback_a_ollama_entrevista(texto)
                 
         else:
-            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback a Ollama.")
+            logging.warning(f"GPT falló al clasificar entrevista.")
             return _fallback_a_ollama_entrevista(texto)
             
     except Exception as e:
@@ -545,9 +586,9 @@ def es_agenda_con_gpt(texto: str) -> bool:
             "max_tokens": 10
         }
         
-        response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=15)
+        response = _gpt_request_with_retry(headers, data)
         
-        if response.status_code == 200:
+        if response:
             result = response.json()
             content = result['choices'][0]['message']['content'].strip().upper()
             
@@ -562,7 +603,7 @@ def es_agenda_con_gpt(texto: str) -> bool:
                 return _fallback_a_ollama_agenda(texto)
                 
         else:
-            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback a Ollama.")
+            logging.warning(f"GPT falló al clasificar agenda.")
             return _fallback_a_ollama_agenda(texto)
             
     except Exception as e:
@@ -740,9 +781,9 @@ def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_actual: str = "Gabr
             "max_tokens": 20
         }
         
-        response = requests.post(GPT_API_URL, headers=headers, json=data, timeout=15)
+        response = _gpt_request_with_retry(headers, data)
         
-        if response.status_code == 200:
+        if response:
             result = response.json()
             content = result['choices'][0]['message']['content'].strip()
             
@@ -764,7 +805,7 @@ def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_actual: str = "Gabr
                 return "Nota"
                 
         else:
-            logging.warning(f"Error en API de GPT: {response.status_code}. Usando fallback.")
+            logging.warning(f"GPT falló al clasificar tipo de publicación.")
             return None
             
     except Exception as e:

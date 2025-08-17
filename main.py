@@ -9,7 +9,7 @@ from datetime import timedelta
 CAMPOS_FIJOS = [
     'TITULO', 'TIPO PUBLICACION', 'FECHA', 'SOPORTE', 'MEDIO','SECCION',
     'AUTOR', 'ENTREVISTADO', 'TEMA', 'LINK', 'HTML_OBJ', 'ALCANCE', 'COTIZACION', 'VALORACION',
-    'FACTOR POLITICO','GESTION','TEXTO_PLANO', 'CRISIS', 'MENCIONES', 'MENCIONES_EXCEL',
+    'FACTOR POLITICO','TEXTO_PLANO', 'CRISIS', 'MENCIONES', 'MENCIONES_EXCEL',
     'USR_CREADOR', 'USR_REVISOR'
 ]
 
@@ -61,7 +61,6 @@ df['SECCION'] = df['HTML_OBJ'].apply(Z.get_seccion_from_html_obj)
 df['COTIZACION'] = df['HTML_OBJ'].apply(Z.get_cotizacion_from_html_obj)
 df['ALCANCE'] = df['HTML_OBJ'].apply(Z.get_alcance_from_html_obj)
 df['AUTOR'] = df['HTML_OBJ'].apply(Z.get_autor_from_html_obj)
-df['GESTION'] = df['HTML_OBJ'].apply(Z.get_gestion_from_html_obj)
 
 # ============================================================================
 # 4 Inferencias con el módulo de IA (OLLAMA/GPT)
