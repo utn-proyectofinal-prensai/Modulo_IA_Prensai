@@ -17,7 +17,7 @@ import os
 
 app = Flask(__name__)
 
-# Los campos ministro y ministerio ahora son obligatorios
+# Los campos ministro_key_words y ministerios_key_words ahora son obligatorios
 # Las menciones pueden venir vacías
 # Configuración configurable en runtime (se puede modificar via endpoints)
 RUNTIME_CONFIG = {
@@ -36,8 +36,8 @@ def procesar_noticias_con_ia(
     urls: list,
     temas: list,
     menciones: list = None,
-    ministro: str = None,
-    ministerio: str = None
+    ministro_key_words: list = None,
+    ministerios_key_words: list = None
 ) -> dict:
     """
     Función principal que procesa las noticias usando IA
@@ -106,7 +106,7 @@ def procesar_noticias_con_ia(
         df['TIPO PUBLICACION'] = df['TEXTO_PLANO'].apply(
             lambda x: Z.marcar_o_valorar_con_ia(
                 x, 
-                lambda t: Gpt.clasificar_tipo_publicacion_con_ia(t, ministro, gpt_active), 
+                lambda t: Gpt.clasificar_tipo_publicacion_con_ia(t, ministro_key_words, ministerios_key_words, gpt_active), 
                 limite_texto
             )
         )
@@ -124,7 +124,7 @@ def procesar_noticias_con_ia(
         df['VALORACION'] = df['TEXTO_PLANO'].apply(
             lambda x: Z.marcar_o_valorar_con_ia(
                 x, 
-                lambda t: Gpt.valorar_con_ia(t, ministro=ministro, ministerio=ministerio, gpt_active=gpt_active), 
+                lambda t: Gpt.valorar_con_ia(t, ministro_key_words=ministro_key_words, ministerios_key_words=ministerios_key_words, gpt_active=gpt_active), 
                 limite_texto
             )
         )
@@ -137,8 +137,6 @@ def procesar_noticias_con_ia(
                     texto=t,
                     lista_temas=temas,
                     tipo_publicacion=row['TIPO PUBLICACION'],
-                    fecha_noticia=row.get('FECHA'),
-                    tema_a_fecha={},  # Por ahora vacío, se puede extender después
                     gpt_active=gpt_active
                 ), 
                 limite_texto
@@ -226,8 +224,8 @@ def validar_parametros_noticias(data):
         urls = data.get('urls', [])
         temas = data.get('temas', [])
         menciones = data.get('menciones', [])
-        ministro = data.get('ministro', '')
-        ministerio = data.get('ministerio', '')
+        ministro_key_words = data.get('ministro_key_words', [])
+        ministerios_key_words = data.get('ministerios_key_words', [])
         
         # Validaciones adicionales
         if not urls:
@@ -243,16 +241,28 @@ def validar_parametros_noticias(data):
             }, None
         
         # Validar campos obligatorios
-        if not ministro:
+        if not ministro_key_words:
             return False, {
                 "success": False,
-                "error": "Campo 'ministro' es obligatorio"
+                "error": "Campo 'ministro_key_words' es obligatorio"
             }, None
         
-        if not ministerio:
+        if not isinstance(ministro_key_words, list):
             return False, {
                 "success": False,
-                "error": "Campo 'ministerio' es obligatorio"
+                "error": "Campo 'ministro_key_words' debe ser una lista"
+            }, None
+        
+        if not ministerios_key_words:
+            return False, {
+                "success": False,
+                "error": "Campo 'ministerios_key_words' es obligatorio"
+            }, None
+        
+        if not isinstance(ministerios_key_words, list):
+            return False, {
+                "success": False,
+                "error": "Campo 'ministerios_key_words' debe ser una lista"
             }, None
         
         # Si todo está bien, retornar datos validados
@@ -260,8 +270,8 @@ def validar_parametros_noticias(data):
             'urls': urls,
             'temas': temas,
             'menciones': menciones if menciones else None,
-            'ministro': ministro if ministro else None,
-            'ministerio': ministerio if ministerio else None
+            'ministro_key_words': ministro_key_words if ministro_key_words else None,
+            'ministerios_key_words': ministerios_key_words if ministerios_key_words else None
         }
         
         return True, None, datos_validados

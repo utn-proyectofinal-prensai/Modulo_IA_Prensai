@@ -1,0 +1,22 @@
+# TODO - TESTING DE FUNCIONES OPTIMIZADAS
+# ========================================
+
+## 🎯 OBJETIVO
+Testear a fondo las funciones optimizadas para asegurar que funcionen correctamente.
+
+## 📋 CHECKLIST DE TESTING
+- [ ] Testear `valorar_noticia_con_ollama` a fondo
+- [ ] Testear `es_declaracion_ollama` a fondo  
+- [ ] Testear `clasificar_tema_ollama` a fondo
+- [ ] Testear `clasificar_tema_con_gpt` a fondo
+- [ ] Testear `clasificar_tema_con_ia` a fondo
+
+## 📝 NOTAS
+- Todas las funciones ya están optimizadas y refactorizadas
+- Sistema de fallback GPT → Ollama implementado
+- Nombres de funciones actualizados y consistentes
+
+## 🔄 PENDIENTES GENERALES
+- [ ] **Documentación API**: `#TODO avisar al back como viene esta respuesta.` - `api_flask.py:173`
+
+

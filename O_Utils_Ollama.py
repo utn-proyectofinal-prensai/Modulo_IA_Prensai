@@ -41,8 +41,6 @@ def _verificar_e_imprimir_estado_ollama(timeout_seconds: int = 2) -> bool:
         _ollama_estado_reportado = True
         return False
 
-
-
 def set_modelo_ollama(modelo):
     """
     Actualiza el modelo de Ollama globalmente.
@@ -106,9 +104,14 @@ def valorar_noticia_con_ollama_base(texto):
         logging.error(f"[Ollama] Error valorando noticia: {repr(e)} | Texto: {texto[:120]}...")
         return "NO_NEGATIVA"  # Fallback conservador
 
-def valorar_noticia_con_ollama(texto, ministro=None, ministerio=None):
+def valorar_noticia_con_ollama(texto, ministro_key_words=None, ministerios_key_words=None):
     """
     Valora noticias con Ollama y aplica heurística para POSITIVA/NEUTRA.
+    
+    Args:
+        texto (str): Texto a analizar
+        ministro_key_words (str or list, optional): Palabras clave para identificar al ministro
+        ministerios_key_words (str or list, optional): Palabras clave para identificar al ministerio
     """
     valoracion_base = valorar_noticia_con_ollama_base(texto)
     
@@ -116,8 +119,8 @@ def valorar_noticia_con_ollama(texto, ministro=None, ministerio=None):
         return "NEGATIVA"
     elif valoracion_base == "NO_NEGATIVA":
         # Aplicar heurística para POSITIVA/NEUTRA
-        if (ministro or ministerio):
-            return Z.aplicar_heuristica_valoracion(valoracion_base, texto, ministro, ministerio)
+        if (ministro_key_words or ministerios_key_words):
+            return Z.aplicar_heuristica_valoracion(valoracion_base, texto, ministro_key_words, ministerios_key_words)
         else:
             return "NEUTRA"
     else:
@@ -210,29 +213,74 @@ def es_entrevista_ollama(texto):
         logging.error(f"[Ollama] Error detectando entrevista: {repr(e)} | Texto: {texto[:120]}...")
         return False  # Fallback conservador
 
-def es_declaracion_ollama(texto, ministro_actual):
+def es_declaracion_ollama(texto, ministro_key_words, ministerios_key_words=None):
     """
-    Detecta si es una DECLARACIÓN usando Ollama: nota con cita SÍ O SÍ atribuida al MINISTRO.
+    Detecta si es una DECLARACIÓN usando Ollama: nota con cita textual atribuida al ministro o ministerio.
+    
+    Args:
+        texto (str): Texto a analizar
+        ministro_key_words (str or list): Palabras clave para identificar al ministro
+        ministerios_key_words (str or list, optional): Palabras clave para identificar al ministerio
     """
-    if not texto or pd.isnull(texto):
+    if not texto or pd.isna(texto):
         return False
     
+    # Construir lista combinada de actores (ministros + ministerios)
+    actores = []
+    
+    # Agregar ministros
+    if ministro_key_words:
+        if isinstance(ministro_key_words, list):
+            # Aplanar listas anidadas y filtrar elementos None
+            for item in ministro_key_words:
+                if isinstance(item, list):
+                    actores.extend([m for m in item if m])
+                else:
+                    if item:
+                        actores.append(item)
+        else:
+            actores.append(ministro_key_words)
+    
+    # Agregar ministerios si existen
+    if ministerios_key_words:
+        if isinstance(ministerios_key_words, list):
+            # Aplanar listas anidadas y filtrar elementos None
+            for item in ministerios_key_words:
+                if isinstance(item, list):
+                    actores.extend([m for m in item if m])
+                else:
+                    if item:
+                        actores.append(item)
+        else:
+            actores.append(ministerios_key_words)
+    
+    # Verificar que tengamos actores válidos
+    if not actores:
+        logging.warning("No se encontraron actores válidos para buscar declaraciones en Ollama")
+        return False
+    
+    # Convertir a string legible
+    actores_str = ", ".join(actores)
+    
+    # Prompt unificado para buscar citas adjudicadas a actores
     prompt = (
-        "¿El siguiente texto es una DECLARACIÓN del ministro?\n\n"
+        "¿El siguiente texto contiene una DECLARACIÓN (cita textual) atribuida a alguno de estos actores?\n\n"
+        f"ACTORES A BUSCAR: {actores_str}\n\n"
         "CRITERIOS PARA CONSIDERARLO DECLARACIÓN:\n"
-        "- Debe tener CITA (comillas) atribuida al ministro\n"
-        "- Debe mencionar al MINISTRO de Cultura\n"
+        "- Debe tener CITA entre comillas atribuida a alguno de los actores\n"
+        "- El actor puede ser referenciado de cualquier forma (directa o indirecta)\n"
         "- Debe contener verbos de decir/acción (dijo, anunció, presentó, etc.)\n"
-        "- El ministro debe ser el que habla o actúa\n\n"
+        "- El actor debe ser el que habla o actúa\n\n"
         "EJEMPLOS DE DECLARACIÓN:\n"
-        "- 'Estamos trabajando...', dijo el ministro\n"
-        "- El ministro anunció: 'Vamos a...'\n"
-        "- Gabriela Ricardes presentó el programa\n\n"
+        "- 'Estamos trabajando...', dijo Gabriela Ricardes\n"
+        "- El Ministerio de Cultura anunció: 'Vamos a...'\n"
+        "- La ministra presentó el programa\n"
+        "- Desde la cartera cultural se informó que...\n"
+        "- La funcionaria dijo: 'Es importante...'\n\n"
         "EJEMPLOS DE NO DECLARACIÓN:\n"
-        "- Se presentó un programa (sin ministro)\n"
+        "- Se presentó un programa (sin cita ni actor)\n"
         "- El programa incluye... (sin cita)\n"
-        "- Se inauguró el teatro (sin ministro)\n\n"
-        f"MINISTRO: {ministro_actual}\n"
+        "- Se inauguró el teatro (sin cita ni actor)\n\n"
         f"TEXTO: {texto}\n\n"
         "Respondé únicamente SI o NO:"
     )
@@ -252,61 +300,18 @@ def es_declaracion_ollama(texto, ministro_actual):
         logging.error(f"[Ollama] Error detectando declaración: {repr(e)} | Texto: {texto[:120]}...")
         return False  # Fallback conservador
 
-def es_nota_opinion_ollama(texto, ministro_actual, autor=None):
-    """
-    Detecta si es una NOTA DE OPINIÓN usando Ollama: firmada por el ministro.
-    """
-    if not texto or pd.isnull(texto):
-        return False
-    
-    prompt = (
-        "¿El siguiente texto es una NOTA DE OPINIÓN del ministro?\n\n"
-        "CRITERIOS PARA CONSIDERARLO NOTA DE OPINIÓN:\n"
-        "- Debe estar firmada por el MINISTRO de Cultura\n"
-        "- Es una opinión personal del ministro, no un comunicado\n"
-        "- Puede incluir 'por el ministro de cultura' o el nombre del ministro\n"
-        "- Es un texto de opinión, no informativo\n\n"
-        "EJEMPLOS DE NOTA DE OPINIÓN:\n"
-        "- 'Por Gabriela Ricardes, ministra de Cultura'\n"
-        "- 'El ministro opina sobre...'\n"
-        "- 'Por el ministro de cultura: mi visión sobre...'\n\n"
-        "EJEMPLOS DE NO NOTA DE OPINIÓN:\n"
-        "- Comunicado oficial\n"
-        "- Noticia informativa\n"
-        "- Declaración en rueda de prensa\n\n"
-        f"MINISTRO: {ministro_actual}\n"
-        f"AUTOR: {autor if autor else 'No especificado'}\n"
-        f"TEXTO: {texto}\n\n"
-        "Respondé únicamente SI o NO:"
-    )
-    
-    data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
-    try:
-        response = requests.post(OLLAMA_URL, json=data, timeout=60)
-        result = response.json()
-        salida = result.get("response", "").strip().upper()
-        
-        if salida.startswith("SI"):
-            return True
-        else:
-            return False
-            
-    except Exception as e:
-        logging.error(f"[Ollama] Error detectando nota de opinión: {repr(e)} | Texto: {texto[:120]}...")
-        return False  # Fallback conservador
-
-def clasificar_tipo_publicacion_unificado(texto, ministro_actual="Gabriela Ricardes"):
+def clasificar_tipo_publicacion_unificado(texto, ministro_key_words="Gabriela Ricardes", ministerios_key_words=None):
     """
     Clasifica el tipo de publicación con orden de prioridad:
     1. Agenda (más frecuente)
     2. Entrevista (formato distintivo)
     3. Declaración (citas específicas)
-    4. Nota de opinión (muy rara, <1%)
-    5. Nota (default)
+    4. Nota (default)
     
     Args:
         texto (str): Texto plano de la noticia
-        ministro_actual (str): Nombre del ministro actual
+        ministro_key_words (str or list): Palabras clave para identificar al ministro
+        ministerios_key_words (str or list, optional): Palabras clave para identificar al ministerio
     
     Returns:
         str: Tipo de publicación clasificado
@@ -318,41 +323,44 @@ def clasificar_tipo_publicacion_unificado(texto, ministro_actual="Gabriela Ricar
         if not texto or pd.isnull(texto):
             return "Nota"
         
+        logging.debug(f"Clasificando con ministro_key_words: {ministro_key_words}, ministerios_key_words: {ministerios_key_words}")
+        
         # 1. PRIORIDAD ALTA: Agenda (más frecuente, regla clara)
+        logging.debug("Verificando si es Agenda...")
         if es_agenda_ollama(texto):
-            logging.info(f"Clasificado como Agenda")
+            logging.debug(f"Clasificado como Agenda")
             return "Agenda"
         
         # 2. PRIORIDAD MEDIA: Entrevista (formato distintivo)
+        logging.debug("Verificando si es Entrevista...")
         if es_entrevista_ollama(texto):
-            logging.info(f"Clasificado como Entrevista")
+            logging.debug(f"Clasificado como Entrevista")
             return "Entrevista"
         
         # 3. PRIORIDAD MEDIA: Declaración (citas específicas)
-        if es_declaracion_ollama(texto, ministro_actual):
-            logging.info(f"Clasificado como Declaración")
+        logging.debug("Verificando si es Declaración...")
+        logging.debug(f"Pasando a es_declaracion_ollama: ministro_key_words={ministro_key_words}, ministerios_key_words={ministerios_key_words}")
+        if es_declaracion_ollama(texto, ministro_key_words, ministerios_key_words):
+            logging.debug(f"Clasificado como Declaración")
             return "Declaración"
         
-        # 4. PRIORIDAD BAJA: Nota de opinión (muy rara, <1%)
-        if es_nota_opinion_ollama(texto, ministro_actual):
-            logging.info(f"Clasificado como Nota de opinión")
-            return "Nota de opinión"
-        
-        # 5. DEFAULT: Nota (lo que no cabe claramente en otras categorías)
-        logging.info(f"Clasificado como Nota (default)")
+        # 4. DEFAULT: Nota (lo que no cabe claramente en otras categorías)
+        logging.debug(f"Clasificado como Nota (default)")
         return "Nota"
         
     except Exception as e:
         logging.error(f"Error al clasificar tipo de publicación: {e}")
+        logging.error(f"Parámetros: texto={texto[:100]}..., ministro_key_words={ministro_key_words}, ministerios_key_words={ministerios_key_words}")
         return "Nota"  # Fallback seguro
 
 # ============================================================================
 # FUNCIONES DE CLASIFICACIÓN DE TEMAS
 # ============================================================================
 
-def matchear_tema_con_fallback(texto, lista_temas, tipo_publicacion=None, fecha_noticia=None, tema_a_fecha=None):
+def clasificar_tema_ollama(texto, lista_temas, tipo_publicacion=None):
     """
-    Clasifica una noticia en un tema específico usando heurísticas + IA + fallback.
+    Clasifica una noticia en un tema específico usando heurísticas + IA.
+    Combina coincidencias exactas, reglas de negocio y consulta a Ollama.
     
     Args:
         texto (str): Texto plano de la noticia
@@ -364,29 +372,6 @@ def matchear_tema_con_fallback(texto, lista_temas, tipo_publicacion=None, fecha_
     """
     if not texto or not lista_temas:
         return "Revisar Manual"
-    """
-    # 1. Heurísticas muy estrictas para coincidencias exactas
-    texto_lower = texto.lower()
-    for tema in lista_temas:
-        tema_lower = tema.lower()
-        # Solo coincidencia exacta o muy cercana
-        if tema_lower in texto_lower or texto_lower.count(tema_lower) > 0:
-            return tema
-    """
-    # 2. Fallback por tipo de publicación
-    if tipo_publicacion == "Agenda":
-        return "Actividades programadas"
-    
-    # 3. Consulta a IA (con conocimiento opcional de fechas)
-    return _consulta_ollama_tema(texto, lista_temas, fecha_noticia=fecha_noticia, tema_a_fecha=tema_a_fecha)
-
-
-def matchear_tema_sin_fecha(texto, lista_temas, tipo_publicacion=None):
-    """
-    Variante histórica sin considerar fechas para desempate. Útil para comparar accuracy.
-    """
-    if not texto or not lista_temas:
-        return "Revisar Manual"
 
     # 1. Heurísticas muy estrictas para coincidencias exactas
     texto_lower = texto.lower()
@@ -399,58 +384,27 @@ def matchear_tema_sin_fecha(texto, lista_temas, tipo_publicacion=None):
     if tipo_publicacion == "Agenda":
         return "Actividades programadas"
 
-    # 3. Consulta a IA sin señales temporales
-    return _consulta_ollama_tema(texto, lista_temas)
+    # 3. Consulta a IA si las heurísticas fallan
+    return _promptear_clasificacion_tema_ollama(texto, lista_temas)
 
-def _consulta_ollama_tema(texto, lista_temas, fecha_noticia=None, tema_a_fecha=None):
+#Funcion privada aux para Tema_ollama
+def _promptear_clasificacion_tema_ollama(texto, lista_temas):
     """
-    Consulta a Ollama para clasificar el tema usando estrategia de eliminación + contexto temporal opcional.
-    - fecha_noticia: str o datetime con formato ISO 'YYYY-MM-DD' cuando esté disponible
-    - tema_a_fecha: dict opcional {tema: 'YYYY-MM-DD'} con fecha de carga del tema
+    Función privada que consulta a Ollama para clasificar el tema.
+    Construye el prompt y maneja la respuesta de la IA.
     """
-    # Normalizar fecha noticia
-    noticia_dt = None
-    if fecha_noticia:
-        try:
-            noticia_dt = fecha_noticia if isinstance(fecha_noticia, datetime) else datetime.fromisoformat(str(fecha_noticia))
-        except Exception:
-            noticia_dt = None
-
     # Construir lista textual completa de temas (lista cerrada de elegibles)
     temas_str = "\n".join([f"- {t}" for t in lista_temas])
 
-    # Calcular top-k cercanos por fecha (contexto no restrictivo)
-    contexto_temporal = []
-    if tema_a_fecha and noticia_dt:
-        def distancia_dias(tema):
-            try:
-                f = tema_a_fecha.get(tema)
-                if not f:
-                    return 999999
-                dt = f if isinstance(f, datetime) else datetime.fromisoformat(str(f))
-                return abs((dt - noticia_dt).days)
-            except Exception:
-                return 999999
-
-        candidatos_ordenados = sorted(lista_temas, key=distancia_dias)
-        # Tomar solo aquellos con fecha válida
-        top_con_fecha = [t for t in candidatos_ordenados if tema_a_fecha.get(t)]
-        for t in top_con_fecha[:7]:
-            contexto_temporal.append(f"- {t} (fecha_carga: {tema_a_fecha[t]})")
-
-    contexto_str = "\n".join(contexto_temporal) if contexto_temporal else "(sin datos temporales relevantes)"
-
-    # Armar prompt con contexto temporal no restrictivo
+    # Armar prompt simplificado
     prompt = (
         f"Asigná UNO y solo UNO de los siguientes temas a la noticia (lista cerrada):\n{temas_str}\n\n"
         "REGLAS DE DECISIÓN (aplicá en este orden):\n"
         "A) Coincidencia literal: si el nombre de un tema de la lista aparece en el TÍTULO o CUERPO (sin sensibilidad a mayúsculas/acentos y tolerando signos como °), elegí ese tema.\n"
         "B) Múltiples coincidencias: elegí el MÁS ESPECÍFICO (el texto más largo) o el que aparezca en el TÍTULO.\n"
         "C) Sin coincidencia literal: podés elegir un tema por PARÁFRASIS solo si la evidencia es inequívoca (mismo evento/proyecto reconocido). Si hay dudas, NO arriesgues.\n"
-        "D) Contexto temporal NO RESTRICTIVO (abajo): si estás entre 2-3 opciones y ninguna tiene evidencia textual clara, PREFERÍ uno de los temas listados en el contexto temporal (por ser recientes). Si hay coincidencia literal, ignorá esta preferencia.\n"
-        "E) Fallback: si no hay evidencia clara de un tema concreto, asigná 'Actividades programadas - FB'.\n"
-        "F) Nunca inventes ni modifiques nombres: la respuesta debe ser exactamente uno de los provistos.\n\n"
-        f"Contexto temporal (no restrictivo, top recientes):\n{contexto_str}\n\n"
+        "D) Fallback: si no hay evidencia clara de un tema concreto, asigná 'Actividades programadas'.\n"
+        "E) Nunca inventes ni modifiques nombres: la respuesta debe ser exactamente uno de los provistos.\n\n"
         "SALIDA:\n"
         "- Respondé ÚNICAMENTE con el nombre exacto de un tema de la lista.\n"
         "- Sin comentarios ni explicaciones.\n\n"
@@ -467,7 +421,7 @@ def _consulta_ollama_tema(texto, lista_temas, fecha_noticia=None, tema_a_fecha=N
         if tema_asignado in lista_temas:
             return tema_asignado
         else:
-            return "Actividades programadas - FB"  # Fallback
+            return "Actividades programadas"  # Fallback
             
     except Exception as e:
         logging.error(f"[Ollama] Error clasificando tema: {repr(e)} | Texto: {texto[:120]}...")

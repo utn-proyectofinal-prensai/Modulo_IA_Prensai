@@ -145,9 +145,7 @@ def get_texto_plano_from_link(link):
         logging.error(f"Excepción al descargar/parsing {link}: {e}")
         return None
 
-#Funcion para obtener los LINKs de un archivo Excel que va importar el usuario en la PRIMER COLUMNA, PRIMER HOJA.
-#TODO ver que hacer con los LINKS que no pertenecen a ejes (suelen ser videos u otros contenidos).
-#Por ahora los voy a eliminar del workflow, pero quizás convenga guardarlos en un log o algo. 
+#Funcion para obtener los LINKs de un archivo Excel que va importar el usuario en la PRIMER COLUMNA, PRIMER HOJA. 
 def obtener_links_del_usuario_desde_excel(EXCEL_URL_PATH):
     """
     Lee el archivo Excel, obtiene la primera columna de la primer hoja (links).
@@ -695,15 +693,15 @@ def procesar_crisis_con_historico(df, historico_path, temas_fijos):
         df['CRISIS'] = 'NO'
         return df
 
-def aplicar_heuristica_valoracion(valoracion_ia, texto, ministro, ministerio):
+def aplicar_heuristica_valoracion(valoracion_ia, texto, ministro_key_words, ministerios_key_words):
     """
-    Aplica heurística de valoración basada en menciones del ministro/ministerio.
+    Aplica heurística de valoración basada en menciones del ministro/ministerios.
     
     Args:
         valoracion_ia (str): Valoración de la IA ("NEGATIVA", "NO_NEGATIVA", "OTRO")
         texto (str): Texto de la noticia
-        ministro (str): Nombre del ministro
-        ministerio (str): Nombre del ministerio
+        ministro_key_words (str or list): Palabras clave para identificar al ministro
+        ministerios_key_words (str or list): Palabras clave para identificar al ministerio
     
     Returns:
         str: Valoración final ("NEGATIVA", "POSITIVA", "NEUTRA")
@@ -715,14 +713,47 @@ def aplicar_heuristica_valoracion(valoracion_ia, texto, ministro, ministerio):
     # Si NO es negativa, verificar menciones
     if valoracion_ia in ["NO_NEGATIVA", "OTRO"]:
         texto_lower = texto.lower()
-        ministro_lower = ministro.lower()
-        ministerio_lower = ministerio.lower()
         
-        # Verificar si menciona al ministro o ministerio
-        if ministro_lower in texto_lower or ministerio_lower in texto_lower:
-            return "POSITIVA"
-        else:
-            return "NEUTRA"
+        # Verificar si menciona a alguno de los ministros
+        if ministro_key_words:
+            if isinstance(ministro_key_words, list):
+                # Si es una lista, buscar cualquiera de ellos (aplanar listas anidadas)
+                for item in ministro_key_words:
+                    if isinstance(item, list):
+                        # Si es una lista anidada, procesar cada elemento
+                        for ministro in item:
+                            if ministro and ministro.lower() in texto_lower:
+                                return "POSITIVA"
+                    else:
+                        # Si es un string directo
+                        if item and item.lower() in texto_lower:
+                            return "POSITIVA"
+            else:
+                # Si es un string, buscar directamente
+                if ministro_key_words.lower() in texto_lower:
+                    return "POSITIVA"
+        
+        # Verificar si menciona a alguno de los ministerios
+        if ministerios_key_words:
+            if isinstance(ministerios_key_words, list):
+                # Si es una lista, buscar cualquiera de ellos (aplanar listas anidadas)
+                for item in ministerios_key_words:
+                    if isinstance(item, list):
+                        # Si es una lista anidada, procesar cada elemento
+                        for ministerio in item:
+                            if ministerio and ministerio.lower() in texto_lower:
+                                return "POSITIVA"
+                    else:
+                        # Si es un string directo
+                        if item and item.lower() in texto_lower:
+                            return "POSITIVA"
+            else:
+                # Si es un string, buscar directamente
+                if ministerios_key_words.lower() in texto_lower:
+                    return "POSITIVA"
+        
+        # Si no menciona a ninguno, es NEUTRA
+        return "NEUTRA"
     
     # Para otros casos, mantener la valoración original
     return valoracion_ia
