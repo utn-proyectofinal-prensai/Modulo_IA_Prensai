@@ -160,7 +160,7 @@ def procesar_noticias_con_ia(
         
                 
         # 9. Limpiar DataFrame para respuesta
-        df_final = df.drop(columns=['HTML_OBJ', 'TEXTO_PLANO', 'MENCIONES_EXCEL'])
+        df_final = df.drop(columns=['HTML_OBJ', 'TEXTO_PLANO'])
         
         # Medición tiempo final
         t1 = time.time()
@@ -478,7 +478,7 @@ def procesar_noticias_export_excel():
                 "archivo_excel": None
             }), 200
         
-        # Crear DataFrame para exportar (incluyendo MENCIONES_EXCEL)
+        # Crear DataFrame para exportar
         df_export = pd.DataFrame(resultado['data'])
         
         # Agregar campos adicionales para Excel

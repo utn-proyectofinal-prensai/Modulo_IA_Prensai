@@ -598,7 +598,7 @@ def buscar_menciones(df, lista_menciones, max_menciones=5):
         
         # Convertir listas a formato legible para Excel (opcional, solo para visualización)
         # Para la API esto no es necesario ya que se exporta como JSON
-        df['MENCIONES_EXCEL'] = df['MENCIONES'].apply(lambda x: ', '.join(x) if x else '')
+        # df['MENCIONES_EXCEL'] = df['MENCIONES'].apply(lambda x: ', '.join(x) if x else '')
         
         return df
         
