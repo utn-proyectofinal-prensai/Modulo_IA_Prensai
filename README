@@ -1,1 +1,137 @@
-Módulo interpretador de noticias para transformar en data estructurada mediante IA. 
+# 🚀 Módulo IA Prensai - Interpretador de Noticias
+
+Módulo interpretador de noticias para transformar en data estructurada mediante IA.
+
+## 📋 Descripción General
+
+Este módulo procesa noticias de medios digitales y las clasifica automáticamente usando Inteligencia Artificial (Ollama y GPT-4) para extraer información estructurada como tipo de publicación, temas, valoración, menciones y más.
+
+## 🏗️ Arquitectura
+
+### Componentes Principales
+- **API Flask** (`api_flask.py`) - Servidor principal con endpoints REST
+- **Ollama Utils** (`O_Utils_Ollama.py`) - Integración con modelos locales Ollama
+- **GPT Utils** (`O_Utils_GPT.py`) - Integración con OpenAI GPT-4
+- **Utils Generales** (`Z_Utils.py`) - Funciones auxiliares y scraping
+
+### Endpoints Disponibles
+- `POST /procesar-noticias` - Procesa noticias individuales
+- `POST /procesar-noticias-export-excel` - Procesa y exporta a Excel
+- `GET /health` - Verificación de estado
+- `GET /logs` - Consulta de logs
+- `POST /config/*` - Configuración del sistema (requiere autenticación)
+
+## 🚀 Cómo Levantar el Sistema
+
+### 1. Levantar la API
+```bash
+cd /ruta/al/proyecto
+source venv/bin/activate
+python api_flask.py
+```
+La API estará disponible en `http://localhost:5000`
+
+### 2. (Opcional) Hacer Pública con ngrok
+```bash
+# En otra terminal
+ngrok http 5000
+```
+Obtendrás una URL pública como: `https://abc123.ngrok-free.app`
+
+## 🔐 Autenticación
+
+### Endpoints Protegidos
+Los endpoints de configuración (`/config/*`) requieren autenticación por token.
+
+**Token:** `prensai-config-2025`
+
+### Uso del Token
+```bash
+curl -X POST https://tu-url.ngrok.io/config/gpt-active \
+  -H "X-API-Key: prensai-config-2025" \
+  -H "Content-Type: application/json" \
+  -d '{"gpt_active": true}'
+```
+
+## 📊 Uso de la API
+
+### Procesar Noticias
+```bash
+curl -X POST https://tu-url.ngrok.io/procesar-noticias-export-excel \
+  -H "Content-Type: application/json" \
+  -d '{
+    "urls": ["https://ejemplo.com/noticia1"],
+    "temas": ["Cultura", "Actividades"],
+    "menciones": ["Gabriela Ricardes"],
+    "ministro_key_words": ["Gabriela Ricardes", "Ministra de Cultura"],
+    "ministerios_key_words": ["Ministerio de Cultura"]
+  }'
+```
+
+### Activar/Desactivar GPT
+```bash
+# Activar GPT
+curl -X POST https://tu-url.ngrok.io/config/gpt-active \
+  -H "X-API-Key: prensai-config-2025" \
+  -H "Content-Type: application/json" \
+  -d '{"gpt_active": true}'
+
+# Desactivar GPT (usar Ollama)
+curl -X POST https://tu-url.ngrok.io/config/gpt-active \
+  -H "X-API-Key: prensai-config-2025" \
+  -H "Content-Type: application/json" \
+  -d '{"gpt_active": false}'
+```
+
+## 🧪 Testing
+
+### Scripts Automáticos
+El proyecto incluye scripts de testing que detectan automáticamente si ngrok está activo:
+
+- `./Testing/Curls/curl_activar_gpt.sh` - Activa/desactiva GPT
+- `./Testing/Curls/curl_es_declaracion.sh` - Test de declaraciones
+- `./Testing/Curls/curl_origin.sh` - Test exhaustivo con múltiples URLs
+
+### Ejecutar Tests
+```bash
+chmod +x Testing/Curls/*.sh
+./Testing/Curls/curl_activar_gpt.sh
+```
+
+## 🔧 Configuración
+
+### Variables de Entorno
+- `OPENAI_API_KEY` - Clave de API de OpenAI (para GPT-4)
+- `OLLAMA_BASE_URL` - URL base de Ollama (por defecto: localhost:11434)
+
+### Configuración en Runtime
+- **Límite de texto:** Configurable via API
+- **Modelo de IA:** Alterna entre Ollama y GPT-4
+- **Logs:** Consultables via endpoint
+
+## 📁 Estructura del Proyecto
+
+```
+Modulo_IA_Prensai/
+├── api_flask.py              # API principal
+├── O_Utils_Ollama.py         # Utilidades Ollama
+├── O_Utils_GPT.py           # Utilidades GPT
+├── Z_Utils.py               # Utilidades generales
+├── Testing/                 # Scripts de testing
+│   └── Curls/              # Scripts curl automáticos
+├── Data_Results/            # Archivos Excel generados
+└── venv/                   # Entorno virtual Python
+```
+
+## 🌟 Características Principales
+
+- **Doble modelo de IA:** Ollama (local) + GPT-4 (cloud)
+- **Fallback automático:** Si GPT falla, usa Ollama
+- **Scraping robusto:** Con reintentos y manejo de errores
+- **Exportación a Excel:** Resultados estructurados
+- **Autenticación por token:** Endpoints sensibles protegidos
+- **Detección automática de ngrok:** Scripts se adaptan automáticamente
+
+## 📞 Soporte
+
+Para dudas o problemas, revisar los logs via endpoint `/logs` o consultar la documentación del código. 

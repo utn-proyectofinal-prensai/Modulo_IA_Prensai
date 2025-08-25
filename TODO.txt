@@ -19,4 +19,3 @@ Testear a fondo las funciones optimizadas para asegurar que funcionen correctame
 ## 🔄 PENDIENTES GENERALES
 - [ ] **Documentación API**: `#TODO avisar al back como viene esta respuesta.` - `api_flask.py:173`
 
-

@@ -6,6 +6,7 @@ Endpoint principal: /procesar-noticias
 """
 
 from flask import Flask, request, jsonify
+from functools import wraps
 import pandas as pd
 import Z_Utils as Z
 import O_Utils_Ollama as Oll
@@ -16,6 +17,39 @@ import logging
 import os
 
 app = Flask(__name__)
+
+# Autenticación por token para endpoints de configuración
+VALID_TOKENS = [
+    'prensai-config-2025'  # Token único para acceso a configuración
+]
+
+def require_api_key(f):
+    """
+    Decorator que verifica si el request tiene un token válido
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Obtener el token del header X-API-Key
+        token = request.headers.get('X-API-Key')
+        
+        # Si no hay token, devolver error 401 (No autorizado)
+        if not token:
+            return jsonify({
+                'error': 'Token requerido',
+                'message': 'Debes incluir el header X-API-Key para acceder a la configuración'
+            }), 401
+        
+        # Si el token no es válido, devolver error 401
+        if token not in VALID_TOKENS:
+            return jsonify({
+                'error': 'Token inválido',
+                'message': 'El token proporcionado no es válido'
+            }), 401
+        
+        # Si el token es válido, ejecutar la función original
+        return f(*args, **kwargs)
+    
+    return decorated_function
 
 # Los campos ministro_key_words y ministerios_key_words ahora son obligatorios
 # Las menciones pueden venir vacías
@@ -322,6 +356,7 @@ def health_check():
     }), 200
 
 @app.route('/config/limite-texto', methods=['POST'])
+@require_api_key
 def configurar_limite_texto():
     """
     Endpoint para configurar el límite de texto
@@ -364,6 +399,7 @@ def configurar_limite_texto():
         }), 500
 
 @app.route('/config/gpt-active', methods=['POST'])
+@require_api_key
 def configurar_gpt_active():
     """
     Endpoint para configurar si GPT está activo
@@ -406,6 +442,7 @@ def configurar_gpt_active():
         }), 500
 
 @app.route('/config/estado', methods=['GET'])
+@require_api_key
 def obtener_estado_config():
     """
     Endpoint para obtener el estado actual de la configuración

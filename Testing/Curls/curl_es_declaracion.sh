@@ -1,10 +1,32 @@
 #!/bin/bash
 
-echo "🚀 Probando endpoint de exportación a Excel con 15 URLs para testing de declaraciones..."
+# Detectar automáticamente si ngrok está activo
+if curl -s http://localhost:4040/api/tunnels > /dev/null 2>&1; then
+    # ngrok está activo, obtener la URL pública
+    NGROK_URL=$(curl -s http://localhost:4040/api/tunnels | python3 -c "
+import json, sys
+try:
+    data = json.load(sys.stdin)
+    if data['tunnels']:
+        print(data['tunnels'][0]['public_url'])
+    else:
+        print('http://localhost:5000')
+except:
+    print('http://localhost:5000')
+")
+    API_URL="$NGROK_URL"
+    echo "🌐 ngrok detectado, usando URL: $API_URL"
+else
+    # ngrok no está activo, usar localhost
+    API_URL="http://localhost:5000"
+    echo "🏠 ngrok no detectado, usando localhost: $API_URL"
+fi
+
 echo "📊 Endpoint: /procesar-noticias-export-excel"
+echo "🌐 URL: $API_URL"
 echo "============================================================"
 
-curl -X POST http://localhost:5000/procesar-noticias-export-excel \
+curl -X POST $API_URL/procesar-noticias-export-excel \
   -H "Content-Type: application/json" \
   -d '{
     "urls": [
@@ -13,7 +35,7 @@ curl -X POST http://localhost:5000/procesar-noticias-export-excel \
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22651539",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22627194",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22583651",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22606260",
+      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22606260"
     ],
     "temas": ["BAFICI", "Cultura", "Actividades", "Tango BA", "Presentaciones"],
     "menciones": ["Gabriela Ricardes", "Jorge Macri"],
@@ -23,4 +45,4 @@ curl -X POST http://localhost:5000/procesar-noticias-export-excel \
 
 echo ""
 echo "✅ Curl ejecutado. Revisa la respuesta y el archivo Excel generado en Data_Results/"
-echo "🎯 Este test incluye 13 URLs para testing exhaustivo de la funcionalidad de declaraciones"
+
