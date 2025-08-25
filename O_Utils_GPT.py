@@ -664,36 +664,44 @@ def es_declaracion_con_gpt(texto: str, ministro_key_words, ministerios_key_words
         
         # Prompt para detectar declaraciones
         prompt = f"""
-        Eres un experto en clasificar noticias periodísticas. Tu tarea es determinar si un texto contiene una DECLARACIÓN (cita textual) atribuida a alguno de estos actores.
+        Eres un experto en clasificar noticias periodísticas. Tu tarea es determinar si un texto contiene AL MENOS UNA DECLARACIÓN (cita textual) atribuida a alguno de estos actores.
 
         ACTORES A BUSCAR: {actores_str}
 
         TEXTO DE LA NOTICIA:
         {texto}
 
-        CRITERIOS PARA CONSIDERARLO DECLARACIÓN:
-        ✅ Debe tener CITA entre comillas atribuida a alguno de los actores
-        ✅ El actor puede ser referenciado de cualquier forma (directa o indirecta)
-        ✅ Debe contener verbos de decir/acción (dijo, anunció, presentó, etc.)
-        ✅ El actor debe ser el que habla o actúa
+        CRITERIOS FLEXIBLES PARA CONSIDERARLO DECLARACIÓN:
+        ✅ DEBE tener AL MENOS UNA CITA entre comillas ("..." o '...') atribuida a alguno de los actores
+        ✅ El actor puede ser referenciado de forma directa o indirecta (fuentes, cartera, ministerio, etc.)
+        ✅ Debe contener verbos de comunicación/acción (dijo, anunció, informó, explicaron, señaló, etc.)
+        ✅ Una noticia puede contener MÚLTIPLES declaraciones de diferentes actores
+        ✅ Las citas pueden ser extensas y detalladas
+        ✅ Solo importa que esté entre comillas y atribuida a un actor
 
-        EJEMPLOS DE DECLARACIÓN:
-        - 'Estamos trabajando...', dijo Gabriela Ricardes
-        - El Ministerio de Cultura anunció: 'Vamos a...'
-        - La ministra presentó el programa
-        - Desde la cartera cultural se informó que...
-        - La funcionaria dijo: 'Es importante...', pero tiene que ser CLARAMENTE en referencia a los "actores" buscados. 
+        EJEMPLOS CLAROS DE DECLARACIÓN:
+        - 'Estamos trabajando en el proyecto', dijo Gabriela Ricardes
+        - El Ministerio de Cultura anunció: 'Vamos a implementar nuevas políticas'
+        - La ministra expresó: 'Es fundamental apoyar la cultura'
+        - Desde la cartera cultural se informó que 'se realizarán inversiones'
+        - La funcionaria manifestó: 'Es importante preservar el patrimonio'
+        - 'Según explicaron fuentes del ministerio: 'la plataforma ya la creamos...''
+        - 'La ministra señaló: 'Es una muestra concreta de cómo...''
+        - 'Fuentes del área informaron que 'la aplicación funcionará como...''
 
-        EJEMPLOS DE NO DECLARACIÓN:
-        - Se presentó un programa (sin cita ni actor)
-        - El programa incluye... (sin cita)
+        EJEMPLOS CLAROS DE NO DECLARACIÓN:
+        - La ministra presentó el programa (sin cita textual)
         - Se inauguró el teatro (sin cita ni actor)
+        - El programa incluye actividades culturales (sin cita)
+        - Se realizó una conferencia (sin cita ni actor)
+        - La funcionaria asistió al evento (sin cita)
+        - Se anunció la nueva política (sin cita textual)
 
         IMPORTANTE: 
+        - Si hay AL MENOS UNA cita textual atribuida a un actor, es DECLARACIÓN
         - Analiza TODO el texto completo, no solo el inicio
         - Las declaraciones tienen citas textuales entre comillas
         - Debe haber atribución clara a alguno de los actores listados
-        - No solo menciones de actores, sino citas atribuidas
 
         RESPONDE SOLO: "SI" si es declaración, "NO" si no lo es.
         """
