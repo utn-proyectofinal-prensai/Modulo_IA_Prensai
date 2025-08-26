@@ -10,6 +10,7 @@ Testear a fondo las funciones optimizadas para asegurar que funcionen correctame
 - [ ] Testear `clasificar_tema_ollama` a fondo
 - [ ] Testear `clasificar_tema_con_gpt` a fondo
 - [ ] Testear `clasificar_tema_con_ia` a fondo
+Testear Es_AGENDA_GPT
 
 ## 📝 NOTAS
 - Todas las funciones ya están optimizadas y refactorizadas

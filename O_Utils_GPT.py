@@ -497,37 +497,31 @@ def es_agenda_con_gpt(texto: str) -> bool:
             logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
             return _fallback_a_ollama_agenda(texto)
         
-        # Prompt para detectar agendas
+        # Prompt para detectar agendas basado en análisis real de ejemplos
         prompt = f"""
         Eres un experto en clasificar noticias periodísticas. Tu tarea es determinar si un texto es una AGENDA o NO.
 
         TEXTO DE LA NOTICIA:
         {texto}
 
-        CRITERIOS PARA AGENDA:
-        ✅ Anuncios de eventos, actividades o actividades programadas
-        ✅ Información sobre fechas, horarios y lugares específicos
-        ✅ Programación de espectáculos, exposiciones, conciertos
-        ✅ Calendario de actividades culturales o institucionales
-        ✅ Anuncios de inauguraciones, presentaciones o lanzamientos
-        ✅ Información sobre fechas límite, inscripciones o convocatorias
-        ✅ Programación de festivales, ferias o eventos masivos
+        ✅ CRITERIOS PARA SER AGENDA (debe cumplir TODOS):
+        1. TÍTULO INDICATIVO: Palabras como "Recomendados", "Imperdibles", "Agenda", "Programación", "AGENDATE"
+        2. ESTRUCTURA PROGRAMÁTICA: Lista organizada de actividades por día, categoría o cronológicamente
+        3. PROPÓSITO: Invitar al lector a asistir a eventos (no solo informar)
+        4. INFORMACIÓN PRÁCTICA: Entradas, precios, lugares, inscripciones, cupos
+        5. FECHAS: Específicas O relativas (HOY, MAÑANA, DOMINGO, "sábado 15 de junio")
+        6. HORARIOS: Específicos O rangos ("a las 20:30 h", "de 18 a 21")
 
-        NO ES AGENDA:
-        ❌ Noticias sobre eventos que ya sucedieron
-        ❌ Crónicas o reseñas de actividades pasadas
-        ❌ Entrevistas o declaraciones sobre eventos
-        ❌ Análisis o opiniones sobre programación
-        ❌ Notas informativas sin fechas específicas
-        ❌ Reportajes sobre eventos en general
+        ❌ EXCLUIR si:
+        - Estructura narrativa descriptiva (no programática)
+        - Propósito de informar sobre eventos ya realizados o convenios
+        - Títulos que describen acciones pasadas o futuras lejanas
 
-        IMPORTANTE: 
-        - Analiza TODO el texto completo, no solo el inicio
-        - Las agendas tienen fechas, horarios o información programática
-        - Debe haber información sobre eventos futuros o programados
-        - No solo menciones de eventos, sino información programática
-
-        RESPONDE SOLO: "SI" si es agenda, "NO" si no lo es.
+        IMPORTANTE:
+        - Los títulos como "Recomendados", "Imperdibles", "Agenda" o titulos similares que hagan referencias a una agenda de actividades son indicadores FUERTES de agenda.
+        - Todos los criterios de inclusión son obligatorios.
+        - Si no cumple absolutamente todos, la respuesta es "NO".
+        - Responde solo "SI" o "NO".
         """
         
         # Preparar request para GPT

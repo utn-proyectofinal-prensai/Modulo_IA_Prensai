@@ -45,16 +45,3 @@ echo "✅ Curl ejecutado para activar GPT!"
 echo "🤖 Modo GPT activado en la API"
 echo "📊 Ahora puedes usar otros endpoints con GPT como primera opción"
 
-echo ""
-echo "🔄 Desactivando GPT..."
-curl -X POST $API_URL/config/gpt-active \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: $API_TOKEN" \
-  -d '{
-    "gpt_active": false
-  }'
-
-echo ""
-echo "✅ Curl ejecutado para desactivar GPT!"
-echo "🤖 Modo GPT desactivado en la API"
-echo "📊 Ahora usarás Ollama como primera opción"
