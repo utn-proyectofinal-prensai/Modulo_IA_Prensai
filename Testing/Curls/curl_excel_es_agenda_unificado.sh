@@ -31,7 +31,7 @@ curl -X POST $API_URL/procesar-noticias-export-excel \
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24347481",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24185308",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24257893",
+      "https://culturagcba.clientes.ejeZ.com/noticia_completa.cfm?id=24257893",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23662034",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23595633",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23595797",

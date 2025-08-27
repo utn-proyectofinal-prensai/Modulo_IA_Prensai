@@ -106,38 +106,129 @@ def procesar_noticias_con_ia(
         
         if not urls_validas:
             logging.warning("No hay URLs válidas para procesar")
+            # Convertir motivos de rechazo al formato de errores
+            errores = []
+            for url in urls_no_validas:
+                motivo = validacion_urls['motivos'].get(url, "Error desconocido")
+                errores.append({
+                    "url": url,
+                    "motivo": motivo
+                })
+            
+            # Retornar con código de error 422 (datos válidos pero no procesables)
             return {
-                "success": True,
                 "recibidas": len(urls),
                 "procesadas": 0,
-                "urls_no_procesadas": urls_no_validas,
-                "motivos_rechazo": validacion_urls['motivos'],
-                "tiempo_procesamiento": "0:00:00",
-                "noticias_procesadas": 0,
-                "data": []
-            }
+                "data": [],
+                "errores": errores,
+                "tiempo_procesamiento": "0:00:00"
+            }, 422
         
         # 2. Configurar DataFrame solo con URLs válidas
         df = pd.DataFrame(columns=CAMPOS_FIJOS)
         df['LINK'] = urls_validas
         
         # 3. Extraer texto plano para cada link válido (con reintentos)
+        logging.info(f"🔄 Iniciando extracción de texto plano para {len(urls_validas)} URLs válidas")
         df['TEXTO_PLANO'] = df['LINK'].apply(lambda x: Z.procesar_link_robusto(x, 'texto', 3))
         
         # 4. Procesar HTML y rellenar campos (con reintentos)
+        logging.info(f"🔄 Iniciando extracción de HTML para {len(urls_validas)} URLs válidas")
         df['HTML_OBJ'] = df['LINK'].apply(lambda x: Z.procesar_link_robusto(x, 'html', 3))
-        df['TITULO'] = df['HTML_OBJ'].apply(Z.get_titulo_from_html_obj)
-        df['FECHA'] = df['HTML_OBJ'].apply(Z.get_fecha_from_html_obj)
-        df['MEDIO'] = df['HTML_OBJ'].apply(Z.get_medio_from_html_obj).apply(Z.normalizar_medio)
-        df['SOPORTE'] = df['HTML_OBJ'].apply(Z.get_soporte_from_html_obj)
-        df['SECCION'] = df['HTML_OBJ'].apply(Z.get_seccion_from_html_obj)
-        df['COTIZACION'] = df['HTML_OBJ'].apply(Z.get_cotizacion_from_html_obj)
-        df['ALCANCE'] = df['HTML_OBJ'].apply(Z.get_alcance_from_html_obj)
-        df['AUTOR'] = df['HTML_OBJ'].apply(Z.get_autor_from_html_obj)
         
-        # 5. Inferencias con IA
+        # 5. VERIFICAR QUÉ URLs FALLARON EN LA EXTRACCIÓN
+        logging.info("🔍 Verificando URLs que fallaron en la extracción...")
+        urls_extraccion_fallida = []
+        for idx, row in df.iterrows():
+            if row['TEXTO_PLANO'] is None or row['HTML_OBJ'] is None:
+                motivo = "No se pudo extraer contenido (servidor no disponible o contenido vacío)"
+                urls_extraccion_fallida.append({
+                    'url': row['LINK'],
+                    'motivo': motivo
+                })
+                logging.warning(f"⚠️ URL falló en extracción: {row['LINK']} - {motivo}")
+        
+        # 6. FILTRAR SOLO URLs EXITOSAS para continuar procesamiento
+        df_exitosas = df[df['TEXTO_PLANO'].notna() & df['HTML_OBJ'].notna()].copy()
+        logging.info(f"✅ URLs exitosas en extracción: {len(df_exitosas)} de {len(df)}")
+        
+        if len(df_exitosas) == 0:
+            logging.error("❌ No se pudo extraer contenido de ninguna URL válida")
+            # Convertir motivos de rechazo al formato de errores
+            errores = []
+            for url in urls_no_validas:
+                motivo = validacion_urls['motivos'].get(url, "Error desconocido")
+                errores.append({
+                    "url": url,
+                    "motivo": motivo
+                })
+            # Agregar errores de extracción fallida
+            errores.extend(urls_extraccion_fallida)
+            
+            return {
+                "recibidas": len(urls),
+                "procesadas": 0,
+                "data": [],
+                "errores": errores,
+                "tiempo_procesamiento": "0:00:00"
+            }, 500
+        
+        # 7. Procesar solo URLs exitosas
+        logging.info(f"🔄 Procesando {len(df_exitosas)} URLs exitosas...")
+        df_exitosas['TITULO'] = df_exitosas['HTML_OBJ'].apply(Z.get_titulo_from_html_obj)
+        df_exitosas['FECHA'] = df_exitosas['HTML_OBJ'].apply(Z.get_fecha_from_html_obj)
+        df_exitosas['MEDIO'] = df_exitosas['HTML_OBJ'].apply(Z.get_medio_from_html_obj).apply(Z.normalizar_medio)
+        df_exitosas['SOPORTE'] = df_exitosas['HTML_OBJ'].apply(Z.get_soporte_from_html_obj)
+        df_exitosas['SECCION'] = df_exitosas['HTML_OBJ'].apply(Z.get_seccion_from_html_obj)
+        df_exitosas['COTIZACION'] = df_exitosas['HTML_OBJ'].apply(Z.get_cotizacion_from_html_obj)
+        df_exitosas['ALCANCE'] = df_exitosas['HTML_OBJ'].apply(Z.get_alcance_from_html_obj)
+        df_exitosas['AUTOR'] = df_exitosas['HTML_OBJ'].apply(Z.get_autor_from_html_obj)
+        
+        # 8. VERIFICAR CONTENIDO VÁLIDO POST-PROCESAMIENTO HTML
+        logging.info("🔍 Verificando contenido válido post-procesamiento HTML...")
+        urls_contenido_invalido = []
+        
+        for row in df_exitosas.iterrows():
+            fecha = row[1]['FECHA']
+            cotizacion = row[1]['COTIZACION']
+            
+            # Verificar si AMBAS son null (contenido inválido)
+            if fecha is None and cotizacion is None:  # AMBAS son null
+                motivo = "Contenido extraído no es una noticia válida (fecha y cotización son null)"
+                urls_contenido_invalido.append({
+                    'url': row[1]['LINK'],
+                    'motivo': motivo
+                })
+                logging.warning(f"⚠️ Contenido inválido: {row[1]['LINK']} - FECHA: {fecha}, COTIZACION: {cotizacion}")
+        
+        # 9. FILTRAR SOLO URLs CON CONTENIDO VÁLIDO para IA
+        df_contenido_valido = df_exitosas[df_exitosas['LINK'].isin([url for url in df_exitosas['LINK'] if url not in [e['url'] for e in urls_contenido_invalido]])].copy()
+        
+        logging.info(f"✅ URLs con contenido válido: {len(df_contenido_valido)} de {len(df_exitosas)}")
+        
+        if len(df_contenido_valido) == 0:
+            logging.error("❌ No hay URLs con contenido válido para procesar con IA")
+            # Combinar todos los errores
+            errores = []
+            for url in urls_no_validas:
+                motivo = validacion_urls['motivos'].get(url, "Error desconocido")
+                errores.append({"url": url, "motivo": motivo})
+            errores.extend(urls_extraccion_fallida)
+            errores.extend(urls_contenido_invalido)
+            
+            return {
+                "recibidas": len(urls),
+                "procesadas": 0,
+                "data": [],
+                "errores": errores,
+                "tiempo_procesamiento": "0:00:00"
+            }, 500
+        
+        # 10. Inferencias con IA (solo URLs con contenido válido)
+        logging.info(f"🤖 Iniciando procesamiento con IA para {len(df_contenido_valido)} URLs válidas...")
+        
         # Clasificación de tipo de publicación (GPT con fallback a Ollama)
-        df['TIPO PUBLICACION'] = df['TEXTO_PLANO'].apply(
+        df_contenido_valido['TIPO PUBLICACION'] = df_contenido_valido['TEXTO_PLANO'].apply(
             lambda x: Z.marcar_o_valorar_con_ia(
                 x, 
                 lambda t: Gpt.clasificar_tipo_publicacion_con_ia(t, ministro_key_words, ministerios_key_words, gpt_active), 
@@ -146,7 +237,7 @@ def procesar_noticias_con_ia(
         )
         
         # Factor político
-        df['FACTOR POLITICO'] = df['TEXTO_PLANO'].apply(
+        df_contenido_valido['FACTOR POLITICO'] = df_contenido_valido['TEXTO_PLANO'].apply(
             lambda x: Z.marcar_o_valorar_con_ia(
                 x, 
                 Oll.detectar_factor_politico_con_ollama, 
@@ -155,7 +246,7 @@ def procesar_noticias_con_ia(
         )
         
         # Valoración
-        df['VALORACION'] = df['TEXTO_PLANO'].apply(
+        df_contenido_valido['VALORACION'] = df_contenido_valido['TEXTO_PLANO'].apply(
             lambda x: Z.marcar_o_valorar_con_ia(
                 x, 
                 lambda t: Gpt.valorar_con_ia(t, ministro_key_words=ministro_key_words, ministerios_key_words=ministerios_key_words, gpt_active=gpt_active), 
@@ -164,7 +255,7 @@ def procesar_noticias_con_ia(
         )
         
         # Clasificación de temas
-        df['TEMA'] = df.apply(
+        df_contenido_valido['TEMA'] = df_contenido_valido.apply(
             lambda row: Z.marcar_o_valorar_con_ia(
                 row['TEXTO_PLANO'], 
                 lambda t: Gpt.clasificar_tema_con_ia(
@@ -178,23 +269,23 @@ def procesar_noticias_con_ia(
             axis=1
         )
         
-        # 6. Extraer entrevistado
-        df['ENTREVISTADO'] = df.apply(
+        # 11. Extraer entrevistado
+        df_contenido_valido['ENTREVISTADO'] = df_contenido_valido.apply(
             lambda row: Oll.extraer_entrevistado_con_ollama(row['TEXTO_PLANO']) 
             if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
             axis=1
         )
     
-        # 8. Detectar menciones solo si se especificaron
+        # 12. Detectar menciones solo si se especificaron (solo URLs con contenido válido)
         if menciones:
-            df = Z.buscar_menciones(df, lista_menciones)
+            df_contenido_valido = Z.buscar_menciones(df_contenido_valido, lista_menciones)
         else:
             # Si no hay menciones, asignar lista vacía
-            df['MENCIONES'] = [[] for _ in range(len(df))]
+            df_contenido_valido['MENCIONES'] = [[] for _ in range(len(df_contenido_valido))]
         
                 
-        # 9. Limpiar DataFrame para respuesta
-        df_final = df.drop(columns=['HTML_OBJ', 'TEXTO_PLANO'])
+        # 13. Limpiar DataFrame para respuesta
+        df_final = df_contenido_valido.drop(columns=['HTML_OBJ', 'TEXTO_PLANO'])
         
         # Medición tiempo final
         t1 = time.time()
@@ -205,29 +296,56 @@ def procesar_noticias_con_ia(
         # Convertir a JSON
         resultado_json = df_final.to_dict('records')
         
-        #TODO avisar al back como viene esta respuesta.
+        # 14. Combinar errores de validación + extracción + contenido inválido
+        logging.info("🔍 Preparando respuesta final con errores combinados...")
+        errores = []
+        
+        # Errores de validación previa
+        for url in urls_no_validas:
+            motivo = validacion_urls['motivos'].get(url, "Error desconocido")
+            errores.append({
+                "url": url,
+                "motivo": motivo
+            })
+            logging.info(f"❌ Error de validación: {url} - {motivo}")
+        
+        # Errores de extracción fallida
+        for error in urls_extraccion_fallida:
+            errores.append(error)
+            logging.info(f"❌ Error de extracción: {error['url']} - {error['motivo']}")
+        
+        # Errores de contenido inválido
+        for error in urls_contenido_invalido:
+            errores.append(error)
+            logging.info(f"❌ Error de contenido: {error['url']} - {error['motivo']}")
+        
+        logging.info(f"📊 Resumen final: {len(urls)} recibidas, {len(df_final)} procesadas, {len(errores)} errores")
+        
         return {
-            "success": True,
             "recibidas": len(urls),
-            "procesadas": len(urls_validas),
-            "urls_no_procesadas": urls_no_validas,
-            "motivos_rechazo": validacion_urls['motivos'],
-            "tiempo_procesamiento": tiempo_total,
-            "noticias_procesadas": len(resultado_json),
-            "data": resultado_json
-        }
+            "procesadas": len(df_final),
+            "data": resultado_json,
+            "errores": errores,
+            "tiempo_procesamiento": tiempo_total
+        }, 200
         
     except Exception as e:
         logging.error(f"Error en procesamiento: {str(e)}")
+        # Convertir URLs a formato de errores
+        errores = []
+        for url in urls:
+            errores.append({
+                "url": url,
+                "motivo": f"Error en procesamiento: {str(e)}"
+            })
+        
         return {
-            "success": False,
-            "error": str(e),
             "recibidas": len(urls),
             "procesadas": 0,
-            "urls_no_procesadas": urls,
-            "motivos_rechazo": {url: f"Error en procesamiento: {str(e)}" for url in urls},
-            "data": []
-        }
+            "data": [],
+            "errores": errores,
+            "tiempo_procesamiento": "0:00:00"
+        }, 500
 
 def validar_parametros_noticias(data):
     """
@@ -238,20 +356,17 @@ def validar_parametros_noticias(data):
         # Validar que venga JSON
         if not request.is_json:
             return False, {
-                "success": False,
                 "error": "Content-Type debe ser application/json"
             }, None
         
         # Validar campos obligatorios
         if 'urls' not in data:
             return False, {
-                "success": False,
                 "error": "Campo 'urls' es obligatorio"
             }, None
         
         if 'temas' not in data:
             return False, {
-                "success": False,
                 "error": "Campo 'temas' es obligatorio"
             }, None
         
@@ -264,38 +379,32 @@ def validar_parametros_noticias(data):
         # Validaciones adicionales
         if not urls:
             return False, {
-                "success": False,
                 "error": "La lista de URLs no puede estar vacía"
             }, None
         
         if not temas:
             return False, {
-                "success": False,
                 "error": "La lista de temas no puede estar vacía"
             }, None
         
         # Validar campos obligatorios
         if not ministro_key_words:
             return False, {
-                "success": False,
                 "error": "Campo 'ministro_key_words' es obligatorio"
             }, None
         
         if not isinstance(ministro_key_words, list):
             return False, {
-                "success": False,
                 "error": "Campo 'ministro_key_words' debe ser una lista"
             }, None
         
         if not ministerios_key_words:
             return False, {
-                "success": False,
                 "error": "Campo 'ministerios_key_words' es obligatorio"
             }, None
         
         if not isinstance(ministerios_key_words, list):
             return False, {
-                "success": False,
                 "error": "Campo 'ministerios_key_words' debe ser una lista"
             }, None
         
@@ -312,7 +421,6 @@ def validar_parametros_noticias(data):
         
     except Exception as e:
         return False, {
-            "success": False,
             "error": f"Error en validación: {str(e)}"
         }, None
 
@@ -331,16 +439,13 @@ def procesar_noticias():
             return jsonify(error_response), 400
         
         # Procesar noticias
-        resultado = procesar_noticias_con_ia(**datos_validados)
+        resultado, status_code = procesar_noticias_con_ia(**datos_validados)
         
-        if resultado["success"]:
-            return jsonify(resultado), 200
-        else:
-            return jsonify(resultado), 500
+        # Retornar el resultado con el código de estado correspondiente
+        return jsonify(resultado), status_code
             
     except Exception as e:
         return jsonify({
-            "success": False,
             "error": f"Error interno del servidor: {str(e)}"
         }), 500
 
@@ -364,7 +469,6 @@ def configurar_limite_texto():
     try:
         if not request.is_json:
             return jsonify({
-                "success": False,
                 "error": "Content-Type debe ser application/json"
             }), 400
         
@@ -373,13 +477,11 @@ def configurar_limite_texto():
         
         if nuevo_limite is None:
             return jsonify({
-                "success": False,
                 "error": "Campo 'limite_texto' es obligatorio"
             }), 400
         
         if not isinstance(nuevo_limite, int) or nuevo_limite <= 0:
             return jsonify({
-                "success": False,
                 "error": "limite_texto debe ser un número entero positivo"
             }), 400
         
@@ -387,14 +489,12 @@ def configurar_limite_texto():
         RUNTIME_CONFIG['limite_texto'] = nuevo_limite
         
         return jsonify({
-            "success": True,
             "message": f"Límite de texto actualizado a {nuevo_limite}",
             "nuevo_limite": nuevo_limite
         }), 200
         
     except Exception as e:
         return jsonify({
-            "success": False,
             "error": f"Error interno del servidor: {str(e)}"
         }), 500
 
@@ -407,7 +507,6 @@ def configurar_gpt_active():
     try:
         if not request.is_json:
             return jsonify({
-                "success": False,
                 "error": "Content-Type debe ser application/json"
             }), 400
         
@@ -416,13 +515,11 @@ def configurar_gpt_active():
         
         if nuevo_valor is None:
             return jsonify({
-                "success": False,
                 "error": "Campo 'gpt_active' es obligatorio"
             }), 400
         
         if not isinstance(nuevo_valor, bool):
             return jsonify({
-                "success": False,
                 "error": "gpt_active debe ser un valor booleano (true/false)"
             }), 400
         
@@ -430,14 +527,12 @@ def configurar_gpt_active():
         RUNTIME_CONFIG['gpt_active'] = nuevo_valor
         
         return jsonify({
-            "success": True,
             "message": f"GPT Active actualizado a {nuevo_valor}",
             "nuevo_valor": nuevo_valor
         }), 200
         
     except Exception as e:
         return jsonify({
-            "success": False,
             "error": f"Error interno del servidor: {str(e)}"
         }), 500
 
@@ -448,7 +543,6 @@ def obtener_estado_config():
     Endpoint para obtener el estado actual de la configuración
     """
     return jsonify({
-        "success": True,
         "configuracion": RUNTIME_CONFIG
     }), 200
 
@@ -462,7 +556,6 @@ def obtener_logs():
         
         if not os.path.exists(log_path):
             return jsonify({
-                'success': False,
                 'error': 'Archivo de logs no encontrado'
             }), 404
             
@@ -470,15 +563,13 @@ def obtener_logs():
             contenido = f.read()
             
         return jsonify({
-            'success': True,
             'archivo': 'Procesamiento_Noticias_API.log',
             'contenido': contenido,
             'lineas': len(contenido.split('\n'))
-        })
+        }), 200
         
     except Exception as e:
         return jsonify({
-            'success': False,
             'error': f'Error al leer logs: {str(e)}'
         }), 500
 
@@ -497,23 +588,23 @@ def procesar_noticias_export_excel():
             return jsonify(error_response), 400
         
         # Procesar noticias usando la función existente
-        resultado = procesar_noticias_con_ia(**datos_validados)
+        resultado, status_code = procesar_noticias_con_ia(**datos_validados)
         
-        if not resultado['success']:
-            return jsonify(resultado), 500
+        # Si hay error en el procesamiento, retornar el error
+        if status_code != 200:
+            return jsonify(resultado), status_code
         
         # Si no hay noticias procesadas, no exportar
         if resultado['procesadas'] == 0:
             return jsonify({
-                "success": True,
                 "message": "No hay noticias para exportar",
                 "recibidas": resultado['recibidas'],
                 "procesadas": 0,
-                "urls_no_procesadas": resultado['urls_no_procesadas'],
-                "motivos_rechazo": resultado['motivos_rechazo'],
+                "data": resultado['data'],
+                "errores": resultado['errores'],
                 "tiempo_procesamiento": resultado['tiempo_procesamiento'],
                 "archivo_excel": None
-            }), 200
+            }), 422  # 422 = datos válidos pero no procesables
         
         # Crear DataFrame para exportar
         df_export = pd.DataFrame(resultado['data'])
@@ -538,14 +629,12 @@ def procesar_noticias_export_excel():
         logging.info(f"Archivo Excel exportado: {ruta_archivo}")
         
         return jsonify({
-            "success": True,
             "message": f"Noticias procesadas y exportadas exitosamente a Excel",
             "recibidas": resultado['recibidas'],
             "procesadas": resultado['procesadas'],
-            "urls_no_procesadas": resultado['urls_no_procesadas'],
-            "motivos_rechazo": resultado['motivos_rechazo'],
+            "data": resultado['data'],
+            "errores": resultado['errores'],
             "tiempo_procesamiento": resultado['tiempo_procesamiento'],
-            "noticias_procesadas": resultado['noticias_procesadas'],
             "archivo_excel": nombre_archivo,
             "ruta_completa": ruta_archivo,
             "registros_exportados": len(df_export)
@@ -553,15 +642,23 @@ def procesar_noticias_export_excel():
         
     except Exception as e:
         logging.error(f"Error en exportación a Excel: {str(e)}")
+        # Convertir URLs a formato de errores
+        urls_error = datos_validados['urls'] if 'datos_validados' in locals() else []
+        errores = []
+        for url in urls_error:
+            errores.append({
+                "url": url,
+                "motivo": f"Error en exportación: {str(e)}"
+            })
+        
         return jsonify({
-            "success": False,
-            "error": f"Error interno del servidor: {str(e)}",
-            "recibidas": len(datos_validados['urls']) if 'datos_validados' in locals() else 0,
+            "recibidas": len(urls_error),
             "procesadas": 0,
-            "urls_no_procesadas": datos_validados['urls'] if 'datos_validados' in locals() else [],
-            "motivos_rechazo": {url: f"Error en exportación: {str(e)}" for url in (datos_validados['urls'] if 'datos_validados' in locals() else [])},
+            "data": [],
+            "errores": errores,
+            "tiempo_procesamiento": "0:00:00",
             "archivo_excel": None
-        }), 500
+        }), 500  # 500 = error interno del servidor
 
 if __name__ == '__main__':
     print("🚀 Iniciando API de Prensai IA...")

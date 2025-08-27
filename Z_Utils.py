@@ -112,7 +112,7 @@ def get_texto_plano_from_link(link):
                 enc = detected_enc if detected_enc else enc
                 html = texto_bytes.decode(enc, errors='replace')
             except Exception as e:
-                logging.warning(f"Problema al decodificar HTML de {link}: {e}")
+                logging.warning(f"⚠️ Problema al decodificar HTML de {link}: {e}")
                 html = r.text  # Fallback
             soup = BeautifulSoup(html, 'html.parser')
 
@@ -139,10 +139,21 @@ def get_texto_plano_from_link(link):
             else:
                 return body
         else:
-            logging.warning(f"Status code {r.status_code} al acceder a {link}")
+            logging.warning(f"⚠️ Status code {r.status_code} al acceder a {link}")
             return None
+    except requests.exceptions.ConnectionError as e:
+        if "Connection refused" in str(e):
+            logging.error(f"🚫 Error PERMANENTE (servidor caído): {link} - {e}")
+        elif "Max retries exceeded" in str(e):
+            logging.error(f"🔄 Error de reintentos agotados: {link} - {e}")
+        else:
+            logging.error(f"🌐 Error de conexión: {link} - {e}")
+        return None
+    except requests.exceptions.Timeout as e:
+        logging.error(f"⏰ Timeout al acceder a {link}: {e}")
+        return None
     except Exception as e:
-        logging.error(f"Excepción al descargar/parsing {link}: {e}")
+        logging.error(f"❌ Excepción al descargar/parsing {link}: {e}")
         return None
 
 #Funcion para obtener los LINKs de un archivo Excel que va importar el usuario en la PRIMER COLUMNA, PRIMER HOJA. 
@@ -190,27 +201,59 @@ def procesar_link_robusto(link, tipo='texto', max_reintentos=3):
         - Si tipo='html': objeto BeautifulSoup parseado
         - None si falla definitivamente después de todos los intentos
     """
+    logging.info(f"🔄 Iniciando procesamiento robusto de {link} (tipo: {tipo}, max_reintentos: {max_reintentos})")
+    
     for intento in range(max_reintentos):
         try:
+            logging.info(f"🌐 Intento {intento + 1}/{max_reintentos} para {link}")
+            
             if tipo == 'texto':
-                return get_texto_plano_from_link(link)
+                resultado = get_texto_plano_from_link(link)
+                if resultado:
+                    logging.info(f"✅ Éxito en intento {intento + 1} para {link}")
+                    return resultado
+                else:
+                    logging.warning(f"⚠️ Intento {intento + 1} falló (sin resultado) para {link}")
+                    
             elif tipo == 'html':
-                return get_html_object_from_link(link)
+                resultado = get_html_object_from_link(link)
+                if resultado:
+                    logging.info(f"✅ Éxito en intento {intento + 1} para {link}")
+                    return resultado
+                else:
+                    logging.warning(f"⚠️ Intento {intento + 1} falló (sin resultado) para {link}")
             else:
-                logging.error(f"Tipo '{tipo}' no válido. Debe ser 'texto' o 'html'")
+                logging.error(f"❌ Tipo '{tipo}' no válido. Debe ser 'texto' o 'html'")
+                return None
+                
+        except requests.exceptions.ConnectionError as e:
+            if intento < max_reintentos - 1:
+                delay = (2 ** intento) * 2  # 2, 4, 8 segundos
+                logging.warning(f"🌐 Error de conexión en intento {intento + 1} para {link}. Reintentando en {delay}s... Error: {e}")
+                time.sleep(delay)
+            else:
+                logging.error(f"❌ {link} falló definitivamente después de {max_reintentos} intentos por error de conexión. Error: {e}")
+                return None
+                
+        except requests.exceptions.Timeout as e:
+            if intento < max_reintentos - 1:
+                delay = (2 ** intento) * 2
+                logging.warning(f"⏰ Timeout en intento {intento + 1} para {link}. Reintentando en {delay}s... Error: {e}")
+                time.sleep(delay)
+            else:
+                logging.error(f"❌ {link} falló definitivamente después de {max_reintentos} intentos por timeout. Error: {e}")
                 return None
                 
         except Exception as e:
             if intento < max_reintentos - 1:
-                delay = (2 ** intento) * 2  # 2, 4, 8 segundos
-                logging.warning(f"Intento {intento + 1} falló para {link}, reintentando en {delay}s... Error: {e}")
+                delay = (2 ** intento) * 2
+                logging.warning(f"⚠️ Error general en intento {intento + 1} para {link}. Reintentando en {delay}s... Error: {e}")
                 time.sleep(delay)
             else:
-                error_msg = f"Link {link} falló definitivamente después de {max_reintentos} intentos. Error: {e}"
-                logging.error(error_msg)
-                print(f"❌ {error_msg}")  # Imprimir por pantalla
+                logging.error(f"❌ {link} falló definitivamente después de {max_reintentos} intentos por error general. Error: {e}")
                 return None
     
+    logging.error(f"❌ {link} falló definitivamente después de {max_reintentos} intentos")
     return None
 
 #Función para obtener el HTML de un link y devolerlo como un "objetito" para luego poder procesarlo y rellenar los campos de mi DF. 
@@ -224,11 +267,22 @@ def get_html_object_from_link(link):
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
         return soup
-    except requests.RequestException as e:
-        logging.error(f"Error de conexión al obtener HTML de {link}: {e}")
+    except requests.exceptions.ConnectionError as e:
+        if "Connection refused" in str(e):
+            logging.error(f"🚫 Error PERMANENTE (servidor caído): {link} - {e}")
+        elif "Max retries exceeded" in str(e):
+            logging.error(f"🔄 Error de reintentos agotados: {link} - {e}")
+        else:
+            logging.error(f"🌐 Error de conexión: {link} - {e}")
+        return None
+    except requests.exceptions.Timeout as e:
+        logging.error(f"⏰ Timeout al obtener HTML de {link}: {e}")
+        return None
+    except requests.exceptions.HTTPError as e:
+        logging.error(f"📡 Error HTTP {e.response.status_code} al obtener HTML de {link}: {e}")
         return None
     except Exception as e:
-        logging.error(f"Error general al parsear HTML de {link}: {e}")
+        logging.error(f"❌ Error general al parsear HTML de {link}: {e}")
         return None
 
 ##// JUEGO DE FUNCIONES para trabajar con el HTML_OBJ

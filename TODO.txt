@@ -6,7 +6,6 @@ Testear a fondo las funciones optimizadas para asegurar que funcionen correctame
 
 ## 📋 CHECKLIST DE TESTING
 - [ ] Testear `valorar_noticia_con_ollama` a fondo
-- [ ] Testear `es_declaracion_ollama` a fondo  ; ANDA BIEN! pero , revisar Es_AGENDA_GPT porque le gana en prio y clasifica mal como agenda. 
 - [ ] Testear `clasificar_tema_ollama` a fondo
 - [ ] Testear `clasificar_tema_con_gpt` a fondo
 - [ ] Testear `clasificar_tema_con_ia` a fondo
