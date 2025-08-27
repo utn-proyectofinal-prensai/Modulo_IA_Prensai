@@ -20,3 +20,4 @@ Testear Es_AGENDA_GPT
 ## 🔄 PENDIENTES GENERALES
 - [ ] **Documentación API**: `#TODO avisar al back como viene esta respuesta.` - `api_flask.py:173`
 
+como manejar error si el server de ejes esta caido, por lo menos avisar. 
