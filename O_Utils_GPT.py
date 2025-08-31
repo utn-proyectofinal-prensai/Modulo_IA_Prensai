@@ -241,98 +241,134 @@ def clasificar_tema_con_gpt(
     gpt_active: bool = True,
 ) -> str:
     """
-    Clasifica un tema usando GPT como primera opción y fallback a Ollama.
-
-    - Debe devolver EXACTAMENTE uno de lista_temas
-    - Si tipo_publicacion == 'Agenda' → 'Actividades programadas'
-    - Solo clasificación por contenido (sin contexto temporal)
+    Clasifica una noticia en un tema específico usando GPT-4o.
+    
+    Args:
+        texto (str): Texto completo de la noticia (título + cuerpo)
+        lista_temas (List[str]): Lista de temas disponibles para elegir
+        tipo_publicacion (Optional[str]): Tipo de publicación (para reglas especiales)
+        gpt_active (bool): Si usar GPT (True) o fallback a Ollama (False)
+    
+    Returns:
+        str: Tema asignado (debe estar en lista_temas)
     """
     try:
+        # Validaciones básicas
         if not texto or not lista_temas:
-            return "Revisar Manual"
-
-        # Regla simple por tipo de publicación
+            return "Actividades programadas"
+        
+        # Regla especial: si es Agenda, siempre es "Actividades programadas"
         if tipo_publicacion == "Agenda":
             return "Actividades programadas"
+        
+        # Solo proceder si GPT está activo
+        if not gpt_active:
+            logging.info("🔄 GPT desactivado, usando fallback a Ollama...")
+            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion)
+        
+        # Verificar API key
+        api_key = leer_api_key_desde_env()
+        if not api_key:
+            logging.warning("⚠️ No se encontró API key de OpenAI. Usando fallback a Ollama...")
+            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion)
+        
+        # Usar GPT-4o para clasificación (activando el switch)
+        GPT_MODEL = switch_4o(gpt_active)
+        logging.info(f"🔍 Clasificando tema con {GPT_MODEL} para tipo: {tipo_publicacion}")
+        
+        # Construir lista de temas para el prompt
+        temas_str = "\n".join([f"- {t}" for t in lista_temas])
+        logging.debug(f"📋 Temas disponibles: {lista_temas}")
+        
+        # PROMPT REFINADO CON PRIORIDADES CLARAS
+        system_msg = (
+            "Eres un editor periodístico experto en clasificar noticias por temas. "
+            "Tu tarea es asignar el tema MÁS ADECUADO de una lista predefinida, "
+            "priorizando temas específicos sobre temas genéricos."
+        )
+        
+        user_msg = (
+            f"ANALIZA esta noticia (título + cuerpo completo) y asígnale el tema MÁS ADECUADO de la lista disponible.\n\n"
+            f"IMPORTANTE: Solo puedes elegir de esta lista, NO inventes temas:\n{temas_str}\n\n"
+            f"CRITERIOS DE EVALUACIÓN (APLICAR EN ESTE ORDEN):\n"
+            f"1. PRIORIDAD ALTA: Si el nombre EXACTO de un tema aparece en el título o cuerpo → elegir ese tema\n"
+            f"2. PRIORIDAD MEDIA: Si hay palabras clave específicas de un tema (ej: 'BAFICI', 'Juventus Lyrica', 'Abasto') → elegir ese tema\n"
+            f"3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir un tema genérico como 'Actividades programadas'\n\n"
+            f"REGLAS IMPORTANTES:\n"
+            f"- NUNCA ignores un tema específico que está claramente mencionado en el texto\n"
+            f"- Los temas genéricos son SOLO para noticias que realmente no encajan con temas específicos\n"
+            f"- Si hay dudas entre temas similares, elige el MÁS ESPECÍFICO\n\n"
+            f"NOTICIA A ANALIZAR:\n{texto}\n\n"
+            f"RESPUESTA: Responde ÚNICAMENTE con el nombre exacto del tema elegido (sin comillas, sin puntos, sin texto adicional)."
+        )
+        
+        # Preparar request para GPT
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": GPT_MODEL,
+            "messages": [
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg}
+            ],
+            "temperature": 0.0,  # Baja temperatura para respuestas consistentes
+            "max_tokens": 30      # Suficiente para el nombre del tema
+        }
+        
+        # Hacer request a GPT con retry
+        response = _gpt_request_with_retry(headers, data)
+        
+        if response and response.status_code == 200:
+            try:
+                result = response.json()
+                content = result["choices"][0]["message"]["content"].strip()
+                
+                # Saneo básico de la respuesta
+                content = content.strip().strip('"').strip("'").rstrip(".").strip()
+                
+                # Validar que el tema esté en la lista
+                if content in lista_temas:
+                    logging.info(f"✅ {GPT_MODEL} clasificó tema como: {content}")
+                    return content
+                
+                # Intento de match por casefold (sin sensibilidad a mayúsculas)
+                mapeo_lower = {t.casefold(): t for t in lista_temas}
+                if content.casefold() in mapeo_lower:
+                    tema_correcto = mapeo_lower[content.casefold()]
+                    logging.info(f"🔄 Aplicando casefold matching: '{content}' → '{tema_correcto}'")
+                    return tema_correcto
+                
+                # Si no es válido, loggear y usar fallback
+                logging.warning(f"⚠️ {GPT_MODEL} devolvió tema inválido: '{content}'. Usando fallback...")
+                
+            except Exception as e:
+                logging.error(f"❌ Error procesando respuesta de {GPT_MODEL}: {e}")
+        else:
+            logging.warning(f"⚠️ {GPT_MODEL} falló al clasificar tema. Usando fallback...")
+        
+        # Fallback a Ollama
+        return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion)
+        
+    except Exception as e:
+        logging.error(f"❌ Error inesperado en clasificar_tema_con_gpt: {e}")
+        return "Actividades programadas"  # Fallback seguro
 
-        if gpt_active:
-            api_key = leer_api_key_desde_env()
-            if api_key:
-                logging.info(f"🔍 Clasificando tema con {GPT_MODEL} para tipo: {tipo_publicacion}")
-                temas_str = "\n".join([f"- {t}" for t in lista_temas])
-                # Solo clasificación por contenido - sin contexto temporal
 
-                # PROMPT reforzado
-                system_msg = (
-                    "Sos un clasificador ESTRICTO. Debés asignar EXACTAMENTE 1 tema "
-                    "de una lista cerrada. No inventes nombres ni sinónimos. "
-                    "La salida debe ser SOLO el nombre del tema (sin comillas, sin puntos, sin texto extra)."
-                )
-                user_msg = (
-                    f"Asigná UNO y solo UNO de los siguientes temas a la noticia (lista cerrada):\n{temas_str}\n\n"
-                    "REGLAS (aplicarlas en este orden):\n"
-                    "0) Normalización: considerá TÍTULO y CUERPO en minúsculas y sin acentos/diacríticos.\n"
-                    "1) Coincidencia literal inequívoca (en TÍTULO o CUERPO) → elegí ese tema.\n"
-                    "2) Si hay varias coincidencias literales:\n"
-                    "   2.1) Prioridad al que aparezca en el TÍTULO.\n"
-                    "   2.2) Si persiste el empate, elegí el MÁS ESPECÍFICO (string más largo).\n"
-                    "   2.3) Si persiste, elegí el que aparezca MÁS VECES en el texto.\n"
-                    "3) Sin coincidencia literal: permití paráfrasis SOLO si es claramente el mismo evento/proyecto (sin ambigüedad).\n"
-                    "   3.1) Si hay más de una opción por paráfrasis, aplicá 2.1 → 2.3.\n"
-                    "4) Umbral de confianza: si no hay evidencia clara (ni literal ni paráfrasis inequívoca), elegí exactamente: Actividades programadas.\n"
-                    "6) Prohibido: múltiples temas, explicaciones, texto adicional o un tema fuera de la lista.\n\n"
-                    f"TEXTO:\n{texto}\n\n"
-                    "RESPUESTA (solo el nombre exacto del tema):"
-                )
-
-                headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-                data = {
-                    "model": GPT_MODEL,
-                    "messages": [
-                        {"role": "system", "content": system_msg},
-                        {"role": "user", "content": user_msg},
-                    ],
-                    "temperature": 0.0,
-                    "max_tokens": 20,
-                }
-
-                response = _gpt_request_with_retry(headers, data)
-                if response:
-                    result = response.json()
-                    content = result["choices"][0]["message"]["content"].strip()
-
-                    # Saneo mínimo de salida (quitar comillas/puntos sueltos)
-                    content = content.strip().strip('"').strip("'").rstrip(".").strip()
-
-                    # Validación estricta
-                    if content in lista_temas:
-                        logging.info(f"✅ {GPT_MODEL} clasificó tema como: {content}")
-                        return content
-
-                    # Intento de match por casefold (sin alterar la decisión final)
-                    mapeo_lower = {t.casefold(): t for t in lista_temas}
-                    if content.casefold() in mapeo_lower:
-                        logging.info(f" Aplicando casefold matching: '{content}' → '{mapeo_lower[content.casefold()]}'")
-                        return mapeo_lower[content.casefold()]
-
-                    # Si no es válido → fallback a Ollama
-                else:
-                    logging.warning(f"GPT tema falló al clasificar tema.")
-                    logging.info(f"🔄 {GPT_MODEL} no pudo clasificar, activando fallback a Ollama...")
-
-        # Fallback a Ollama (misma lógica que el proyecto usa hoy)
-        try:
-            from O_Utils_Ollama import clasificar_tema_ollama
-            resultado_ollama = clasificar_tema_ollama(
-                texto,
-                lista_temas,
-                tipo_publicacion,
-            )
-            logging.info(f"✅ Ollama clasificó tema como: {resultado_ollama}")
-            return resultado_ollama
-        except Exception as e:
-            logging.error(f"Fallback Ollama tema falló: {e}")
-            return "Actividades programadas"
+def _fallback_a_ollama_tema(texto: str, lista_temas: List[str], tipo_publicacion: Optional[str] = None) -> str:
+    """
+    Función auxiliar para fallback a Ollama cuando GPT falla.
+    """
+    try:
+        from O_Utils_Ollama import clasificar_tema_ollama
+        resultado_ollama = clasificar_tema_ollama(texto, lista_temas, tipo_publicacion)
+        logging.info(f"✅ Ollama clasificó tema como: {resultado_ollama}")
+        return resultado_ollama
+    except Exception as e:
+        logging.error(f"❌ Fallback Ollama tema falló: {e}")
+        return "Actividades programadas"
 
     except Exception as e:
         logging.error(f"Error inesperado en clasificar_tema_con_gpt: {e}")
@@ -346,13 +382,13 @@ def clasificar_tema_con_ia(
     gpt_active: bool = True,
 ) -> str:
     """
-    Interfaz unificada similar a valorar_con_ia:
+    Interfaz unificada para clasificación de temas:
     - Si gpt_active y hay API key → intenta GPT (clasificar_tema_con_gpt)
     - Si falla o está desactivado → fallback a Ollama (clasificar_tema_ollama)
     """
     try:
         if not texto or not lista_temas:
-            return "Revisar Manual"
+            return "Actividades programadas"
 
         if gpt_active:
             resultado = clasificar_tema_con_gpt(
@@ -372,7 +408,7 @@ def clasificar_tema_con_ia(
             tipo_publicacion,
         )
     except Exception as e:
-        logging.error(f"clasificar_tema_con_ia error: {e}")
+        logging.error(f"❌ clasificar_tema_con_ia error: {e}")
         return "Actividades programadas"
 
 

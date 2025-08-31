@@ -405,19 +405,20 @@ def _promptear_clasificacion_tema_ollama(texto, lista_temas):
     # Construir lista textual completa de temas (lista cerrada de elegibles)
     temas_str = "\n".join([f"- {t}" for t in lista_temas])
 
-    # Armar prompt simplificado
+    # Armar prompt simplificado (versión mejorada)
     prompt = (
-        f"Asigná UNO y solo UNO de los siguientes temas a la noticia (lista cerrada):\n{temas_str}\n\n"
-        "REGLAS DE DECISIÓN (aplicá en este orden):\n"
-        "A) Coincidencia literal: si el nombre de un tema de la lista aparece en el TÍTULO o CUERPO (sin sensibilidad a mayúsculas/acentos y tolerando signos como °), elegí ese tema.\n"
-        "B) Múltiples coincidencias: elegí el MÁS ESPECÍFICO (el texto más largo) o el que aparezca en el TÍTULO.\n"
-        "C) Sin coincidencia literal: podés elegir un tema por PARÁFRASIS solo si la evidencia es inequívoca (mismo evento/proyecto reconocido). Si hay dudas, NO arriesgues.\n"
-        "D) Fallback: si no hay evidencia clara de un tema concreto, asigná 'Actividades programadas'.\n"
-        "E) Nunca inventes ni modifiques nombres: la respuesta debe ser exactamente uno de los provistos.\n\n"
-        "SALIDA:\n"
-        "- Respondé ÚNICAMENTE con el nombre exacto de un tema de la lista.\n"
-        "- Sin comentarios ni explicaciones.\n\n"
-        f"TEXTO A ANALIZAR:\n{texto}\n"
+        f"ANALIZA esta noticia (título + cuerpo completo) y asígnale el tema MÁS ADECUADO de la lista disponible.\n\n"
+        f"IMPORTANTE: Solo puedes elegir de esta lista, NO inventes temas:\n{temas_str}\n\n"
+        "CRITERIOS DE EVALUACIÓN (APLICAR EN ESTE ORDEN):\n"
+        "1. PRIORIDAD ALTA: Si el nombre EXACTO de un tema aparece en el título o cuerpo → elegir ese tema\n"
+        "2. PRIORIDAD MEDIA: Si hay palabras clave específicas de un tema (ej: 'BAFICI', 'Juventus Lyrica', 'Abasto') → elegir ese tema\n"
+        "3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir 'Actividades programadas'\n\n"
+        "REGLAS IMPORTANTES:\n"
+        "- NUNCA ignores un tema específico que está claramente mencionado en el texto\n"
+        "- Los temas genéricos son SOLO para noticias que realmente no encajan con temas específicos\n"
+        "- Si hay dudas entre temas similares, elige el MÁS ESPECÍFICO\n\n"
+        f"NOTICIA A ANALIZAR:\n{texto}\n\n"
+        "RESPUESTA: Responde ÚNICAMENTE con el nombre exacto del tema elegido (sin comillas, sin puntos, sin texto adicional)."
     )
     
     data = {"model": MODELO_OLLAMA, "prompt": prompt, "stream": False, "options": {"temperature": 0}}
