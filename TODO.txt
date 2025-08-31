@@ -6,7 +6,7 @@ Testear a fondo las funciones optimizadas para asegurar que funcionen correctame
 
 ## 📋 CHECKLIST DE TESTING
 - [ ] Testear `valorar_noticia_con_ollama` a fondo y con GPT
-Testear Es_AGENDA_GPT
+- [ ] Testear Es_AGENDA_GPT; NO recuerdo por que quedó esto, pero bueno se le puede pegar un último chequeito. 
 
 
 
