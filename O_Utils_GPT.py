@@ -150,7 +150,7 @@ def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Option
             {"role": "system", "content": "Eres un clasificador de noticias especializado en identificar contenido negativo."},
             {"role": "user", "content": prompt}
         ],
-        "temperature": 0.1,  # Baja temperatura para respuestas más consistentes
+        "temperature": 0.0,  # Baja temperatura para respuestas más consistentes
         "max_tokens": 10
     }
     

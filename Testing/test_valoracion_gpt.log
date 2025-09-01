@@ -1,0 +1,724 @@
+2025-09-01 18:02:52,923 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:02:55,175 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:02:55,447 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:02:57,409 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:02:57,653 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:02:59,505 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:00,291 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:01,431 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:01,962 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:02,608 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:02,879 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:04,398 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:04,599 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:06,106 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:06,320 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:06,916 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:07,099 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:08,563 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:08,753 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:09,365 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:09,563 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:11,879 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:12,089 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:12,766 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:17,086 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:18,044 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:18,240 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:18,914 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:19,126 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:20,484 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:20,664 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:21,917 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:22,228 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:22,781 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:22,976 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:24,248 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:24,480 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:25,110 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:25,289 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:25,818 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:26,007 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:26,968 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:27,183 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:28,670 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:28,909 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:29,855 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:30,063 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:31,853 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:32,031 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:32,621 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:32,887 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:34,089 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:34,293 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:35,512 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:35,685 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:36,314 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:36,498 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:36,959 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:03:37,280 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:37,957 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:38,143 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:39,000 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:39,174 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:03:40,211 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:48,854 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:49,850 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:50,521 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:51,706 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:52,297 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:53,014 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:53,592 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:54,393 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:55,078 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:55,837 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:56,576 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:57,889 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:58,749 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:03:59,344 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:04:00,618 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:04:01,238 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:01,941 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:02,457 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:03,328 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:04,124 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:04,960 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:04:05,755 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:06,757 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:07,246 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:07,750 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:18,160 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:04:18,864 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:19,131 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:19,591 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:04:20,876 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:04:21,613 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:04:22,377 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (sin heurística)
+2025-09-01 18:20:50,684 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:20:51,415 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:20:51,693 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:20:52,648 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:20:54,226 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:20:55,095 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:20:57,639 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:20:58,871 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:20:59,748 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:00,365 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:00,636 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:01,148 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:01,330 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:01,924 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:02,136 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:03,004 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:03,201 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:03,984 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:04,158 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:04,986 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:05,208 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:05,751 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:05,956 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:06,600 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:06,813 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:07,597 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:07,801 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:08,606 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:08,788 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:09,555 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:09,726 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:10,490 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:12,547 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:13,093 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:13,292 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:14,129 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:17,420 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:18,016 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:18,204 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:18,869 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:19,066 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:19,756 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:19,958 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:20,757 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:21,366 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:21,835 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:22,027 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:22,533 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:22,737 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:23,293 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:23,583 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:24,851 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:25,054 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:25,647 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:25,824 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:26,339 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:26,532 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:27,077 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:27,393 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:27,985 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:28,177 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:28,886 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:29,039 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:21:29,666 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:36,873 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:37,863 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:38,496 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:39,640 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:40,111 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:40,804 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:41,380 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:42,182 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:42,862 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:43,604 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:44,348 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:45,656 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:46,513 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:47,097 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:48,372 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:21:48,975 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:49,550 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:50,081 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:50,943 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:51,744 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:52,587 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:21:53,394 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:54,257 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:54,700 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:21:55,182 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:22:05,643 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:22:06,363 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:22:06,622 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:22:07,060 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:22:08,302 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:22:09,041 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:22:09,827 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:29:44,481 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:45,374 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:45,648 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:46,159 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:29:46,420 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:46,990 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:47,578 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:48,394 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:29:48,659 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:49,314 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:49,490 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:50,157 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:50,348 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:51,203 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:29:51,395 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:52,009 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:29:52,186 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:52,894 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:53,054 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:54,222 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:29:54,432 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:55,288 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:29:55,489 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:56,150 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:56,368 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:56,826 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:57,056 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:58,617 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:58,853 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:29:59,467 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:29:59,649 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:30:00,236 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:30:00,828 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:30:01,462 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:30:01,495 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=20402381 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90ed80>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,539 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=20271878 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a932210>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,577 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=19799678 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a932a80>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,615 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=19674630 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a933380>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,648 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=18961573 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a933c80>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,679 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=17867914 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90f500>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,715 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=17918357 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90ee10>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,753 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=17815252 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90cd40>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,785 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89819217 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90d550>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,817 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89161318 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90df70>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,849 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89163058 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c3e0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,875 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89129117 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90dd30>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,901 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24291597 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90d8e0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,932 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24070877 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90d010>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:01,967 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=23561903 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c650>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,004 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24313595 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90fce0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,033 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24423099 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c9b0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,065 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24423181 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90eba0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,091 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24301580 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90fdd0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,116 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24301733 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c680>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,151 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24301275 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90ccb0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,185 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24361465 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90d940>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,218 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24340866 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90e120>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,244 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24326655 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7b0f8bc0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,269 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24192610 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90d280>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,295 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24172624 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90cad0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,341 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24187599 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90f560>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,380 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24189134 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90f530>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,411 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24196084 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90f0e0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,453 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24196152 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90f980>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,481 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=22838274 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c200>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,520 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=20420667 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90fe90>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,552 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=20402381 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c770>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,583 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=20271878 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90cf50>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,623 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=19799678 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90f350>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,650 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=19674630 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90df10>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,693 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=18961573 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90e330>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,733 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=17867914 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90f350>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,763 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=17918357 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90cf50>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,795 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=17815252 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c770>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,837 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89819217 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90ee70>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,869 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89161318 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c200>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,899 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89163058 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7b0fba70>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,934 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=89129117 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c7d0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,958 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24291597 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90c9e0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:02,995 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=24070877 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90d490>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:30:03,021 - ERROR - 🚫 Error PERMANENTE (servidor caído): https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903 - HTTPSConnectionPool(host='culturagcba.clientes.ejes.com', port=443): Max retries exceeded with url: /noticia_completa.cfm?id=23561903 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x721c7a90db80>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-09-01 18:45:35,536 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:35,536 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
+2025-09-01 18:45:36,590 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
+2025-09-01 18:45:36,590 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:37,500 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:37,500 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:37,500 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099
+2025-09-01 18:45:37,744 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099
+2025-09-01 18:45:37,744 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:38,375 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:45:38,375 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:38,375 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181
+2025-09-01 18:45:38,590 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181
+2025-09-01 18:45:38,590 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:39,432 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:39,433 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:39,433 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580
+2025-09-01 18:45:40,159 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580
+2025-09-01 18:45:40,159 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:40,919 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:40,919 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:40,919 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733
+2025-09-01 18:45:41,112 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733
+2025-09-01 18:45:41,112 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:41,724 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:41,724 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:41,724 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275
+2025-09-01 18:45:41,887 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275
+2025-09-01 18:45:41,887 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:43,266 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:43,266 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:43,266 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465
+2025-09-01 18:45:43,456 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465
+2025-09-01 18:45:43,456 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:44,252 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:45:44,252 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:44,252 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866
+2025-09-01 18:45:44,506 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866
+2025-09-01 18:45:44,507 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:45,758 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:45:45,759 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:45,759 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655
+2025-09-01 18:45:45,888 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655
+2025-09-01 18:45:45,888 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:46,310 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:46,311 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:46,311 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610
+2025-09-01 18:45:46,460 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610
+2025-09-01 18:45:46,460 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:47,346 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:45:47,346 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:47,346 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624
+2025-09-01 18:45:47,490 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624
+2025-09-01 18:45:47,491 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:48,619 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:45:48,619 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:48,619 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599
+2025-09-01 18:45:48,789 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599
+2025-09-01 18:45:48,789 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:49,635 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:49,635 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:49,636 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134
+2025-09-01 18:45:49,812 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134
+2025-09-01 18:45:49,812 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:50,312 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:50,312 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:50,312 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084
+2025-09-01 18:45:50,491 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084
+2025-09-01 18:45:50,491 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:51,215 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:51,215 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:51,215 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152
+2025-09-01 18:45:51,387 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152
+2025-09-01 18:45:51,387 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:52,517 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:45:52,517 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:52,517 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274
+2025-09-01 18:45:52,677 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274
+2025-09-01 18:45:52,677 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:53,342 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:53,342 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:53,342 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667
+2025-09-01 18:45:53,965 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667
+2025-09-01 18:45:53,966 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:54,609 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:54,610 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:54,610 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381
+2025-09-01 18:45:54,781 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381
+2025-09-01 18:45:54,781 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:55,308 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:55,308 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:55,308 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878
+2025-09-01 18:45:55,533 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878
+2025-09-01 18:45:55,533 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:56,110 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:56,111 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:56,111 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678
+2025-09-01 18:45:56,315 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678
+2025-09-01 18:45:56,315 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:57,148 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:57,149 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:57,149 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630
+2025-09-01 18:45:57,338 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630
+2025-09-01 18:45:57,338 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:57,929 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:57,929 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:57,929 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573
+2025-09-01 18:45:58,132 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573
+2025-09-01 18:45:58,132 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:45:59,223 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:45:59,223 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:45:59,223 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914
+2025-09-01 18:45:59,601 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914
+2025-09-01 18:45:59,601 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:00,168 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:00,168 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:00,168 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357
+2025-09-01 18:46:00,383 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357
+2025-09-01 18:46:00,383 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:01,074 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:01,074 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:01,075 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252
+2025-09-01 18:46:01,271 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252
+2025-09-01 18:46:01,271 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:01,979 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:01,979 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:01,979 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217
+2025-09-01 18:46:02,255 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217
+2025-09-01 18:46:02,255 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:03,108 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:03,109 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:03,109 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318
+2025-09-01 18:46:03,303 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318
+2025-09-01 18:46:03,303 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:04,106 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:04,107 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:04,107 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058
+2025-09-01 18:46:04,270 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058
+2025-09-01 18:46:04,270 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:04,903 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:04,903 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:04,903 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117
+2025-09-01 18:46:05,116 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117
+2025-09-01 18:46:05,116 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:05,609 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:05,609 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:05,609 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597
+2025-09-01 18:46:05,902 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597
+2025-09-01 18:46:05,902 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:06,380 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:06,380 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:06,380 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877
+2025-09-01 18:46:06,550 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877
+2025-09-01 18:46:06,550 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:07,647 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:07,647 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:07,647 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903
+2025-09-01 18:46:07,818 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903
+2025-09-01 18:46:07,818 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 18:46:08,606 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:08,606 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:08,606 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
+2025-09-01 18:46:08,836 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
+2025-09-01 18:46:16,462 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:16,462 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:16,462 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099
+2025-09-01 18:46:16,684 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099
+2025-09-01 18:46:17,447 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:17,447 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:17,447 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181
+2025-09-01 18:46:17,649 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181
+2025-09-01 18:46:18,070 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:18,070 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:18,070 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580
+2025-09-01 18:46:18,285 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580
+2025-09-01 18:46:19,198 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:19,198 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:19,198 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733
+2025-09-01 18:46:19,428 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733
+2025-09-01 18:46:19,682 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:19,682 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:19,682 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275
+2025-09-01 18:46:19,844 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275
+2025-09-01 18:46:20,377 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:20,377 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:20,377 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465
+2025-09-01 18:46:20,526 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465
+2025-09-01 18:46:20,957 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:20,957 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:20,957 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866
+2025-09-01 18:46:21,129 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866
+2025-09-01 18:46:21,761 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:21,761 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:21,761 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655
+2025-09-01 18:46:21,905 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655
+2025-09-01 18:46:22,449 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:22,449 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:22,449 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610
+2025-09-01 18:46:22,597 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610
+2025-09-01 18:46:23,211 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:23,211 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:23,211 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624
+2025-09-01 18:46:23,380 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624
+2025-09-01 18:46:23,944 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:23,944 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:23,944 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599
+2025-09-01 18:46:24,114 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599
+2025-09-01 18:46:25,240 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:25,240 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:25,240 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134
+2025-09-01 18:46:25,410 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134
+2025-09-01 18:46:26,092 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:26,092 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:26,092 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084
+2025-09-01 18:46:26,255 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084
+2025-09-01 18:46:26,689 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:26,689 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:26,689 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152
+2025-09-01 18:46:26,856 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152
+2025-09-01 18:46:27,960 - INFO - Valoración: Ollama → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 18:46:27,960 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:27,961 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274
+2025-09-01 18:46:28,098 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274
+2025-09-01 18:46:28,562 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:28,562 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:28,562 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667
+2025-09-01 18:46:28,767 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667
+2025-09-01 18:46:28,965 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:28,965 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:28,965 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381
+2025-09-01 18:46:29,137 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381
+2025-09-01 18:46:29,476 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:29,477 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:29,477 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878
+2025-09-01 18:46:29,663 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878
+2025-09-01 18:46:30,357 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:30,357 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:30,357 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678
+2025-09-01 18:46:30,520 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678
+2025-09-01 18:46:31,156 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:31,156 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:31,156 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630
+2025-09-01 18:46:31,311 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630
+2025-09-01 18:46:31,991 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:31,991 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:31,991 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573
+2025-09-01 18:46:32,146 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573
+2025-09-01 18:46:32,763 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:32,763 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:32,763 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914
+2025-09-01 18:46:37,223 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914
+2025-09-01 18:46:37,909 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:37,909 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:37,909 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357
+2025-09-01 18:46:38,062 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357
+2025-09-01 18:46:38,382 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:38,382 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:38,382 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252
+2025-09-01 18:46:38,559 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252
+2025-09-01 18:46:38,882 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:38,882 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:38,882 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217
+2025-09-01 18:46:39,129 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217
+2025-09-01 18:46:49,287 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:49,287 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:49,287 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318
+2025-09-01 18:46:49,477 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318
+2025-09-01 18:46:50,008 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:50,008 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:50,008 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058
+2025-09-01 18:46:50,158 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058
+2025-09-01 18:46:50,286 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:50,286 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:50,286 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117
+2025-09-01 18:46:50,444 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117
+2025-09-01 18:46:50,755 - INFO - Valoración: Ollama → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 18:46:50,755 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:50,755 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597
+2025-09-01 18:46:50,976 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597
+2025-09-01 18:46:52,010 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:52,010 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:52,010 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877
+2025-09-01 18:46:52,193 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877
+2025-09-01 18:46:52,768 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 18:46:52,769 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903 (tipo: texto, max_reintentos: 3)
+2025-09-01 18:46:52,769 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903
+2025-09-01 18:46:52,918 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903
+2025-09-01 18:46:53,552 - INFO - Valoración: Ollama → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:14,286 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:14,286 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
+2025-09-01 19:04:14,894 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
+2025-09-01 19:04:14,894 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:15,810 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:15,810 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:15,810 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099
+2025-09-01 19:04:16,043 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423099
+2025-09-01 19:04:16,043 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:16,805 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:16,805 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:16,805 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181
+2025-09-01 19:04:17,021 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24423181
+2025-09-01 19:04:17,021 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:18,095 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:18,095 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:18,095 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580
+2025-09-01 19:04:18,612 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301580
+2025-09-01 19:04:18,612 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:19,163 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:19,163 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:19,163 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733
+2025-09-01 19:04:19,390 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301733
+2025-09-01 19:04:19,390 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:20,167 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:20,168 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:20,168 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275
+2025-09-01 19:04:20,332 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24301275
+2025-09-01 19:04:20,332 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:21,104 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:21,104 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:21,104 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465
+2025-09-01 19:04:21,262 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24361465
+2025-09-01 19:04:21,262 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:22,142 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:22,142 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:22,142 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866
+2025-09-01 19:04:22,337 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24340866
+2025-09-01 19:04:22,338 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:23,176 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:23,177 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:23,177 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655
+2025-09-01 19:04:23,323 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24326655
+2025-09-01 19:04:23,323 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:24,410 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:24,410 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:24,410 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610
+2025-09-01 19:04:24,569 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24192610
+2025-09-01 19:04:24,569 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:25,102 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:25,103 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:25,103 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624
+2025-09-01 19:04:25,265 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24172624
+2025-09-01 19:04:25,265 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:26,059 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:26,060 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:26,060 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599
+2025-09-01 19:04:26,225 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24187599
+2025-09-01 19:04:26,225 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:27,396 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:27,397 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:27,397 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134
+2025-09-01 19:04:27,568 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24189134
+2025-09-01 19:04:27,569 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:28,281 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:28,281 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:28,281 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084
+2025-09-01 19:04:28,442 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084
+2025-09-01 19:04:28,442 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:29,298 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:29,298 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:29,298 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152
+2025-09-01 19:04:29,491 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196152
+2025-09-01 19:04:29,491 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:30,212 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → NEUTRA (heurística aplicada)
+2025-09-01 19:04:30,212 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:30,212 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274
+2025-09-01 19:04:30,364 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22838274
+2025-09-01 19:04:30,364 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:31,341 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:31,341 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:31,341 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667
+2025-09-01 19:04:31,929 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20420667
+2025-09-01 19:04:31,930 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:32,707 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:32,707 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:32,707 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381
+2025-09-01 19:04:32,906 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20402381
+2025-09-01 19:04:32,906 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:33,354 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:33,354 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:33,354 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878
+2025-09-01 19:04:33,543 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=20271878
+2025-09-01 19:04:33,544 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:34,380 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:34,380 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:34,380 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678
+2025-09-01 19:04:34,551 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19799678
+2025-09-01 19:04:34,551 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:35,303 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:35,303 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:35,303 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630
+2025-09-01 19:04:35,485 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=19674630
+2025-09-01 19:04:35,485 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:36,212 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:36,213 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:36,213 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573
+2025-09-01 19:04:36,378 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18961573
+2025-09-01 19:04:36,378 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:36,967 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:36,967 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:36,967 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914
+2025-09-01 19:04:37,531 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17867914
+2025-09-01 19:04:37,531 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:37,992 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:37,992 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:37,992 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357
+2025-09-01 19:04:38,147 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17918357
+2025-09-01 19:04:38,147 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:38,861 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:38,861 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:38,861 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252
+2025-09-01 19:04:39,056 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=17815252
+2025-09-01 19:04:39,056 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:39,775 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:39,776 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:39,776 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217
+2025-09-01 19:04:40,069 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89819217
+2025-09-01 19:04:40,069 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:41,896 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:41,897 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:41,897 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318
+2025-09-01 19:04:42,092 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89161318
+2025-09-01 19:04:42,092 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:42,625 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:42,625 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:42,625 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058
+2025-09-01 19:04:45,863 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89163058
+2025-09-01 19:04:45,863 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:47,031 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:47,031 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:47,032 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117
+2025-09-01 19:04:47,188 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=89129117
+2025-09-01 19:04:47,188 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:47,796 - INFO - Valoración: GPT-gpt-3.5-turbo → NEGATIVA → NEGATIVA (sin heurística)
+2025-09-01 19:04:47,796 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:47,796 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597
+2025-09-01 19:04:48,103 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24291597
+2025-09-01 19:04:48,103 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:48,817 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:48,817 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:48,818 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877
+2025-09-01 19:04:48,987 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24070877
+2025-09-01 19:04:48,987 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:49,884 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:49,884 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:49,884 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903
+2025-09-01 19:04:50,013 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23561903
+2025-09-01 19:04:50,013 - INFO - API key de OpenAI encontrada en .env
+2025-09-01 19:04:50,500 - INFO - Valoración: GPT-gpt-3.5-turbo → NO_NEGATIVA → POSITIVA (heurística aplicada)
+2025-09-01 19:04:50,500 - INFO - 🔄 Iniciando procesamiento robusto de https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595 (tipo: texto, max_reintentos: 3)
+2025-09-01 19:04:50,500 - INFO - 🌐 Intento 1/3 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
+2025-09-01 19:04:50,732 - INFO - ✅ Éxito en intento 1 para https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24313595
