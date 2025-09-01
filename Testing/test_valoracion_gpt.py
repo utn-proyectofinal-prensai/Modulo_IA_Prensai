@@ -21,7 +21,7 @@ from datetime import datetime
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from O_Utils_GPT import valorar_con_ia
-from Z_Utils import procesar_link_robusto
+from Z_Utils import procesar_link_robusto, marcar_o_valorar_con_ia
 
 # Configurar logging
 logging.basicConfig(
@@ -32,6 +32,9 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
+
+# Límite de texto para valoración (igual que en la API)
+LIMITE_TEXTO = 14900
 
 # CASOS DE TEST - 32 URLs con valoraciones humanas
 casos_test = [
@@ -198,12 +201,16 @@ def test_valoracion_gpt_35():
                 })
                 continue
             
-            # Valorar con GPT-3.5
-            valoracion_ia = valorar_con_ia(
-                texto, 
-                gpt_active=True,
-                ministro_key_words=["Gabriela Ricardes", "Ministra de Cultura", "Victoria Noorthoorn", "Gerardo Grieco", "Jorge Macri"],
-                ministerios_key_words=["Ministerio de Cultura", "Ministerio de Cultura de Buenos Aires"]
+            # Valorar con GPT-3.5 usando marcar_o_valorar_con_ia (como en la API)
+            valoracion_ia = marcar_o_valorar_con_ia(
+                texto,
+                lambda t: valorar_con_ia(
+                    t, 
+                    gpt_active=True,
+                    ministro_key_words=["Gabriela Ricardes", "Ministra de Cultura", "Victoria Noorthoorn", "Gerardo Grieco", "Jorge Macri"],
+                    ministerios_key_words=["Ministerio de Cultura", "Ministerio de Cultura de Buenos Aires"]
+                ),
+                LIMITE_TEXTO
             )
             
             # Verificar acierto
@@ -277,12 +284,16 @@ def test_valoracion_ollama():
                 })
                 continue
             
-            # Valorar con Ollama
-            valoracion_ia = valorar_con_ia(
-                texto, 
-                gpt_active=False,
-                ministro_key_words=["Gabriela Ricardes", "Ministra de Cultura", "Victoria Noorthoorn", "Gerardo Grieco", "Jorge Macri"],
-                ministerios_key_words=["Ministerio de Cultura", "Ministerio de Cultura de Buenos Aires"]
+            # Valorar con Ollama usando marcar_o_valorar_con_ia (como en la API)
+            valoracion_ia = marcar_o_valorar_con_ia(
+                texto,
+                lambda t: valorar_con_ia(
+                    t, 
+                    gpt_active=False,
+                    ministro_key_words=["Gabriela Ricardes", "Ministra de Cultura", "Victoria Noorthoorn", "Gerardo Grieco", "Jorge Macri"],
+                    ministerios_key_words=["Ministerio de Cultura", "Ministerio de Cultura de Buenos Aires"]
+                ),
+                LIMITE_TEXTO
             )
             
             # Verificar acierto

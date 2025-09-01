@@ -865,7 +865,7 @@ def get_gestion_from_html_obj(html_obj):
     
     return "REBOTE"
 
-def marcar_o_valorar_con_ia(texto, funcion_ia, limite):
+def marcar_o_valorar_con_ia(texto, funcion_ia, limite, url_id=None):
     """
     Función unificada para manejar el límite de texto en funciones de IA.
     Si el texto es muy largo o nulo, devuelve 'REVISAR MANUAL'.
@@ -875,12 +875,21 @@ def marcar_o_valorar_con_ia(texto, funcion_ia, limite):
         texto (str): Texto a procesar
         funcion_ia (function): Función de IA a aplicar (puede ser GPT u Ollama)
         limite (int): Límite de caracteres permitidos
+        url_id (str, optional): ID o URL para logging
         
     Returns:
         str: Resultado de la función IA o "REVISAR MANUAL"
     """
-    if pd.isnull(texto) or len(texto) > limite:
+    import logging
+    
+    if pd.isnull(texto) or not texto:
+        logging.warning(f"⚠️ Texto es nulo o vacío (URL: {url_id}) -> REVISAR MANUAL")
         return "REVISAR MANUAL"
+    
+    if len(texto) > limite:
+        logging.warning(f"⚠️ Texto excede límite: {len(texto):,} chars > {limite:,} (URL: {url_id}) -> REVISAR MANUAL")
+        return "REVISAR MANUAL"
+    
     return funcion_ia(texto)
 
 def normalizar_medio(medio):

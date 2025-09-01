@@ -228,30 +228,36 @@ def procesar_noticias_con_ia(
         logging.info(f"🤖 Iniciando procesamiento con IA para {len(df_contenido_valido)} URLs válidas...")
         
         # Clasificación de tipo de publicación (GPT con fallback a Ollama)
-        df_contenido_valido['TIPO PUBLICACION'] = df_contenido_valido['TEXTO_PLANO'].apply(
-            lambda x: Z.marcar_o_valorar_con_ia(
-                x, 
+        df_contenido_valido['TIPO PUBLICACION'] = df_contenido_valido.apply(
+            lambda row: Z.marcar_o_valorar_con_ia(
+                row['TEXTO_PLANO'], 
                 lambda t: Gpt.clasificar_tipo_publicacion_con_ia(t, ministro_key_words, ministerios_key_words, gpt_active), 
-                limite_texto
-            )
+                limite_texto,
+                row['LINK']
+            ),
+            axis=1
         )
         
         # Factor político
-        df_contenido_valido['FACTOR POLITICO'] = df_contenido_valido['TEXTO_PLANO'].apply(
-            lambda x: Z.marcar_o_valorar_con_ia(
-                x, 
+        df_contenido_valido['FACTOR POLITICO'] = df_contenido_valido.apply(
+            lambda row: Z.marcar_o_valorar_con_ia(
+                row['TEXTO_PLANO'], 
                 Oll.detectar_factor_politico_con_ollama, 
-                limite_texto
-            )
+                limite_texto,
+                row['LINK']
+            ),
+            axis=1
         )
         
         # Valoración
-        df_contenido_valido['VALORACION'] = df_contenido_valido['TEXTO_PLANO'].apply(
-            lambda x: Z.marcar_o_valorar_con_ia(
-                x, 
+        df_contenido_valido['VALORACION'] = df_contenido_valido.apply(
+            lambda row: Z.marcar_o_valorar_con_ia(
+                row['TEXTO_PLANO'], 
                 lambda t: Gpt.valorar_con_ia(t, ministro_key_words=ministro_key_words, ministerios_key_words=ministerios_key_words, gpt_active=gpt_active), 
-                limite_texto
-            )
+                limite_texto,
+                row['LINK']
+            ),
+            axis=1
         )
         
         # Clasificación de temas
@@ -264,7 +270,8 @@ def procesar_noticias_con_ia(
                     tipo_publicacion=row['TIPO PUBLICACION'],
                     gpt_active=gpt_active
                 ), 
-                limite_texto
+                limite_texto,
+                row['LINK']
             ), 
             axis=1
         )
@@ -285,7 +292,7 @@ def procesar_noticias_con_ia(
         
                 
         # 13. Limpiar DataFrame para respuesta
-        df_final = df_contenido_valido.drop(columns=['HTML_OBJ', 'TEXTO_PLANO'])
+        df_final = df_contenido_valido.drop(columns=['HTML_OBJ'])
         
         # Medición tiempo final
         t1 = time.time()

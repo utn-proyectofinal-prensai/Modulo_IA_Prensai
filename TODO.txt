@@ -5,8 +5,6 @@
 Testear a fondo las funciones optimizadas para asegurar que funcionen correctamente.
 
 ## 📋 CHECKLIST DE TESTING
-- [ ] Testear Es_AGENDA_GPT; NO recuerdo por que quedó esto, pero bueno se le puede pegar un último chequeito. 
-- Mandar TEXTO_PLANO. 
 -Ver el tema del Limite de texto, si lo dejamos como una limitacion del modelo. 
 -ver el tema de VALORACION si usa las mismas key_words que ministro/ministerio. 
 
