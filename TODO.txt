@@ -8,3 +8,5 @@ Testear a fondo las funciones optimizadas para asegurar que funcionen correctame
 -Ver el tema del Limite de texto, si lo dejamos como una limitacion del modelo. 
 -ver el tema de VALORACION si usa las mismas key_words que ministro/ministerio. 
 
+revisar que pasa con TEMA y la rta predeterminada con agenda_tema y si hay algun tipo de validacion con que NO esté en la lista 
+de temas recibida , y si ademas estamos normalizando de alguna forma la respuesta? 

@@ -201,16 +201,14 @@ def procesar_link_robusto(link, tipo='texto', max_reintentos=3):
         - Si tipo='html': objeto BeautifulSoup parseado
         - None si falla definitivamente después de todos los intentos
     """
-    logging.info(f"🔄 Iniciando procesamiento robusto de {link} (tipo: {tipo}, max_reintentos: {max_reintentos})")
     
     for intento in range(max_reintentos):
         try:
-            logging.info(f"🌐 Intento {intento + 1}/{max_reintentos} para {link}")
             
             if tipo == 'texto':
                 resultado = get_texto_plano_from_link(link)
                 if resultado:
-                    logging.info(f"✅ Éxito en intento {intento + 1} para {link}")
+                    logging.info(f"✅ Extraído (intento {intento + 1}): {link}")
                     return resultado
                 else:
                     logging.warning(f"⚠️ Intento {intento + 1} falló (sin resultado) para {link}")
@@ -218,7 +216,7 @@ def procesar_link_robusto(link, tipo='texto', max_reintentos=3):
             elif tipo == 'html':
                 resultado = get_html_object_from_link(link)
                 if resultado:
-                    logging.info(f"✅ Éxito en intento {intento + 1} para {link}")
+                    logging.info(f"✅ Extraído (intento {intento + 1}): {link}")
                     return resultado
                 else:
                     logging.warning(f"⚠️ Intento {intento + 1} falló (sin resultado) para {link}")

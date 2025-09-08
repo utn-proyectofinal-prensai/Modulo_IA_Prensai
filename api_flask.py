@@ -69,9 +69,10 @@ CAMPOS_FIJOS = [
 def procesar_noticias_con_ia(
     urls: list,
     temas: list,
+    tema_agenda: str,
     menciones: list = None,
     ministro_key_words: list = None,
-    ministerios_key_words: list = None
+    ministerios_key_words: list = None,
 ) -> dict:
     """
     Función principal que procesa las noticias usando IA
@@ -268,7 +269,8 @@ def procesar_noticias_con_ia(
                     texto=t,
                     lista_temas=temas,
                     tipo_publicacion=row['TIPO PUBLICACION'],
-                    gpt_active=gpt_active
+                    gpt_active=gpt_active,
+                    tema_agenda=tema_agenda
                 ), 
                 limite_texto,
                 row['LINK']
@@ -382,6 +384,8 @@ def validar_parametros_noticias(data):
         menciones = data.get('menciones', [])
         ministro_key_words = data.get('ministro_key_words', [])
         ministerios_key_words = data.get('ministerios_key_words', [])
+        tema_agenda = data.get('tema_agenda', '')  # ← NUEVO CAMPO
+
         
         # Validaciones adicionales
         if not urls:
@@ -415,13 +419,19 @@ def validar_parametros_noticias(data):
                 "error": "Campo 'ministerios_key_words' debe ser una lista"
             }, None
         
+        if not tema_agenda:
+            return False, {
+                "error": "Campo 'tema_agenda' es obligatorio"
+            }, None
+        
         # Si todo está bien, retornar datos validados
         datos_validados = {
             'urls': urls,
             'temas': temas,
             'menciones': menciones if menciones else None,
             'ministro_key_words': ministro_key_words if ministro_key_words else None,
-            'ministerios_key_words': ministerios_key_words if ministerios_key_words else None
+            'ministerios_key_words': ministerios_key_words if ministerios_key_words else None,
+            'tema_agenda': tema_agenda
         }
         
         return True, None, datos_validados

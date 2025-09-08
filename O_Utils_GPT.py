@@ -86,7 +86,6 @@ def leer_api_key_desde_env() -> Optional[str]:
     try:
         api_key = os.getenv('OPENAI_API_KEY')
         if api_key:
-            logging.info("API key de OpenAI encontrada en .env")
             return api_key
         else:
             logging.warning("Variable OPENAI_API_KEY no encontrada en .env")
@@ -239,6 +238,7 @@ def clasificar_tema_con_gpt(
     lista_temas: List[str],
     tipo_publicacion: Optional[str] = None,
     gpt_active: bool = True,
+    tema_agenda: str = None,
 ) -> str:
     """
     Clasifica una noticia en un tema específico usando GPT-4o.
@@ -248,6 +248,7 @@ def clasificar_tema_con_gpt(
         lista_temas (List[str]): Lista de temas disponibles para elegir
         tipo_publicacion (Optional[str]): Tipo de publicación (para reglas especiales)
         gpt_active (bool): Si usar GPT (True) o fallback a Ollama (False)
+        tema_agenda (str): Tema específico para publicaciones de agenda
     
     Returns:
         str: Tema asignado (debe estar en lista_temas)
@@ -255,26 +256,26 @@ def clasificar_tema_con_gpt(
     try:
         # Validaciones básicas
         if not texto or not lista_temas:
-            return "Actividades programadas"
+            return tema_agenda
         
-        # Regla especial: si es Agenda, siempre es "Actividades programadas"
+        # Regla especial: si es Agenda, usar tema_agenda
         if tipo_publicacion == "Agenda":
-            return "Actividades programadas"
+            logging.info(f"Tema: GPT -> Heurística (Agenda) asignó tema {tema_agenda}")
+            return tema_agenda
         
         # Solo proceder si GPT está activo
         if not gpt_active:
             logging.info("🔄 GPT desactivado, usando fallback a Ollama...")
-            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion)
+            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_agenda)
         
         # Verificar API key
         api_key = leer_api_key_desde_env()
         if not api_key:
             logging.warning("⚠️ No se encontró API key de OpenAI. Usando fallback a Ollama...")
-            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion)
+            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_agenda)
         
         # Usar GPT-4o para clasificación (activando el switch)
         GPT_MODEL = switch_4o(gpt_active)
-        logging.info(f"🔍 Clasificando tema con {GPT_MODEL} para tipo: {tipo_publicacion}")
         
         # Construir lista de temas para el prompt
         temas_str = "\n".join([f"- {t}" for t in lista_temas])
@@ -293,7 +294,7 @@ def clasificar_tema_con_gpt(
             f"CRITERIOS DE EVALUACIÓN (APLICAR EN ESTE ORDEN):\n"
             f"1. PRIORIDAD ALTA: Si el nombre EXACTO de un tema aparece en el título o cuerpo → elegir ese tema\n"
             f"2. PRIORIDAD MEDIA: Si hay palabras clave específicas de un tema (ej: 'BAFICI', 'Juventus Lyrica', 'Abasto') → elegir ese tema\n"
-            f"3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir un tema genérico como 'Actividades programadas'\n\n"
+            f"3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir un tema genérico como '{tema_agenda}'\n\n"
             f"REGLAS IMPORTANTES:\n"
             f"- NUNCA ignores un tema específico que está claramente mencionado en el texto\n"
             f"- Los temas genéricos son SOLO para noticias que realmente no encajan con temas específicos\n"
@@ -331,7 +332,8 @@ def clasificar_tema_con_gpt(
                 
                 # Validar que el tema esté en la lista
                 if content in lista_temas:
-                    logging.info(f"✅ {GPT_MODEL} clasificó tema como: {content}")
+                    modelo_display = GPT_MODEL.replace("gpt-", "GPT-").replace("-turbo", "").replace("-4o", "-4o")
+                    logging.info(f"Tema: {modelo_display} -> {content}")
                     return content
                 
                 # Intento de match por casefold (sin sensibilidad a mayúsculas)
@@ -350,29 +352,28 @@ def clasificar_tema_con_gpt(
             logging.warning(f"⚠️ {GPT_MODEL} falló al clasificar tema. Usando fallback...")
         
         # Fallback a Ollama
-        return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion)
+        logging.info("🔄 GPT falló, usando fallback a Ollama...")
+        return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_agenda)
         
     except Exception as e:
         logging.error(f"❌ Error inesperado en clasificar_tema_con_gpt: {e}")
-        return "Actividades programadas"  # Fallback seguro
+        return tema_agenda
 
 
-def _fallback_a_ollama_tema(texto: str, lista_temas: List[str], tipo_publicacion: Optional[str] = None) -> str:
+def _fallback_a_ollama_tema(texto: str, lista_temas: List[str], tipo_publicacion: Optional[str] = None, tema_agenda: str = None) -> str:
     """
     Función auxiliar para fallback a Ollama cuando GPT falla.
     """
     try:
         from O_Utils_Ollama import clasificar_tema_ollama
-        resultado_ollama = clasificar_tema_ollama(texto, lista_temas, tipo_publicacion)
-        logging.info(f"✅ Ollama clasificó tema como: {resultado_ollama}")
-        return resultado_ollama
+        return clasificar_tema_ollama(texto, lista_temas, tema_agenda, tipo_publicacion)
     except Exception as e:
         logging.error(f"❌ Fallback Ollama tema falló: {e}")
-        return "Actividades programadas"
+        return tema_agenda
 
     except Exception as e:
         logging.error(f"Error inesperado en clasificar_tema_con_gpt: {e}")
-        return "Actividades programadas"
+        return tema_agenda
 
 
 def clasificar_tema_con_ia(
@@ -380,6 +381,7 @@ def clasificar_tema_con_ia(
     lista_temas: List[str],
     tipo_publicacion: Optional[str] = None,
     gpt_active: bool = True,
+    tema_agenda: str = None,
 ) -> str:
     """
     Interfaz unificada para clasificación de temas:
@@ -388,7 +390,7 @@ def clasificar_tema_con_ia(
     """
     try:
         if not texto or not lista_temas:
-            return "Actividades programadas"
+            return tema_agenda
 
         if gpt_active:
             resultado = clasificar_tema_con_gpt(
@@ -396,6 +398,7 @@ def clasificar_tema_con_ia(
                 lista_temas=lista_temas,
                 tipo_publicacion=tipo_publicacion,
                 gpt_active=True,
+                tema_agenda=tema_agenda,
             )
             if resultado:
                 return resultado
@@ -403,13 +406,14 @@ def clasificar_tema_con_ia(
         # Fallback a Ollama
         from O_Utils_Ollama import clasificar_tema_ollama
         return clasificar_tema_ollama(
-            texto,
-            lista_temas,
-            tipo_publicacion,
+            texto=texto,
+            lista_temas=lista_temas,
+            tema_agenda=tema_agenda,
+            tipo_publicacion=tipo_publicacion,
         )
     except Exception as e:
         logging.error(f"❌ clasificar_tema_con_ia error: {e}")
-        return "Actividades programadas"
+        return tema_agenda
 
 
 # =============================================================================
@@ -491,10 +495,8 @@ def es_entrevista_con_gpt(texto: str, gpt_active: bool = True) -> bool:
             
             # Normalizar respuesta
             if content in ['SI', 'SÍ', 'YES', 'TRUE', 'VERDADERO']:
-                logging.info(f"✅ {GPT_MODEL} clasificó como: Entrevista")
                 return True
             elif content in ['NO', 'FALSE', 'FALSO']:
-                logging.info(f"❌ {GPT_MODEL} clasificó como: NO Entrevista")
                 return False
             else:
                 # Si GPT devolvió algo inesperado, usar fallback
@@ -527,7 +529,7 @@ def _fallback_a_ollama_entrevista(texto: str) -> bool:
         from O_Utils_Ollama import es_entrevista_ollama
         
         resultado_ollama = es_entrevista_ollama(texto)
-        logging.info(f"✅ Fallback a Ollama completado: {resultado_ollama}")
+        logging.info(f"✅ Fallback Ollama -> No_Entrevista -> Siguiente: Nota")
         
         return resultado_ollama
         
@@ -609,10 +611,8 @@ def es_agenda_con_gpt(texto: str, gpt_active: bool = True) -> bool:
             
             # Normalizar respuesta
             if content in ['SI', 'SÍ', 'YES', 'TRUE', 'VERDADERO']:
-                logging.info(f"✅ {GPT_MODEL} clasificó como: Agenda")
                 return True
             elif content in ['NO', 'FALSE', 'FALSO']:
-                logging.info(f"❌ {GPT_MODEL} clasificó como: NO Agenda")
                 return False
             else:
                 # Si GPT devolvió algo inesperado, usar fallback
@@ -645,7 +645,7 @@ def _fallback_a_ollama_agenda(texto: str) -> bool:
         from O_Utils_Ollama import es_agenda_ollama
         
         resultado_ollama = es_agenda_ollama(texto)
-        logging.info(f"✅ Fallback a Ollama completado: {resultado_ollama}")
+        logging.info(f"✅ Fallback Ollama -> No_Agenda -> Siguiente: Entrevista")
         
         return resultado_ollama
         
@@ -789,10 +789,8 @@ def es_declaracion_con_gpt(texto: str, ministro_key_words, ministerios_key_words
             
             # Normalizar respuesta
             if content in ['SI', 'SÍ', 'YES', 'TRUE', 'VERDADERO']:
-                logging.info(f"✅ {GPT_MODEL} clasificó como: Declaración")
                 return True
             elif content in ['NO', 'FALSE', 'FALSO']:
-                logging.info(f"❌ {GPT_MODEL} clasificó como: NO Declaración")
                 return False
             else:
                 # Si GPT devolvió algo inesperado, usar fallback
@@ -832,7 +830,7 @@ def _fallback_a_ollama_declaracion(texto: str, ministro_key_words, ministerios_k
             return False
         
         resultado_ollama = es_declaracion_ollama(texto, ministro_key_words, ministerios_key_words)
-        logging.info(f"✅ Fallback a Ollama completado: {resultado_ollama}")
+        logging.info(f"✅ Fallback Ollama -> No_Declaración -> Siguiente: Agenda")
         
         return resultado_ollama
         
@@ -843,7 +841,7 @@ def _fallback_a_ollama_declaracion(texto: str, ministro_key_words, ministerios_k
         return False
 
 
-def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_key_words: str = "Gabriela Ricardes", ministerios_key_words: str = None) -> str:
+def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_key_words: str, ministerios_key_words: str, gpt_active: bool) -> str:
     """
     Clasifica el tipo de publicación usando funciones GPT especializadas.
     Procesa secuencialmente: Declaración → Agenda → Entrevista → Nota (por defecto)
@@ -857,28 +855,30 @@ def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_key_words: str = "G
         str: Tipo de publicación clasificado
     """
     try:
-        logging.info("🔍 Clasificando tipo de publicación con GPT...")
+        # Obtener modelo real para logs
+        GPT_MODEL = switch_4o(gpt_active)
+        modelo_display = GPT_MODEL.replace("gpt-", "GPT-").replace("-turbo", "").replace("-4o", "-4o")
         
         # 1. DECLARACIÓN (primera prioridad - más específica, evita falsos positivos)
-        logging.info("💬 Verificando si es Declaración...")
         if es_declaracion_con_gpt(texto, ministro_key_words, ministerios_key_words, gpt_active=True):
-            logging.info("✅ Clasificado como: Declaración")
+            logging.info(f"Tipo Publicación: {modelo_display} -> Declaración")
+            time.sleep(1.0)  # Delay para evitar rate limiting
             return "Declaración"
         
         # 2. AGENDA (segunda prioridad - más frecuente, regla clara)
-        logging.info("📅 Verificando si es Agenda...")
         if es_agenda_con_gpt(texto, gpt_active=True):
-            logging.info("✅ Clasificado como: Agenda")
+            logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> Agenda")
+            time.sleep(1.0)  # Delay para evitar rate limiting
             return "Agenda"
         
         # 3. ENTREVISTA (tercera prioridad - formato distintivo)
-        logging.info("🎤 Verificando si es Entrevista...")
         if es_entrevista_con_gpt(texto, gpt_active=True):
-            logging.info("✅ Clasificado como: Entrevista")
+            logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> NO_Agenda -> Entrevista")
+            time.sleep(1.0)  # Delay para evitar rate limiting
             return "Entrevista"
         
         # 4. NOTA (por defecto - lo que no cabe claramente en otras categorías)
-        logging.info("📰 No es Declaración, Agenda ni Entrevista, clasificando como: Nota")
+        logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> NO_Agenda -> NO_Entrevista -> Nota")
         return "Nota"
         
     except Exception as e:
@@ -887,7 +887,7 @@ def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_key_words: str = "G
         return "Nota"
 
 
-def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str = "Gabriela Ricardes", ministerios_key_words: str = None, gpt_active: bool = False) -> str:
+def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str, ministerios_key_words: str = None, gpt_active: bool = False) -> str:
     """
     Función unificada para clasificar tipo de publicación con GPT y fallback a Ollama.
     
@@ -905,21 +905,18 @@ def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str = "Ga
         from O_Utils_Ollama import clasificar_tipo_publicacion_unificado
         
         if gpt_active:
-            logging.info("Intentando clasificar tipo de publicación con GPT...")
-            resultado_gpt = clasificar_tipo_publicacion_con_gpt(texto, ministro_key_words, ministerios_key_words)
+            resultado_gpt = clasificar_tipo_publicacion_con_gpt(texto, ministro_key_words, ministerios_key_words, gpt_active)
             
             # GPT siempre devuelve algo (Agenda, Entrevista, Declaración, o Nota)
             # Solo fallback a Ollama si hay error de API o excepción
             if resultado_gpt is not None:
-                logging.info(f"GPT clasificó como: {resultado_gpt}")
                 return resultado_gpt
             else:
                 logging.info("GPT falló por error de API, usando fallback a Ollama...")
         
         # Fallback a Ollama (cuando gpt_active=False o GPT falló por error)
-        logging.info("Clasificando tipo de publicación con Ollama...")
         resultado_ollama = clasificar_tipo_publicacion_unificado(texto, ministro_key_words, ministerios_key_words)
-        logging.info(f"Ollama clasificó como: {resultado_ollama}")
+        logging.info(f"Tipo Publicación: Ollama -> {resultado_ollama}")
         return resultado_ollama
         
     except Exception as e:

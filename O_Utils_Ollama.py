@@ -312,10 +312,10 @@ def es_declaracion_ollama(texto, ministro_key_words, ministerios_key_words=None)
 def clasificar_tipo_publicacion_unificado(texto, ministro_key_words="Gabriela Ricardes", ministerios_key_words=None):
     """
     Clasifica el tipo de publicación con orden de prioridad:
-    1. Agenda (más frecuente)
-    2. Entrevista (formato distintivo)
-    3. Declaración (citas específicas)
-    4. Nota (default)
+    1. Declaración (primera prioridad - más específica, evita falsos positivos)
+    2. Agenda (segunda prioridad - más frecuente, regla clara)
+    3. Entrevista (tercera prioridad - formato distintivo)
+    4. Nota (por defecto - lo que no cabe claramente en otras categorías)
     
     Args:
         texto (str): Texto plano de la noticia
@@ -334,24 +334,24 @@ def clasificar_tipo_publicacion_unificado(texto, ministro_key_words="Gabriela Ri
         
         logging.debug(f"Clasificando con ministro_key_words: {ministro_key_words}, ministerios_key_words: {ministerios_key_words}")
         
-        # 1. PRIORIDAD ALTA: Agenda (más frecuente, regla clara)
-        logging.debug("Verificando si es Agenda...")
-        if es_agenda_ollama(texto):
-            logging.debug(f"Clasificado como Agenda")
-            return "Agenda"
-        
-        # 2. PRIORIDAD MEDIA: Entrevista (formato distintivo)
-        logging.debug("Verificando si es Entrevista...")
-        if es_entrevista_ollama(texto):
-            logging.debug(f"Clasificado como Entrevista")
-            return "Entrevista"
-        
-        # 3. PRIORIDAD MEDIA: Declaración (citas específicas)
+        # 1. DECLARACIÓN (primera prioridad - más específica, evita falsos positivos)
         logging.debug("Verificando si es Declaración...")
         logging.debug(f"Pasando a es_declaracion_ollama: ministro_key_words={ministro_key_words}, ministerios_key_words={ministerios_key_words}")
         if es_declaracion_ollama(texto, ministro_key_words, ministerios_key_words):
             logging.debug(f"Clasificado como Declaración")
             return "Declaración"
+        
+        # 2. AGENDA (segunda prioridad - más frecuente, regla clara)
+        logging.debug("Verificando si es Agenda...")
+        if es_agenda_ollama(texto):
+            logging.debug(f"Clasificado como Agenda")
+            return "Agenda"
+        
+        # 3. ENTREVISTA (tercera prioridad - formato distintivo)
+        logging.debug("Verificando si es Entrevista...")
+        if es_entrevista_ollama(texto):
+            logging.debug(f"Clasificado como Entrevista")
+            return "Entrevista"
         
         # 4. DEFAULT: Nota (lo que no cabe claramente en otras categorías)
         logging.debug(f"Clasificado como Nota (default)")
@@ -366,7 +366,7 @@ def clasificar_tipo_publicacion_unificado(texto, ministro_key_words="Gabriela Ri
 # FUNCIONES DE CLASIFICACIÓN DE TEMAS
 # ============================================================================
 
-def clasificar_tema_ollama(texto, lista_temas, tipo_publicacion=None):
+def clasificar_tema_ollama(texto, lista_temas, tema_agenda, tipo_publicacion=None):
     """
     Clasifica una noticia en un tema específico usando heurísticas + IA.
     Combina coincidencias exactas, reglas de negocio y consulta a Ollama.
@@ -375,29 +375,32 @@ def clasificar_tema_ollama(texto, lista_temas, tipo_publicacion=None):
         texto (str): Texto plano de la noticia
         lista_temas (list): Lista de temas disponibles
         tipo_publicacion (str): Tipo de publicación (para fallback)
+        tema_agenda (str): Tema específico para publicaciones de agenda
     
     Returns:
         str: Tema asignado o "Revisar Manual"
     """
     if not texto or not lista_temas:
-        return "Revisar Manual"
+        return "REVISAR MANUAL"
 
-    # 1. Heurísticas muy estrictas para coincidencias exactas
+    # 1. PRIORIDAD MÁXIMA: Fallback por tipo de publicación (Agenda)
+    if tipo_publicacion == "Agenda":
+        logging.info(f"Tema: Ollama -> Heurística (Agenda) asignó tema {tema_agenda}")
+        return tema_agenda
+
+    # 2. Heurísticas muy estrictas para coincidencias exactas
     texto_lower = texto.lower()
     for tema in lista_temas:
         tema_lower = tema.lower()
         if tema_lower in texto_lower or texto_lower.count(tema_lower) > 0:
+            logging.info(f"Tema: Ollama -> Heurística (coincidencia exacta) asignó tema {tema}")
             return tema
 
-    # 2. Fallback por tipo de publicación
-    if tipo_publicacion == "Agenda":
-        return "Actividades programadas"
-
     # 3. Consulta a IA si las heurísticas fallan
-    return _promptear_clasificacion_tema_ollama(texto, lista_temas)
+    return _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_agenda)
 
 #Funcion privada aux para Tema_ollama
-def _promptear_clasificacion_tema_ollama(texto, lista_temas):
+def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_agenda):
     """
     Función privada que consulta a Ollama para clasificar el tema.
     Construye el prompt y maneja la respuesta de la IA.
@@ -412,7 +415,7 @@ def _promptear_clasificacion_tema_ollama(texto, lista_temas):
         "CRITERIOS DE EVALUACIÓN (APLICAR EN ESTE ORDEN):\n"
         "1. PRIORIDAD ALTA: Si el nombre EXACTO de un tema aparece en el título o cuerpo → elegir ese tema\n"
         "2. PRIORIDAD MEDIA: Si hay palabras clave específicas de un tema (ej: 'BAFICI', 'Juventus Lyrica', 'Abasto') → elegir ese tema\n"
-        "3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir 'Actividades programadas'\n\n"
+        f"3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir '{tema_agenda}'\n\n"
         "REGLAS IMPORTANTES:\n"
         "- NUNCA ignores un tema específico que está claramente mencionado en el texto\n"
         "- Los temas genéricos son SOLO para noticias que realmente no encajan con temas específicos\n"
@@ -429,13 +432,16 @@ def _promptear_clasificacion_tema_ollama(texto, lista_temas):
         
         # Validar que el tema asignado esté en la lista
         if tema_asignado in lista_temas:
+            logging.info(f"Tema: Ollama -> Ollama (IA) asignó tema {tema_asignado}")
             return tema_asignado
         else:
-            return "Actividades programadas"  # Fallback
+            logging.info(f"Tema: Ollama -> Ollama (fallback) asignó tema {tema_agenda}")
+            return tema_agenda  # Fallback
             
     except Exception as e:
         logging.error(f"[Ollama] Error clasificando tema: {repr(e)} | Texto: {texto[:120]}...")
-        return "Actividades programadas"  # Fallback
+        logging.info(f"Tema: Ollama -> Ollama (excepción) asignó tema {tema_agenda}")
+        return tema_agenda  # Fallback
 
 # ============================================================================
 # FUNCIONES DE EXTRACCIÓN
