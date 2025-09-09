@@ -37,21 +37,13 @@ curl -X POST $API_URL/procesar-noticias \
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22335604",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23059116",
       "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=21949478",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24069245",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24136111",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24049682",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23932884",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23370658",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23432671",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24137173",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23973943",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23990873"
+      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24069245"
     ],
     "temas": ["BAFICI", "Cultura", "Actividades programadas", "Tango BA", "Presentaciones"],
     "menciones": ["Gabriela Ricardes", "Jorge Macri"],
     "ministro_key_words": ["Gabriela Ricardes", "Ministra de Cultura", "Victoria Noorthoorn","Gerardo Grieco","Jorge Macri"],
     "ministerios_key_words": ["Ministerio de Cultura", "Ministerio de Cultura de Buenos Aires"],
-    "tema_agenda": "Actividades Pro"
+    "tema_default": "Actividades Pro"
   }'
 
 echo ""

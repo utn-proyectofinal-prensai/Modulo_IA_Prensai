@@ -22,7 +22,7 @@ else
     echo "🏠 ngrok no detectado, usando localhost: $API_URL"
 fi
 
-echo "🧪 TEST: Clasificación de temas con tema_agenda"
+echo "🧪 TEST: Clasificación de temas con tema_default"
 echo "📊 Endpoint: /procesar-noticias"
 echo "🌐 URL: $API_URL"
 echo "============================================================"
@@ -45,7 +45,7 @@ curl -X POST $API_URL/procesar-noticias \
     "menciones": ["Gabriela Ricardes", "Jorge Macri"],
     "ministro_key_words": ["Gabriela Ricardes", "Ministra de Cultura", "Victoria Noorthoorn","Gerardo Grieco","Jorge Macri"],
     "ministerios_key_words": ["Ministerio de Cultura", "Ministerio de Cultura de Buenos Aires"],
-    "tema_agenda": "Eventos Culturales de la Semana"
+    "tema_default": "Eventos Culturales de la Semana"
   }'
 
 echo ""

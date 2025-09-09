@@ -7,13 +7,28 @@ import logging
 import re
 import unicodedata
 import time
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 # Levantar un logger
 def setup_logger(filename):
     # Configura el logger para registrar eventos en un archivo.
     # Crear carpeta de logs si no existe
     os.makedirs('Logs', exist_ok=True)
+    
+    # Limpiar handlers existentes para forzar reconfiguración
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    
+    # Crear timezone de Buenos Aires (UTC-3)
+    BA_TIMEZONE = timezone(timedelta(hours=-3))
+    
+    # Formatter personalizado con timezone de Buenos Aires
+    class BATimeFormatter(logging.Formatter):
+        def formatTime(self, record, datefmt=None):
+            # Convertir UTC a Buenos Aires (UTC-3)
+            dt = datetime.fromtimestamp(record.created, tz=timezone.utc)
+            ba_time = dt.astimezone(BA_TIMEZONE)
+            return ba_time.strftime(datefmt or '%Y-%m-%d %H:%M:%S')
     
     # Configurar el logger
     logging.basicConfig(
@@ -23,6 +38,11 @@ def setup_logger(filename):
         datefmt='%Y-%m-%d %H:%M:%S',  # <-- esto elimina los milisegundos
         level=logging.INFO  # cambiado a INFO para ver logs de valoración
     )
+    
+    # Aplicar el formatter personalizado
+    logger = logging.getLogger()
+    for handler in logger.handlers:
+        handler.setFormatter(BATimeFormatter('%(asctime)s %(levelname)s: %(message)s'))
 
 #Export a excel
 def exportar_df_a_excel(df, export_path):

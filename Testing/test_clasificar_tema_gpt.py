@@ -43,6 +43,9 @@ def test_clasificar_tema_ia_real():
         "Premios municipales y nacionales"
     ]
     
+    # Tema por defecto para publicaciones de agenda
+    tema_default = "Actividades Pro"
+    
     # Casos de prueba con URLs y temas reales asignados por humanos
     casos_test = [
         {
@@ -165,6 +168,18 @@ def test_clasificar_tema_ia_real():
             "url": "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24262318",
             "tema_esperado": "¡URGENTE!",
             "tipo_publicacion": "Nota"
+        },
+        {
+            "nombre": "Caso 21: Agenda - Eventos culturales",
+            "url": "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24294600",
+            "tema_esperado": "Actividades Pro",
+            "tipo_publicacion": "Agenda"
+        },
+        {
+            "nombre": "Caso 22: Agenda - Presentaciones",
+            "url": "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24302208",
+            "tema_esperado": "Actividades Pro",
+            "tipo_publicacion": "Agenda"
         }
     ]
     
@@ -196,12 +211,13 @@ def test_clasificar_tema_ia_real():
             
             print(f"   📄 Texto obtenido: {len(texto_noticia)} caracteres")
             
-            # Clasificar tema usando la función de producción (con Ollama)
+            # Clasificar tema usando la función de producción (con GPT-4o)
             resultado = clasificar_tema_con_ia(
                 texto=texto_noticia,
                 lista_temas=lista_temas,
                 tipo_publicacion=caso['tipo_publicacion'],
-                gpt_active=True
+                gpt_active=True,
+                tema_default=tema_default
             )
             
             print(f"   🎯 RESULTADO: {resultado}")

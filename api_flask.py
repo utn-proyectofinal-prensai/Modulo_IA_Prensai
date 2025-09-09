@@ -69,7 +69,7 @@ CAMPOS_FIJOS = [
 def procesar_noticias_con_ia(
     urls: list,
     temas: list,
-    tema_agenda: str,
+    tema_default: str,
     menciones: list = None,
     ministro_key_words: list = None,
     ministerios_key_words: list = None,
@@ -270,7 +270,7 @@ def procesar_noticias_con_ia(
                     lista_temas=temas,
                     tipo_publicacion=row['TIPO PUBLICACION'],
                     gpt_active=gpt_active,
-                    tema_agenda=tema_agenda
+                    tema_default=tema_default
                 ), 
                 limite_texto,
                 row['LINK']
@@ -280,8 +280,12 @@ def procesar_noticias_con_ia(
         
         # 11. Extraer entrevistado
         df_contenido_valido['ENTREVISTADO'] = df_contenido_valido.apply(
-            lambda row: Oll.extraer_entrevistado_con_ollama(row['TEXTO_PLANO']) 
-            if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
+            lambda row: Z.marcar_o_valorar_con_ia(
+                row['TEXTO_PLANO'], 
+                lambda t: Oll.extraer_entrevistado_con_ollama(t) if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
+                limite_texto,
+                row['LINK']
+            ) if row['TIPO PUBLICACION'] == 'Entrevista' else None,
             axis=1
         )
     
@@ -384,7 +388,7 @@ def validar_parametros_noticias(data):
         menciones = data.get('menciones', [])
         ministro_key_words = data.get('ministro_key_words', [])
         ministerios_key_words = data.get('ministerios_key_words', [])
-        tema_agenda = data.get('tema_agenda', '')  # ← NUEVO CAMPO
+        tema_default = data.get('tema_default', '')  # ← NUEVO CAMPO
 
         
         # Validaciones adicionales
@@ -419,9 +423,9 @@ def validar_parametros_noticias(data):
                 "error": "Campo 'ministerios_key_words' debe ser una lista"
             }, None
         
-        if not tema_agenda:
+        if not tema_default:
             return False, {
-                "error": "Campo 'tema_agenda' es obligatorio"
+                "error": "Campo 'tema_default' es obligatorio"
             }, None
         
         # Si todo está bien, retornar datos validados
@@ -431,7 +435,7 @@ def validar_parametros_noticias(data):
             'menciones': menciones if menciones else None,
             'ministro_key_words': ministro_key_words if ministro_key_words else None,
             'ministerios_key_words': ministerios_key_words if ministerios_key_words else None,
-            'tema_agenda': tema_agenda
+            'tema_default': tema_default
         }
         
         return True, None, datos_validados

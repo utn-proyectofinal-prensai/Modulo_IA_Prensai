@@ -366,7 +366,7 @@ def clasificar_tipo_publicacion_unificado(texto, ministro_key_words="Gabriela Ri
 # FUNCIONES DE CLASIFICACIÓN DE TEMAS
 # ============================================================================
 
-def clasificar_tema_ollama(texto, lista_temas, tema_agenda, tipo_publicacion=None):
+def clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion=None):
     """
     Clasifica una noticia en un tema específico usando heurísticas + IA.
     Combina coincidencias exactas, reglas de negocio y consulta a Ollama.
@@ -375,7 +375,7 @@ def clasificar_tema_ollama(texto, lista_temas, tema_agenda, tipo_publicacion=Non
         texto (str): Texto plano de la noticia
         lista_temas (list): Lista de temas disponibles
         tipo_publicacion (str): Tipo de publicación (para fallback)
-        tema_agenda (str): Tema específico para publicaciones de agenda
+        tema_default (str): Tema específico para publicaciones de agenda
     
     Returns:
         str: Tema asignado o "Revisar Manual"
@@ -385,8 +385,8 @@ def clasificar_tema_ollama(texto, lista_temas, tema_agenda, tipo_publicacion=Non
 
     # 1. PRIORIDAD MÁXIMA: Fallback por tipo de publicación (Agenda)
     if tipo_publicacion == "Agenda":
-        logging.info(f"Tema: Ollama -> Heurística (Agenda) asignó tema {tema_agenda}")
-        return tema_agenda
+        logging.info(f"Tema: Ollama -> Heurística (Agenda) asignó tema {tema_default}")
+        return tema_default
 
     # 2. Heurísticas muy estrictas para coincidencias exactas
     texto_lower = texto.lower()
@@ -397,16 +397,20 @@ def clasificar_tema_ollama(texto, lista_temas, tema_agenda, tipo_publicacion=Non
             return tema
 
     # 3. Consulta a IA si las heurísticas fallan
-    return _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_agenda)
+    return _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_default)
 
 #Funcion privada aux para Tema_ollama
-def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_agenda):
+def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_default):
     """
     Función privada que consulta a Ollama para clasificar el tema.
     Construye el prompt y maneja la respuesta de la IA.
     """
-    # Construir lista textual completa de temas (lista cerrada de elegibles)
-    temas_str = "\n".join([f"- {t}" for t in lista_temas])
+    # Construir lista textual completa de temas (incluyendo tema_default si no está)
+    temas_disponibles = lista_temas.copy()
+    if tema_default and tema_default not in temas_disponibles:
+        temas_disponibles.append(tema_default)
+    
+    temas_str = "\n".join([f"- {t}" for t in temas_disponibles])
 
     # Armar prompt simplificado (versión mejorada)
     prompt = (
@@ -415,7 +419,7 @@ def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_agenda):
         "CRITERIOS DE EVALUACIÓN (APLICAR EN ESTE ORDEN):\n"
         "1. PRIORIDAD ALTA: Si el nombre EXACTO de un tema aparece en el título o cuerpo → elegir ese tema\n"
         "2. PRIORIDAD MEDIA: Si hay palabras clave específicas de un tema (ej: 'BAFICI', 'Juventus Lyrica', 'Abasto') → elegir ese tema\n"
-        f"3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir '{tema_agenda}'\n\n"
+        f"3. PRIORIDAD BAJA: Solo si NO hay evidencia específica clara → elegir '{tema_default}'\n\n"
         "REGLAS IMPORTANTES:\n"
         "- NUNCA ignores un tema específico que está claramente mencionado en el texto\n"
         "- Los temas genéricos son SOLO para noticias que realmente no encajan con temas específicos\n"
@@ -431,17 +435,17 @@ def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_agenda):
         tema_asignado = result.get("response", "").strip()
         
         # Validar que el tema asignado esté en la lista
-        if tema_asignado in lista_temas:
+        if tema_asignado in temas_disponibles:
             logging.info(f"Tema: Ollama -> Ollama (IA) asignó tema {tema_asignado}")
             return tema_asignado
         else:
-            logging.info(f"Tema: Ollama -> Ollama (fallback) asignó tema {tema_agenda}")
-            return tema_agenda  # Fallback
+            logging.info(f"Tema: Ollama -> Ollama (fallback) asignó tema {tema_default}")
+            return tema_default  # Fallback
             
     except Exception as e:
         logging.error(f"[Ollama] Error clasificando tema: {repr(e)} | Texto: {texto[:120]}...")
-        logging.info(f"Tema: Ollama -> Ollama (excepción) asignó tema {tema_agenda}")
-        return tema_agenda  # Fallback
+        logging.info(f"Tema: Ollama -> Ollama (excepción) asignó tema {tema_default}")
+        return tema_default  # Fallback
 
 # ============================================================================
 # FUNCIONES DE EXTRACCIÓN
@@ -470,12 +474,15 @@ def extraer_entrevistado_con_ollama(texto):
         
         # Limpiar respuesta
         if entrevistado and entrevistado.lower() not in ["no identificado", "no hay entrevistado"]:
+            logging.info(f"Entrevistado: Ollama -> {entrevistado}")
             return entrevistado
         else:
+            logging.info(f"Entrevistado: Ollama -> No identificado")
             return None
             
     except Exception as e:
         logging.error(f"[Ollama] Error extrayendo entrevistado: {repr(e)} | Texto: {texto[:120]}...")
+        logging.info(f"Entrevistado: Ollama -> Error")
         return None
 
 # ============================================================================
@@ -507,17 +514,22 @@ def detectar_factor_politico_con_ollama(texto):
         salida = result.get("response", "").strip().upper()
         
         if salida in ["SI", "SÍ"]:
-            return "SI"
+            resultado = "SI"
         elif salida in ["NO"]:
-            return "NO"
+            resultado = "NO"
         else:
             # Validación adicional por palabras clave
             if any(palabra in salida for palabra in ["ELECCION", "CANDIDAT", "CAMPAÑA", "ENCUESTA", "VOTACION", "PARTIDO", "POLITIC"]):
-                return "SI"
+                resultado = "SI"
             else:
-                return "NO"
+                resultado = "NO"
+        
+        # Loggear el resultado
+        logging.info(f"Factor Político: Ollama -> {resultado}")
+        return resultado
                 
     except Exception as e:
         logging.error(f"[Ollama] Error detectando factor político: {repr(e)} | Texto: {texto[:120]}...")
+        logging.info(f"Factor Político: Ollama -> NO (error)")
         return "NO"
 
