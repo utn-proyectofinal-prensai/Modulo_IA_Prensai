@@ -11,3 +11,8 @@ Testear a fondo las funciones optimizadas para asegurar que funcionen correctame
 se agregó el campo tema_default ; tener en cuenta agenda -> tema_default (y subtemas para mejor diferenciación si se quiere). 
 
 revisar los posibles codigos de error para q el back los procese, 500 por ej cuando ejes está caido. 
+
+Í, puede procesar todo bien para una noticia y que el valor de un campo llegue como None en la respuesta final, porque marcar_o_valorar_con_ia no valida el resultado de funcion_ia(texto).
+¿Quieres que agregue validación para convertir None a "REVISAR MANUAL"?
+
+Revisar el marcar con ia si hay un posible None en la rta (nunca lo vi x ahora).

@@ -24,26 +24,14 @@ curl -X POST $API_URL/procesar-noticias \
   -H "Content-Type: application/json" \
   -d '{
     "urls": [
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24294600",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24302208",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24347481",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24196084",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24185308",
-      "https://culturagcba.clientes.ejeZ.com/noticia_completa.cfm?id=24257893",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23662034",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23595633",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23595797",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22335229",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=22335604",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23059116",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=21949478",
-      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=24069245"
+      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=23249425",
+      "https://culturagcba.clientes.ejes.com/noticia_completa.cfm?id=18314993"
     ],
-    "temas": ["BAFICI", "Cultura", "Actividades programadas", "Tango BA", "Presentaciones"],
+    "temas": ["Día Internacional de los Museos", "Cultura", "Feria de Mataderos", "Presentaciones"],
     "menciones": ["Gabriela Ricardes", "Jorge Macri"],
     "ministro_key_words": ["Gabriela Ricardes", "Ministra de Cultura", "Victoria Noorthoorn","Gerardo Grieco","Jorge Macri"],
     "ministerios_key_words": ["Ministerio de Cultura", "Ministerio de Cultura de Buenos Aires"],
-    "tema_default": "Actividades Pro"
+    "tema_default": "Actividades programadas"
   }'
 
 echo ""
