@@ -6,10 +6,10 @@ env_variables:
   FLASK_ENV: production
   PORT: 8080
 
-# Configuración de recursos
+# Configuración de recursos (aumentados para Ollama + API)
 resources:
-  cpu: 2
-  memory: 4Gi
+  cpu: 4
+  memory: 8Gi
   # Nota: Para GPU, necesitarás configurarlo desde la consola de Google Cloud
   # o usar gcloud CLI con --accelerator
 

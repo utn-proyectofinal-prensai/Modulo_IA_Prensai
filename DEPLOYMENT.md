@@ -2,7 +2,8 @@
 
 ## 📋 Archivos creados para deployment
 
-- `Dockerfile` - Configuración del container
+- `Dockerfile` - Configuración del container (incluye Ollama + llama3.1:8b)
+- `start.sh` - Script de inicio para Ollama + API Flask
 - `.dockerignore` - Archivos a excluir del build
 - `requirements.txt` - Dependencias de Python
 - `app.yaml` - Configuración de Google Cloud Run
@@ -47,7 +48,7 @@ gcloud run deploy prensai-api \
   --set-env-vars OPENAI_API_KEY=tu_api_key
 ```
 
-### 2. Con GPU (si es necesario)
+### 2. Con GPU (recomendado para Ollama)
 ```bash
 gcloud run deploy prensai-api \
   --image gcr.io/TU_PROJECT_ID/prensai-api \
@@ -57,7 +58,23 @@ gcloud run deploy prensai-api \
   --memory 8Gi \
   --cpu 4 \
   --accelerator type=nvidia-t4,count=1 \
-  --port 8080
+  --port 8080 \
+  --timeout 900 \
+  --set-env-vars OPENAI_API_KEY=tu_api_key
+```
+
+### 3. Sin GPU (solo CPU - más lento pero más barato)
+```bash
+gcloud run deploy prensai-api \
+  --image gcr.io/TU_PROJECT_ID/prensai-api \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --memory 8Gi \
+  --cpu 4 \
+  --port 8080 \
+  --timeout 900 \
+  --set-env-vars OPENAI_API_KEY=tu_api_key
 ```
 
 ## 🔍 Verificación
@@ -68,9 +85,10 @@ gcloud run deploy prensai-api \
 
 ## 💰 Consideraciones de costo
 
-- **Sin GPU**: ~$0.10-0.50 por request
-- **Con GPU**: ~$0.50-2.00 por request
+- **Sin GPU**: ~$0.20-0.80 por request (más lento, Ollama en CPU)
+- **Con GPU**: ~$0.50-2.00 por request (más rápido, Ollama en GPU)
 - **Escalado a 0**: No hay costo cuando no hay requests
+- **Tiempo de inicio**: ~2-3 minutos (descarga modelo llama3.1:8b en primer uso)
 
 ## 🔧 Troubleshooting
 
