@@ -689,6 +689,12 @@ if __name__ == '__main__':
     print("⚙️  Configuración: POST /config/limite-texto, POST /config/gpt-active")
     print("📋 Consultar logs: GET /logs")
     print("📊 Estado config: GET /config/estado")
-    print("🔧 Puerto: 5000")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Configuración para Google Cloud Run
+    port = int(os.environ.get('PORT', 8080))
+    debug_mode = os.environ.get('FLASK_ENV') != 'production'
+    
+    print(f"🔧 Puerto: {port}")
+    print(f"🐛 Debug: {debug_mode}")
+    
+    app.run(debug=debug_mode, host='0.0.0.0', port=port)
