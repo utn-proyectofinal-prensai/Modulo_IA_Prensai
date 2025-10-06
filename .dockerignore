@@ -55,14 +55,20 @@ Thumbs.db
 # Logs locales (se crearán en el container)
 Logs/*.log
 
-# Testing
+# Testing (excluir para reducir tamaño)
 Testing/
 test_*.py
 
-# Documentación
-*.md
+# Documentación (opcional, mantener solo DEPLOYMENT.md)
 README*
+*.md
+!DEPLOYMENT.md
 
 # Archivos temporales
 *.tmp
 *.temp
+
+# Cloud Build files (no necesarios en container)
+cloudbuild.yaml
+.git/
+.gitignore

@@ -1,0 +1,45 @@
+# Cloud Build configuration para GitHub + Cloud Run
+steps:
+  # Paso 1: Construir la imagen Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 'gcr.io/$PROJECT_ID/prensai-api:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/prensai-api:latest',
+      '.'
+    ]
+
+  # Paso 2: Subir la imagen a Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/prensai-api:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/prensai-api:latest']
+
+  # Paso 3: Deployar a Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: [
+      'run', 'deploy', 'prensai-api',
+      '--image', 'gcr.io/$PROJECT_ID/prensai-api:$COMMIT_SHA',
+      '--region', 'us-central1',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+      '--memory', '8Gi',
+      '--cpu', '4',
+      '--port', '8080',
+      '--timeout', '900',
+      '--min-instances', '1',
+      '--max-instances', '10',
+      '--set-env-vars', 'FLASK_ENV=production,PORT=8080'
+    ]
+
+# Configuración de Cloud Build
+options:
+  machineType: 'E2_HIGHCPU_8'
+  diskSizeGb: 100
+
+# Variables de entorno disponibles
+substitutions:
+  _SERVICE_NAME: 'prensai-api'
+  _REGION: 'us-central1'

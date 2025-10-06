@@ -1,4 +1,4 @@
-# 🚀 Deployment en Google Cloud Run
+# 🚀 Deployment en Google Cloud Run via GitHub + Cloud Build
 
 ## 📋 Archivos creados para deployment
 
@@ -6,7 +6,7 @@
 - `start.sh` - Script de inicio para Ollama + API Flask
 - `.dockerignore` - Archivos a excluir del build
 - `requirements.txt` - Dependencias de Python
-- `app.yaml` - Configuración de Google Cloud Run
+- `cloudbuild.yaml` - Configuración de Cloud Build para deployment automático
 
 ## 🔧 Variables de entorno requeridas
 
@@ -26,27 +26,21 @@ LOG_LEVEL=INFO
 DEFAULT_LIMITE_TEXTO=14900
 ```
 
-## 🚀 Comandos para deployment
+## 🚀 Deployment Automático via GitHub + Cloud Build
 
-### 1. Build y push a Google Container Registry
-```bash
-# Configurar proyecto
-gcloud config set project TU_PROJECT_ID
+### 1. Configurar Cloud Build Trigger
+En Google Cloud Console:
+1. **Cloud Build** → **Triggers** → **CREATE TRIGGER**
+2. **Name**: `prensai-deployment`
+3. **Event**: Push to a branch
+4. **Source**: Conectar con GitHub (`utn-proyectofinal-prensai/Modulo_IA_Prensai`)
+5. **Branch**: `deployment/google-cloud`
+6. **Configuration**: Cloud Build configuration file
+7. **Location**: `/cloudbuild.yaml`
 
-# Build de la imagen
-gcloud builds submit --tag gcr.io/TU_PROJECT_ID/prensai-api
-
-# Deploy a Cloud Run
-gcloud run deploy prensai-api \
-  --image gcr.io/TU_PROJECT_ID/prensai-api \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --memory 4Gi \
-  --cpu 2 \
-  --port 8080 \
-  --set-env-vars OPENAI_API_KEY=tu_api_key
-```
+### 2. Deployment Automático
+- **Push a la rama** `deployment/google-cloud` → **Deploy automático**
+- **Sin comandos manuales** → Todo se hace automáticamente
 
 ### 2. Con GPU (recomendado para Ollama)
 ```bash
