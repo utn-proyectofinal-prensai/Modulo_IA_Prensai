@@ -27,6 +27,8 @@ steps:
       '--allow-unauthenticated',
       '--memory', '16Gi',
       '--cpu', '4',
+      '--gpu', '1',
+      '--gpu-type', 'nvidia-l4',
       '--port', '8080',
       '--timeout', '900',
       '--cpu-boost',
