@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar Ollama desde la imagen base
-COPY --from=ollama-base /usr/local/bin/ollama /usr/local/bin/ollama
+COPY --from=ollama-base /bin/ollama /usr/local/bin/ollama
 
 # Crear usuario para Ollama (por seguridad)
 RUN groupadd -r ollama && useradd -r -g ollama ollama
