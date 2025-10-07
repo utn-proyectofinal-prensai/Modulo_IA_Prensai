@@ -1,20 +1,17 @@
-# Usar Ollama como base para tener Ollama preinstalado
-FROM ollama/ollama:latest as ollama-base
-
 # Usar Python 3.11 slim como base principal
 FROM python:3.11-slim
 
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema y Ollama
 RUN apt-get update && apt-get install -y \
     curl \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar Ollama desde la imagen base
-COPY --from=ollama-base /bin/ollama /usr/local/bin/ollama
+# Instalar Ollama
+RUN curl -fsSL https://ollama.ai/install.sh | sh
 
 # Crear usuario para Ollama (por seguridad)
 RUN groupadd -r ollama && useradd -r -g ollama ollama
