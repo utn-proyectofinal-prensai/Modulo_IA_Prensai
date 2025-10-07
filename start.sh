@@ -22,14 +22,14 @@ for i in {1..30}; do
     sleep 2
 done
 
-# Descargar el modelo llama3.1:8b si no está disponible
+# Verificar que el modelo esté disponible (ya fue descargado en build)
 echo "📥 Verificando modelo llama3.1:8b..."
-if ! ollama list | grep -q "llama3.1:8b"; then
-    echo "⬇️ Descargando modelo llama3.1:8b..."
+if ollama list | grep -q "llama3.1:8b"; then
+    echo "✅ Modelo llama3.1:8b disponible (pre-cargado en imagen)"
+else
+    echo "⚠️ ADVERTENCIA: Modelo no encontrado, descargando..."
     ollama pull llama3.1:8b
     echo "✅ Modelo descargado"
-else
-    echo "✅ Modelo llama3.1:8b ya está disponible"
 fi
 
 # Iniciar la API Flask con Gunicorn

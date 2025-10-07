@@ -19,6 +19,17 @@ RUN groupadd -r ollama && useradd -r -g ollama ollama
 # Crear directorio para Ollama
 RUN mkdir -p /root/.ollama && chown -R ollama:ollama /root/.ollama
 
+# Pre-descargar modelo llama3.1:8b durante el build
+RUN ollama serve & \
+    OLLAMA_PID=$! && \
+    echo "Esperando que Ollama inicie..." && \
+    sleep 10 && \
+    echo "Descargando modelo llama3.1:8b..." && \
+    ollama pull llama3.1:8b && \
+    echo "Modelo descargado exitosamente" && \
+    kill $OLLAMA_PID && \
+    wait $OLLAMA_PID 2>/dev/null || true
+
 # Copiar requirements primero para aprovechar cache de Docker
 COPY requirements.txt .
 
