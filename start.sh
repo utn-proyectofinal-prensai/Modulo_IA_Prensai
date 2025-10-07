@@ -32,9 +32,9 @@ else
     echo "✅ Modelo llama3.1:8b ya está disponible"
 fi
 
-# Iniciar la API Flask
-echo "🚀 Iniciando API Flask..."
-python api_flask.py
+# Iniciar la API Flask con Gunicorn
+echo "🚀 Iniciando API Flask con Gunicorn..."
+exec gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 900 api_flask:app
 
 # Si la API se cierra, terminar Ollama también
 echo "🛑 Cerrando Ollama..."
