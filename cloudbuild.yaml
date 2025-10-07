@@ -29,7 +29,7 @@ steps:
       '--cpu', '4',
       '--port', '8080',
       '--timeout', '900',
-      '--startup-cpu-boost',
+      '--cpu-boost',
       '--min-instances', '0',
       '--max-instances', '3',
       '--set-env-vars', 'FLASK_ENV=production'
