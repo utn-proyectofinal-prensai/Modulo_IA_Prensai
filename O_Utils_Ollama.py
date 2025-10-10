@@ -764,68 +764,34 @@ Genera el informe ahora:
 
 def _limpiar_texto_informe(texto: str) -> str:
     """
-    Limpia y normaliza el texto del informe generado por Ollama.
+    Limpia el texto del informe generado por Ollama manteniendo tildes y caracteres especiales.
     
     Esta función:
-    1. Remueve frases de instrucción del prompt
-    2. Normaliza caracteres especiales (tildes, eñes, etc.)
-    3. Elimina espacios extra y saltos de línea
-    4. Asegura compatibilidad ASCII para evitar errores de codificación
+    1. Elimina espacios extra y saltos de línea vacíos
+    2. Mantiene tildes, eñes y caracteres especiales para mejor calidad
+    3. Verifica compatibilidad básica con sistemas legacy
     
     Args:
         texto (str): Texto crudo del informe
     
     Returns:
-        str: Texto limpio y normalizado
+        str: Texto limpio manteniendo caracteres especiales
     """
     if not texto:
         return ""
     
-    # PASO 1: Normalización de caracteres Unicode
-    try:
-        # Mapeo de caracteres con tildes a sin tildes
-        mapeo_tildes = {
-            'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
-            'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U',
-            'ü': 'u', 'Ü': 'U',
-            'ñ': 'n', 'Ñ': 'N',
-            '¿': '?', '¡': '!', '«': '"', '»': '"',
-            'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u',
-            'À': 'A', 'È': 'E', 'Ì': 'I', 'Ò': 'O', 'Ù': 'U',
-        }
-        
-        texto_normalizado = ''
-        for char in texto:
-            if char in mapeo_tildes:
-                texto_normalizado += mapeo_tildes[char]
-            elif ord(char) < 128:
-                texto_normalizado += char
-            else:
-                # Para otros caracteres Unicode, reemplazar con espacio
-                texto_normalizado += ' '
-        
-        texto = texto_normalizado
-        
-    except Exception as e:
-        logging.warning(f"[Informe] ⚠️ Error normalizando caracteres: {e}")
-        # Fallback: solo ASCII
-        texto = ''.join(char for char in texto if ord(char) < 128)
-    
-    # PASO 2: Remover frases de instrucción del prompt
-    texto = texto.replace("Genera el informe ahora:", "").strip()
-    texto = texto.replace("Genera el análisis detallado:", "").strip()
-    texto = texto.replace("Genera el resumen ejecutivo:", "").strip()
-    
-    # PASO 3: Limpiar espacios extra y saltos de línea
+    # PASO 1: Limpiar formato - eliminar líneas vacías y espacios extra
     lineas = [linea.strip() for linea in texto.split('\n') if linea.strip()]
     texto_limpio = '\n'.join(lineas)
     
-    # PASO 4: Verificación final de codificación
+    # PASO 2: Verificación básica de compatibilidad (sin degradar tildes)
     try:
-        texto_limpio.encode('ascii')
+        # Solo verificar que no hay caracteres problemáticos extremos
+        texto_limpio.encode('utf-8')
     except UnicodeEncodeError:
-        logging.warning(f"[Informe] ⚠️ Aplicando limpieza final de caracteres Unicode")
-        texto_limpio = ''.join(char for char in texto_limpio if ord(char) < 128)
+        logging.warning(f"[Informe] ⚠️ Problemas de codificación detectados")
+        # En caso extremo, mantener solo caracteres seguros pero conservar tildes
+        texto_limpio = ''.join(char for char in texto_limpio if ord(char) < 65536)
     
     return texto_limpio
 
