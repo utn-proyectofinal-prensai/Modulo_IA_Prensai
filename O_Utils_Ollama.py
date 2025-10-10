@@ -533,3 +533,299 @@ def detectar_factor_politico_con_ollama(texto):
         logging.info(f"Factor Político: Ollama -> NO (error)")
         return "NO"
 
+# ============================================================================
+# FUNCIONES DE GENERACIÓN DE INFORMES
+# ============================================================================
+
+def generar_informe_con_ollama(metricas: dict, contexto: dict = None, modelo: str = None) -> dict:
+    """
+    Genera un informe profesional de análisis de medios usando Ollama.
+    
+    Esta función recibe métricas de clipping y genera un informe completo
+    usando el modelo llama3.1:8b. El informe incluye análisis de valoraciones,
+    soportes, medios y menciones.
+    
+    Args:
+        metricas (dict): Métricas del clipping con estructura:
+            {
+                "temaSeleccionado": str,
+                "fechaGeneracion": str,
+                "periodo": {"fechaInicio": str, "fechaFin": str},
+                "totalNoticias": int,
+                "valoraciones": {
+                    "positivas": {"cantidad": int, "porcentaje": float},
+                    "negativas": {"cantidad": int, "porcentaje": float},
+                    "neutras": {"cantidad": int, "porcentaje": float},
+                    "esTemaCritico": bool
+                },
+                "soportes": [{"nombre": str, "cantidad": int, "porcentaje": float}],
+                "medios": [{"nombre": str, "cantidad": int, "porcentaje": float}],
+                "menciones": [{"nombre": str, "cantidad": int, "porcentaje": float}]
+            }
+            
+        contexto (dict, optional): Contexto adicional (no utilizado actualmente).
+            Ejemplo: {"voceros": ["GR", "JM"], "mediosPrimeraLinea": ["Infobae"]}
+            
+        modelo (str, optional): Modelo de Ollama a usar. Si es None, usa llama3.1:8b
+    
+    Returns:
+        dict: Diccionario con la siguiente estructura en caso de éxito:
+            {
+                "success": True,
+                "informe": str,                    # Texto del informe generado
+                "modelo_usado": str,               # Modelo utilizado
+                "metricas_utilizadas": dict,       # Métricas que se usaron
+                "contexto_utilizado": dict,        # Contexto que se usó
+                "metadatos": {
+                    "total_tokens": int,           # Tokens procesados
+                    "tiempo_generacion": float,    # Tiempo en segundos
+                    "fecha_generacion": str        # Timestamp
+                }
+            }
+            
+            En caso de error:
+            {
+                "success": False,
+                "error": str,                      # Descripción del error
+                "response_text": str               # Respuesta de Ollama (si aplica)
+            }
+    
+    Ejemplo de uso:
+        metricas = {
+            "temaSeleccionado": "Obras CCGSM",
+            "totalNoticias": 65,
+            "valoraciones": {
+                "positivas": {"cantidad": 40, "porcentaje": 61.5},
+                "negativas": {"cantidad": 15, "porcentaje": 23.1},
+                "neutras": {"cantidad": 10, "porcentaje": 15.4},
+                "esTemaCritico": False
+            }
+        }
+        
+        resultado = generar_informe_con_ollama(metricas)
+        if resultado['success']:
+            print(resultado['informe'])
+    """
+    import time
+    
+    # Usar modelo especificado o el modelo por defecto de nuestro sistema
+    modelo_a_usar = modelo if modelo else MODELO_OLLAMA
+    
+    # PASO 1: Verificar que Ollama esté funcionando
+    if not _verificar_e_imprimir_estado_ollama():
+        error_msg = "Ollama no está disponible - verifica que el servicio esté ejecutándose"
+        logging.error(f"[Informe] ❌ {error_msg}")
+        return {
+            "error": error_msg
+        }
+    
+    # PASO 2: Generar el prompt optimizado usando la plantilla
+    try:
+        prompt = _generar_prompt_informe(metricas, contexto or {})
+    except Exception as e:
+        error_msg = f"Error generando prompt: {str(e)}"
+        logging.error(f"[Informe] ❌ {error_msg}")
+        return {
+            "error": error_msg
+        }
+    
+    # PASO 3: Preparar payload para Ollama
+    payload = {
+        "model": modelo_a_usar,
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.1,    # Baja temperatura para respuestas consistentes
+            "top_p": 0.9,
+            "num_predict": 2000    # Máximo de tokens a generar
+        }
+    }
+    
+    # PASO 4: Enviar request a Ollama
+    try:
+        inicio = time.time()
+        response = requests.post(OLLAMA_URL, json=payload, timeout=60)
+        tiempo_transcurrido = time.time() - inicio
+        
+        if response.status_code == 200:
+            # PASO 5: Procesar respuesta exitosa
+            result = response.json()
+            informe_texto = result.get("response", "")
+            
+            # PASO 6: Limpiar el texto del informe
+            informe_limpio = _limpiar_texto_informe(informe_texto)
+            
+            # PASO 7: Construir respuesta exitosa
+            return {
+                "informe": informe_limpio,
+                "modelo_usado": modelo_a_usar,
+                "metricas_utilizadas": metricas,
+                "contexto_utilizado": contexto,
+                "metadatos": {
+                    "total_tokens": result.get("eval_count", 0),
+                    "tiempo_generacion": tiempo_transcurrido,
+                    "fecha_generacion": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
+            }
+        else:
+            # Error HTTP de Ollama
+            error_msg = f"Error en Ollama: Status code {response.status_code}"
+            logging.error(f"[Informe] ❌ {error_msg}")
+            return {
+                "error": error_msg,
+                "response_text": response.text
+            }
+            
+    except requests.exceptions.Timeout:
+        error_msg = "Timeout esperando respuesta de Ollama (60s)"
+        logging.error(f"[Informe] ❌ {error_msg}")
+        return {
+            "error": error_msg
+        }
+    except Exception as e:
+        error_msg = f"Error generando informe: {str(e)}"
+        logging.error(f"[Informe] ❌ {error_msg}")
+        return {
+            "error": error_msg
+        }
+
+def _generar_prompt_informe(metricas: dict, contexto: dict) -> str:
+    """
+    Genera el prompt para crear un informe completo y conciso.
+    
+    Esta función usa la misma estructura de prompt que el sistema original
+    para mantener compatibilidad con el backend.
+    
+    Args:
+        metricas (dict): Métricas del clipping
+        contexto (dict): Contexto adicional
+    
+    Returns:
+        str: Prompt optimizado para Ollama
+    """
+    
+    # Función auxiliar para formatear métricas
+    def format_metrics(metrics_list):
+        if not metrics_list:
+            return "No hay datos disponibles"
+        
+        formatted = []
+        for item in metrics_list[:5]:  # Solo los primeros 5 elementos
+            nombre = item.get('nombre', 'N/A')
+            cantidad = item.get('cantidad', 0)
+            porcentaje = item.get('porcentaje', 0)
+            formatted.append(f"- {nombre}: {cantidad} ({porcentaje}%)")
+        
+        return "\n".join(formatted)
+    
+    # Construir el prompt
+    prompt = f"""
+Eres un analista de comunicacion politica experto en analisis de medios. 
+Crea un informe profesional y conciso basado en las metricas de un clipping de noticias.
+
+**IMPORTANTE: SIEMPRE responde en ESPAÑOL. NUNCA uses inglés.**
+
+**CONTEXTO:**
+- Tema: {metricas.get('temaSeleccionado', 'N/A')}
+- Fecha: {metricas.get('fechaGeneracion', 'N/A')}
+- Periodo: {metricas.get('periodo', {}).get('fechaInicio', 'N/A')} a {metricas.get('periodo', {}).get('fechaFin', 'N/A')}
+- Total noticias: {metricas.get('totalNoticias', 0)}
+
+**VALORACIONES:**
+- Positivas: {metricas.get('valoraciones', {}).get('positivas', {}).get('cantidad', 0)} ({metricas.get('valoraciones', {}).get('positivas', {}).get('porcentaje', 0)}%)
+- Negativas: {metricas.get('valoraciones', {}).get('negativas', {}).get('cantidad', 0)} ({metricas.get('valoraciones', {}).get('negativas', {}).get('porcentaje', 0)}%)
+- Neutras: {metricas.get('valoraciones', {}).get('neutras', {}).get('cantidad', 0)} ({metricas.get('valoraciones', {}).get('neutras', {}).get('porcentaje', 0)}%)
+- Estado: {'CRITICO' if metricas.get('valoraciones', {}).get('esTemaCritico', False) else 'No critico'}
+
+**SOPORTES:**
+{format_metrics(metricas.get('soportes', []))}
+
+**MEDIOS:**
+{format_metrics(metricas.get('medios', []))}
+
+**MENCIONES:**
+{format_metrics(metricas.get('menciones', []))}
+
+**INSTRUCCIONES:**
+1. Crea un informe profesional de maximo 500 palabras
+2. Incluye un resumen ejecutivo al inicio
+3. **USA LOS DATOS NUMERICOS EXACTOS** que se proporcionan arriba
+4. **NO inventes datos** - solo usa los valores que se muestran
+5. Analiza los datos de valoracion, soportes y menciones
+6. Destaca los hallazgos mas importantes
+7. NO incluyas recomendaciones detalladas
+8. Manten un tono profesional y objetivo
+9. **OBLIGATORIO: Escribe TODO en ESPAÑOL. NUNCA uses inglés.**
+
+Genera el informe ahora:
+"""
+    
+    return prompt.strip()
+
+def _limpiar_texto_informe(texto: str) -> str:
+    """
+    Limpia y normaliza el texto del informe generado por Ollama.
+    
+    Esta función:
+    1. Remueve frases de instrucción del prompt
+    2. Normaliza caracteres especiales (tildes, eñes, etc.)
+    3. Elimina espacios extra y saltos de línea
+    4. Asegura compatibilidad ASCII para evitar errores de codificación
+    
+    Args:
+        texto (str): Texto crudo del informe
+    
+    Returns:
+        str: Texto limpio y normalizado
+    """
+    if not texto:
+        return ""
+    
+    # PASO 1: Normalización de caracteres Unicode
+    try:
+        # Mapeo de caracteres con tildes a sin tildes
+        mapeo_tildes = {
+            'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+            'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U',
+            'ü': 'u', 'Ü': 'U',
+            'ñ': 'n', 'Ñ': 'N',
+            '¿': '?', '¡': '!', '«': '"', '»': '"',
+            'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u',
+            'À': 'A', 'È': 'E', 'Ì': 'I', 'Ò': 'O', 'Ù': 'U',
+        }
+        
+        texto_normalizado = ''
+        for char in texto:
+            if char in mapeo_tildes:
+                texto_normalizado += mapeo_tildes[char]
+            elif ord(char) < 128:
+                texto_normalizado += char
+            else:
+                # Para otros caracteres Unicode, reemplazar con espacio
+                texto_normalizado += ' '
+        
+        texto = texto_normalizado
+        
+    except Exception as e:
+        logging.warning(f"[Informe] ⚠️ Error normalizando caracteres: {e}")
+        # Fallback: solo ASCII
+        texto = ''.join(char for char in texto if ord(char) < 128)
+    
+    # PASO 2: Remover frases de instrucción del prompt
+    texto = texto.replace("Genera el informe ahora:", "").strip()
+    texto = texto.replace("Genera el análisis detallado:", "").strip()
+    texto = texto.replace("Genera el resumen ejecutivo:", "").strip()
+    
+    # PASO 3: Limpiar espacios extra y saltos de línea
+    lineas = [linea.strip() for linea in texto.split('\n') if linea.strip()]
+    texto_limpio = '\n'.join(lineas)
+    
+    # PASO 4: Verificación final de codificación
+    try:
+        texto_limpio.encode('ascii')
+    except UnicodeEncodeError:
+        logging.warning(f"[Informe] ⚠️ Aplicando limpieza final de caracteres Unicode")
+        texto_limpio = ''.join(char for char in texto_limpio if ord(char) < 128)
+    
+    return texto_limpio
+

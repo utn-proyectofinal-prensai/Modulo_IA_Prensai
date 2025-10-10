@@ -88,9 +88,6 @@ def procesar_noticias_con_ia(
         # Medición tiempo de ejecución
         t0 = time.time()
         
-        # Configurar logger
-        Z.setup_logger('Procesamiento_Noticias_API.log')
-        
         logging.info(f"Procesando {len(urls)} noticias con API")
         
         # Informar qué modelo de IA se usará
@@ -681,10 +678,128 @@ def procesar_noticias_export_excel():
             "archivo_excel": None
         }), 500  # 500 = error interno del servidor
 
+@app.route('/generate-informe', methods=['POST'])
+def generate_informe():
+    """
+    Endpoint para generar informes de análisis de medios con Ollama.
+    
+    Recibe métricas de clipping desde el backend y genera un informe
+    profesional usando el modelo llama3.1:8b.
+    
+    Body esperado:
+        {
+            "metricas": {
+                "temaSeleccionado": str,
+                "fechaGeneracion": str,
+                "periodo": {"fechaInicio": str, "fechaFin": str},
+                "totalNoticias": int,
+                "valoraciones": {
+                    "positivas": {"cantidad": int, "porcentaje": float},
+                    "negativas": {"cantidad": int, "porcentaje": float},
+                    "neutras": {"cantidad": int, "porcentaje": float},
+                    "esTemaCritico": bool
+                },
+                "soportes": [...],
+                "medios": [...],
+                "menciones": [...]
+            },
+            "contexto": {...},        // opcional
+            "modelo": "llama3.1:8b"   // opcional
+        }
+    
+    Returns:
+        200: {
+            "informe": str,
+            "modelo_usado": str,
+            "metadatos": {...}
+        }
+        
+        400: {"error": "Mensaje de error de validación"}
+        500: {"error": "Mensaje de error"}
+    """
+    try:
+        # Validar que venga JSON
+        if not request.is_json:
+            logging.warning("[Informe] Request sin JSON")
+            return jsonify({
+                "error": "Content-Type debe ser application/json"
+            }), 400
+        
+        data = request.get_json()
+        
+        # Validar campo obligatorio: metricas
+        if 'metricas' not in data:
+            logging.warning("[Informe] Request sin campo 'metricas'")
+            return jsonify({
+                "error": "Campo 'metricas' es obligatorio"
+            }), 400
+        
+        metricas = data.get('metricas')
+        
+        # Validar que metricas sea un diccionario
+        if not isinstance(metricas, dict):
+            logging.warning("[Informe] Campo 'metricas' no es un diccionario")
+            return jsonify({
+                "error": "Campo 'metricas' debe ser un objeto JSON"
+            }), 400
+        
+        # Validar que metricas no esté vacío
+        if not metricas:
+            logging.warning("[Informe] Campo 'metricas' está vacío")
+            return jsonify({
+                "error": "Campo 'metricas' no puede estar vacío"
+            }), 400
+        
+        # Campos opcionales
+        contexto = data.get('contexto', None)
+        modelo = data.get('modelo', None)
+        
+        # Logging de inicio (una línea con info esencial)
+        tema = metricas.get('temaSeleccionado', 'N/A')
+        total_noticias = metricas.get('totalNoticias', 0)
+        modelo_solicitado = modelo if modelo else "llama3.1:8b"
+        
+        logging.info(f"[Informe] 🚀 Iniciando | Tema: \"{tema}\" | Noticias: {total_noticias} | Modelo: {modelo_solicitado}")
+        
+        # Llamar a la función de generación de informes
+        resultado = Oll.generar_informe_con_ollama(
+            metricas=metricas,
+            contexto=contexto,
+            modelo=modelo
+        )
+        
+        # Verificar si hay error
+        if 'error' in resultado:
+            # Error en la generación
+            error_msg = resultado.get('error', 'Error desconocido')
+            logging.error(f"[Informe] ❌ Error | {error_msg}")
+            
+            return jsonify(resultado), 500
+        else:
+            # Logging de finalización (una línea con métricas)
+            tokens = resultado.get('metadatos', {}).get('total_tokens', 0)
+            tiempo = resultado.get('metadatos', {}).get('tiempo_generacion', 0)
+            
+            logging.info(f"[Informe] ✅ Completado | Tokens: {tokens} | Tiempo: {tiempo:.1f}s")
+            
+            return jsonify(resultado), 200
+            
+    except Exception as e:
+        error_msg = f"Error interno del servidor: {str(e)}"
+        logging.error(f"[Informe] {error_msg}")
+        
+        return jsonify({
+            "error": error_msg
+        }), 500
+
 if __name__ == '__main__':
+    # Configurar logger al inicio de la API para todos los endpoints
+    Z.setup_logger('Procesamiento_Noticias_API.log')
+    
     print("🚀 Iniciando API de Prensai IA...")
     print("📡 Endpoint principal: POST /procesar-noticias")
     print("📊 Exportar a Excel: POST /procesar-noticias-export-excel")
+    print("📝 Generar informe: POST /generate-informe")
     print("🏥 Health check: GET /health")
     print("⚙️  Configuración: POST /config/limite-texto, POST /config/gpt-active")
     print("📋 Consultar logs: GET /logs")
