@@ -57,6 +57,9 @@ COPY requirements.txt .
 # Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
+# INSTALACIÓN DIRECTA DE FLASK (Asegurar disponibilidad)
+RUN pip install --no-cache-dir Flask==2.3.3 Werkzeug==2.3.7 gunicorn==21.2.0
+
 # Copiar código de la aplicación
 COPY . .
 
