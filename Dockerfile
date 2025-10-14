@@ -1,5 +1,5 @@
 # Dockerfile optimizado para RunPod con GPU
-FROM nvidia/cuda:12.1-devel-ubuntu22.04
+FROM ubuntu:22.04
 
 # Establecer variables de entorno para evitar prompts interactivos
 ENV DEBIAN_FRONTEND=noninteractive
@@ -17,6 +17,11 @@ RUN apt-get update && apt-get install -y \
     wget \
     git \
     build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar NVIDIA drivers básicos (RunPod ya tiene GPU configurada)
+RUN apt-get update && apt-get install -y \
+    nvidia-utils-525 \
     && rm -rf /var/lib/apt/lists/*
 
 # Crear enlace simbólico para python
