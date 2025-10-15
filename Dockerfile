@@ -76,12 +76,15 @@ RUN mkdir -p Logs
 # Hacer ejecutable el script de inicio
 RUN chmod +x start.sh
 
-# Exponer puerto de Ollama
+# Exponer puertos de Ollama y Flask
 EXPOSE 11434
+EXPOSE 5000
 
-# Variables de entorno para el handler
+# Variables de entorno para Flask
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
+ENV FLASK_APP=api_flask.py
+ENV FLASK_ENV=production
 
 # Health check para RunPod (verificar que Ollama esté funcionando)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

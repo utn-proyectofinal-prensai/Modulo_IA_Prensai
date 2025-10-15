@@ -38,10 +38,10 @@ echo "📊 Información del sistema:"
 echo "GPU disponible: $(nvidia-smi --query-gpu=name --format=csv,noheader,nounits 2>/dev/null || echo 'No detectada')"
 echo "Memoria GPU: $(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null || echo 'N/A') MB"
 
-# Iniciar el Handler de RunPod
-echo "🌐 Iniciando Handler de RunPod..."
+# Iniciar la API Flask
+echo "🌐 Iniciando API Flask de Prensai IA..."
 echo "📡 Endpoints disponibles:"
-echo "  - POST /health (Health check)"
+echo "  - GET /health (Health check)"
 echo "  - POST /procesar-noticias (Procesar noticias)"
 echo "  - POST /procesar-noticias-export-excel (Exportar a Excel)"
 echo "  - POST /generate-informe (Generar informe)"
@@ -49,7 +49,7 @@ echo "  - POST /config/gpt-active (Configurar GPT)"
 echo "  - POST /config/limite-texto (Configurar límite texto)"
 echo "  - POST /config/estado (Estado configuración)"
 
-# Verificar que Ollama esté funcionando antes de iniciar Handler
+# Verificar que Ollama esté funcionando antes de iniciar Flask
 echo "🔍 Verificación final de Ollama..."
 for i in {1..30}; do
     if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
@@ -60,9 +60,9 @@ for i in {1..30}; do
     sleep 2
 done
 
-# Ejecutar el Handler de RunPod
-echo "🚀 Iniciando Handler..."
-python3.11 handler.py
+# Ejecutar la API Flask
+echo "🚀 Iniciando API Flask..."
+python3.11 api_flask.py
 
 # Mantener el proceso activo y capturar señales
 trap 'echo "🛑 Deteniendo servicios..."; kill $OLLAMA_PID 2>/dev/null; exit 0' SIGTERM SIGINT
