@@ -38,18 +38,18 @@ echo "📊 Información del sistema:"
 echo "GPU disponible: $(nvidia-smi --query-gpu=name --format=csv,noheader,nounits 2>/dev/null || echo 'No detectada')"
 echo "Memoria GPU: $(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null || echo 'N/A') MB"
 
-# Iniciar la API Flask
-echo "🌐 Iniciando API Flask..."
-echo "📡 Endpoint principal: POST /procesar-noticias"
-echo "📊 Exportar a Excel: POST /procesar-noticias-export-excel"
-echo "📝 Generar informe: POST /generate-informe"
-echo "🏥 Health check: GET /health"
-echo "⚙️  Configuración: POST /config/limite-texto, POST /config/gpt-active"
-echo "📋 Consultar logs: GET /logs"
-echo "📊 Estado config: GET /config/estado"
-echo "🔧 Puerto: 5000"
+# Iniciar el Handler de RunPod
+echo "🌐 Iniciando Handler de RunPod..."
+echo "📡 Endpoints disponibles:"
+echo "  - POST /health (Health check)"
+echo "  - POST /procesar-noticias (Procesar noticias)"
+echo "  - POST /procesar-noticias-export-excel (Exportar a Excel)"
+echo "  - POST /generate-informe (Generar informe)"
+echo "  - POST /config/gpt-active (Configurar GPT)"
+echo "  - POST /config/limite-texto (Configurar límite texto)"
+echo "  - POST /config/estado (Estado configuración)"
 
-# Verificar que Ollama esté funcionando antes de iniciar Flask
+# Verificar que Ollama esté funcionando antes de iniciar Handler
 echo "🔍 Verificación final de Ollama..."
 for i in {1..30}; do
     if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
@@ -60,9 +60,9 @@ for i in {1..30}; do
     sleep 2
 done
 
-# Ejecutar la API Flask
-echo "🚀 Iniciando API Flask..."
-python3 api_flask.py
+# Ejecutar el Handler de RunPod
+echo "🚀 Iniciando Handler..."
+python3 handler.py
 
 # Mantener el proceso activo y capturar señales
 trap 'echo "🛑 Deteniendo servicios..."; kill $OLLAMA_PID 2>/dev/null; exit 0' SIGTERM SIGINT

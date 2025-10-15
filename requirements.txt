@@ -1,4 +1,4 @@
-# Web Framework (ya no necesario para serverless)
+# Web Framework (comentado - no se usa en handler.py serverless)
 # Flask==2.3.3
 # Werkzeug==2.3.7
 
@@ -23,7 +23,7 @@ ollama==0.1.7
 # Utilities
 python-dotenv==1.0.0
 
-# Production WSGI Server (ya no necesario para serverless)
+# Production WSGI Server (comentado - no se usa en handler.py serverless)
 # gunicorn==21.2.0
 
 # Sistema (para manejo de procesos)

@@ -68,6 +68,9 @@ COPY . .
 # Crear directorio para logs
 RUN mkdir -p Logs
 
+# Hacer ejecutable el script de inicio
+RUN chmod +x start.sh
+
 # Exponer puerto de Ollama
 EXPOSE 11434
 
@@ -75,9 +78,9 @@ EXPOSE 11434
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
-# Health check para RunPod (verificar que Python esté funcionando)
+# Health check para RunPod (verificar que Ollama esté funcionando)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python3 -c "import handler; print('Handler OK')" || exit 1
+    CMD curl -f http://localhost:11434/api/tags || exit 1
 
-# Comando para ejecutar el handler de RunPod
-CMD ["python3", "handler.py"]
+# Comando para ejecutar el script de inicio que levanta Ollama + handler
+CMD ["/app/start.sh"]
