@@ -62,7 +62,7 @@ done
 
 # Ejecutar la API Flask
 echo "🚀 Iniciando API Flask..."
-python api_flask.py
+python3 api_flask.py
 
 # Mantener el proceso activo y capturar señales
 trap 'echo "🛑 Deteniendo servicios..."; kill $OLLAMA_PID 2>/dev/null; exit 0' SIGTERM SIGINT

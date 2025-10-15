@@ -54,11 +54,13 @@ RUN ollama serve & \
 # Copiar requirements primero para aprovechar cache de Docker
 COPY requirements.txt .
 
-# Instalar dependencias de Python
+# Instalar dependencias de Python con upgrade de pip
+RUN python -m pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# INSTALACIÓN DIRECTA DE FLASK (Asegurar disponibilidad)
-RUN pip install --no-cache-dir Flask==2.3.3 Werkzeug==2.3.7 gunicorn==21.2.0
+# Verificar instalación de dependencias críticas
+RUN python -c "import pandas; print('Pandas version:', pandas.__version__)"
+RUN python -c "import requests; print('Requests version:', requests.__version__)"
 
 # Copiar código de la aplicación
 COPY . .
@@ -66,22 +68,16 @@ COPY . .
 # Crear directorio para logs
 RUN mkdir -p Logs
 
-# Exponer puertos (5000 para Flask, 11434 para Ollama)
-EXPOSE 5000 11434
+# Exponer puerto de Ollama
+EXPOSE 11434
 
-# Variables de entorno para Flask
-ENV FLASK_APP=api_flask.py
-ENV FLASK_ENV=production
-ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=5000
+# Variables de entorno para el handler
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
-# Script de inicio optimizado para RunPod
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-# Health check para RunPod
+# Health check para RunPod (verificar que Python esté funcionando)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/health || exit 1
+    CMD python3 -c "import handler; print('Handler OK')" || exit 1
 
-# Comando para ejecutar el script de inicio
-CMD ["/start.sh"]
+# Comando para ejecutar el handler de RunPod
+CMD ["python3", "handler.py"]
