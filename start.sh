@@ -62,7 +62,7 @@ done
 
 # Ejecutar el Handler de RunPod
 echo "🚀 Iniciando Handler..."
-python3 handler.py
+python3.11 handler.py
 
 # Mantener el proceso activo y capturar señales
 trap 'echo "🛑 Deteniendo servicios..."; kill $OLLAMA_PID 2>/dev/null; exit 0' SIGTERM SIGINT
