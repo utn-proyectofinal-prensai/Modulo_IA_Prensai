@@ -76,19 +76,16 @@ RUN mkdir -p Logs
 # Hacer ejecutable el script de inicio
 RUN chmod +x start.sh
 
-# Exponer puertos de Ollama y Flask
+# Exponer puerto de Ollama
 EXPOSE 11434
-EXPOSE 5000
 
-# Variables de entorno para Flask
+# Variables de entorno para RunPod Serverless
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
-ENV FLASK_APP=api_flask.py
-ENV FLASK_ENV=production
 
 # Health check para RunPod (verificar que Ollama esté funcionando)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:11434/api/tags || exit 1
 
-# Comando para ejecutar el script de inicio que levanta Ollama + handler
-CMD ["/app/start.sh"]
+# Comando para ejecutar el handler de RunPod Serverless
+CMD ["python3.11", "rp_handler.py"]

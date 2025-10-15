@@ -1,6 +1,9 @@
-# Web Framework
-Flask==2.3.3
-Werkzeug==2.3.7
+# Web Framework (comentado - no se usa en RunPod Serverless)
+# Flask==2.3.3
+# Werkzeug==2.3.7
+
+# RunPod SDK
+runpod==1.7.9
 
 # Data Processing
 pandas==2.0.3
