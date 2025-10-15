@@ -87,5 +87,5 @@ ENV PYTHONUNBUFFERED=1
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:11434/api/tags || exit 1
 
-# Comando para ejecutar el handler de RunPod Serverless
-CMD ["python3.11", "rp_handler.py"]
+# Script de inicio que levanta Ollama + handler
+CMD ["/app/start.sh"]

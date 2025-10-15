@@ -60,9 +60,9 @@ for i in {1..30}; do
     sleep 2
 done
 
-# Ejecutar la API Flask
-echo "🚀 Iniciando API Flask..."
-python3.11 api_flask.py
+# Ejecutar el Handler de RunPod Serverless
+echo "🚀 Iniciando RunPod Serverless Handler..."
+python3.11 rp_handler.py
 
 # Mantener el proceso activo y capturar señales
 trap 'echo "🛑 Deteniendo servicios..."; kill $OLLAMA_PID 2>/dev/null; exit 0' SIGTERM SIGINT
