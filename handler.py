@@ -10,15 +10,81 @@ import asyncio
 import sys
 import os
 
+# =============================================================================
+# DEBUG INFO - DIAGNÓSTICO DEL PROBLEMA
+# =============================================================================
+print("=== 🔍 DEBUG INFO ===")
+print("Python executable:", sys.executable)
+print("Python version:", sys.version)
+print("Python path:", sys.path)
+print("Current working directory:", os.getcwd())
+print("Files in /app:", os.listdir('/app'))
+print("PYTHONPATH:", os.environ.get('PYTHONPATH', 'No definido'))
+print("========================")
+
+# Verificar importaciones críticas
+try:
+    import pandas as pd
+    print("✅ pandas importado exitosamente")
+    print("   pandas location:", pd.__file__)
+    print("   pandas version:", pd.__version__)
+except ImportError as e:
+    print("❌ Error importando pandas:", e)
+
+try:
+    import requests
+    print("✅ requests importado exitosamente")
+    print("   requests version:", requests.__version__)
+except ImportError as e:
+    print("❌ Error importando requests:", e)
+
+try:
+    import numpy as np
+    print("✅ numpy importado exitosamente")
+    print("   numpy version:", np.__version__)
+except ImportError as e:
+    print("❌ Error importando numpy:", e)
+
+try:
+    import ollama
+    print("✅ ollama importado exitosamente")
+    print("   ollama version:", ollama.__version__)
+except ImportError as e:
+    print("❌ Error importando ollama:", e)
+
+print("========================")
+
 # Agregar el directorio actual al path para importar nuestros módulos
 sys.path.append('/app')
 
 # Importar nuestras utilidades
-import Z_Utils as Z
-import O_Utils_Ollama as Oll
-import O_Utils_GPT as Gpt
+try:
+    import Z_Utils as Z
+    print("✅ Z_Utils importado exitosamente")
+except ImportError as e:
+    print("❌ Error importando Z_Utils:", e)
+    sys.exit(1)
+
+try:
+    import O_Utils_Ollama as Oll
+    print("✅ O_Utils_Ollama importado exitosamente")
+except ImportError as e:
+    print("❌ Error importando O_Utils_Ollama:", e)
+    sys.exit(1)
+
+try:
+    import O_Utils_GPT as Gpt
+    print("✅ O_Utils_GPT importado exitosamente")
+except ImportError as e:
+    print("❌ Error importando O_Utils_GPT:", e)
+    sys.exit(1)
+
 import time
 from datetime import datetime
+
+print("=== ✅ TODAS LAS IMPORTACIONES EXITOSAS ===")
+print("🚀 Handler listo para procesar requests")
+print("==========================================")
 
 # Configuración por defecto
 DEFAULT_CONFIG = {
