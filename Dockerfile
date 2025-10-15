@@ -56,6 +56,11 @@ COPY requirements.txt .
 
 # Instalar dependencias de Python con upgrade de pip
 RUN python -m pip install --upgrade pip
+
+# Instalar dependencias críticas directamente
+RUN pip install --no-cache-dir pandas==2.0.3 numpy==1.24.3 requests==2.31.0
+
+# Instalar resto de dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Verificar instalación de dependencias críticas
