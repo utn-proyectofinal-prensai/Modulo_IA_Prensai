@@ -16,3 +16,58 @@ revisar los posibles codigos de error para q el back los procese, 500 por ej cua
 ¿Quieres que agregue validación para convertir None a "REVISAR MANUAL"?
 
 Revisar el marcar con ia si hay un posible None en la rta (nunca lo vi x ahora).
+
+# TODO - RUNPOD SERVERLESS DEPLOYMENT
+# ===================================
+
+## 🎯 OBJETIVO
+Completar la migración a RunPod Serverless y asegurar integración transparente con backend.
+
+## 📋 CHECKLIST RUNPOD
+✅ Configurar Serverless Endpoint con GPU T4 para Ollama
+✅ Deployar imagen Docker en RunPod Serverless  
+✅ Probar cold start y warm requests
+✅ Configurar endpoint RunPod en variables de entorno del backend
+✅ Corregir rp_handler.py para endpoint procesar-noticias
+✅ Agregar Flask a requirements.txt para importar funciones
+✅ Probar endpoint con validación completa y campos obligatorios
+
+## 📋 TODOs PENDIENTES
+
+### 🔧 1. REVISAR ENDPOINTS RESTANTES
+- Revisar el resto de los endpoints y asegurar que todas las validaciones previas se sigan respetando
+- Corregir `/procesar-noticias-export-excel`
+- Corregir `/generate-informe` 
+- Corregir `/config/estado`
+- Corregir `/config/gpt-active`
+- Corregir `/config/limite-texto`
+
+### 🌐 2. PROXY PARA BACKEND
+- Armar proxy para que al backend externo le sea transparente las consultas al nuevo endpoint RunPod
+- Crear servicio que reciba requests en formato original
+- Convertir requests al formato RunPod
+- Devolver respuestas en formato original
+- Mantener compatibilidad total con backend existente
+
+### 🤖 3. CONFIGURACIÓN GPT
+- Resolver configuración de GPT: decidir manualmente si activar GPT en corridas
+- Configurar API key de GPT en RunPod (actualmente en .env local)
+- Implementar sistema para pasar `activar_gpt` en cada request
+- Manejar variables de entorno en RunPod para GPT
+
+## 🔍 CONSIDERACIONES ADICIONALES
+
+### 💰 4. COSTOS Y OPTIMIZACIÓN
+- Monitorear costos de RunPod Serverless
+- Optimizar cold start times
+- Considerar estrategias de warming para reducir latencia
+
+### 🔒 5. SEGURIDAD Y CONFIGURACIÓN
+- Revisar manejo de API keys en RunPod
+- Implementar logging centralizado
+- Configurar alertas de monitoreo
+
+### 📊 6. MONITOREO Y MÉTRICAS
+- Implementar métricas de performance
+- Configurar alertas de errores
+- Monitorear uso de GPU y memoria

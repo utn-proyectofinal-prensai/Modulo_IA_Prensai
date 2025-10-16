@@ -116,7 +116,46 @@ def handler(event):
             return result
         elif endpoint == '/generate-informe':
             print("✅ Ejecutando generate_informe")
-            result = generate_informe(input_data.get('data', {}))
+            # Importar las funciones correctas de api_flask
+            from api_flask import generar_informe_con_ollama
+            
+            # Obtener datos del request
+            data = input_data.get('data', {})
+            
+            # Validación completa (sin contexto Flask) - Misma validación que api_flask.py
+            metricas = data.get('metricas')
+            contexto = data.get('contexto', None)
+            modelo = data.get('modelo', None)
+            
+            # Validaciones obligatorias (igual que api_flask.py)
+            if not metricas:
+                error_response = {"error": "Campo 'metricas' es obligatorio"}
+                result = (error_response, 400)
+            elif not isinstance(metricas, dict):
+                error_response = {"error": "Campo 'metricas' debe ser un objeto JSON"}
+                result = (error_response, 400)
+            elif not metricas:
+                error_response = {"error": "Campo 'metricas' no puede estar vacío"}
+                result = (error_response, 400)
+            else:
+                # Procesar informe
+                try:
+                    resultado = Oll.generar_informe_con_ollama(
+                        metricas=metricas,
+                        contexto=contexto,
+                        modelo=modelo
+                    )
+                    
+                    # Verificar si hay error
+                    if 'error' in resultado:
+                        result = (resultado, 500)
+                    else:
+                        result = (resultado, 200)
+                        
+                except Exception as e:
+                    error_response = {"error": f"Error generando informe: {str(e)}"}
+                    result = (error_response, 500)
+                
             print(f"📤 Resultado generate_informe: {result}")
             return result
         elif endpoint == '/config/estado':
