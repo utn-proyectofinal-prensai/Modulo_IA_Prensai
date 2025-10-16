@@ -58,33 +58,50 @@ def handler(event):
             # Obtener datos del request
             data = input_data.get('data', {})
             
-            # Validación manual (sin contexto Flask)
+            # Validación completa (sin contexto Flask) - Misma validación que api_flask.py
             urls = data.get('urls', [])
-            activar_gpt = data.get('activar_gpt', False)
-            limite_texto = data.get('limite_texto', 14900)
+            temas = data.get('temas', [])
+            menciones = data.get('menciones', [])
+            ministro_key_words = data.get('ministro_key_words', [])
+            ministerios_key_words = data.get('ministerios_key_words', [])
+            tema_default = data.get('tema_default', '')
             
-            # Validar URLs
+            # Validaciones obligatorias (igual que api_flask.py)
             if not urls:
-                error_response = {"error": "No se proporcionaron URLs"}
-                result = (error_response, 400)
-            elif not isinstance(urls, list):
-                error_response = {"error": "URLs debe ser una lista"}
-                result = (error_response, 400)
-            elif len(urls) == 0:
                 error_response = {"error": "La lista de URLs no puede estar vacía"}
                 result = (error_response, 400)
+            elif not temas:
+                error_response = {"error": "La lista de temas no puede estar vacía"}
+                result = (error_response, 400)
+            elif not ministro_key_words:
+                error_response = {"error": "Campo 'ministro_key_words' es obligatorio"}
+                result = (error_response, 400)
+            elif not isinstance(ministro_key_words, list):
+                error_response = {"error": "Campo 'ministro_key_words' debe ser una lista"}
+                result = (error_response, 400)
+            elif not ministerios_key_words:
+                error_response = {"error": "Campo 'ministerios_key_words' es obligatorio"}
+                result = (error_response, 400)
+            elif not isinstance(ministerios_key_words, list):
+                error_response = {"error": "Campo 'ministerios_key_words' debe ser una lista"}
+                result = (error_response, 400)
+            elif not tema_default:
+                error_response = {"error": "Campo 'tema_default' es obligatorio"}
+                result = (error_response, 400)
             else:
-                # Validar límite de texto
-                if not isinstance(limite_texto, (int, float)) or limite_texto <= 0:
-                    limite_texto = 14900
-                
-                # Validar activar_gpt
-                if not isinstance(activar_gpt, bool):
-                    activar_gpt = False
+                # Preparar datos validados (igual que api_flask.py)
+                datos_validados = {
+                    'urls': urls,
+                    'temas': temas,
+                    'menciones': menciones if menciones else None,
+                    'ministro_key_words': ministro_key_words if ministro_key_words else None,
+                    'ministerios_key_words': ministerios_key_words if ministerios_key_words else None,
+                    'tema_default': tema_default
+                }
                 
                 # Procesar noticias
                 try:
-                    resultado, status_code = procesar_noticias_con_ia(urls, activar_gpt, limite_texto)
+                    resultado, status_code = procesar_noticias_con_ia(**datos_validados)
                     result = (resultado, status_code)
                 except Exception as e:
                     error_response = {"error": f"Error procesando noticias: {str(e)}"}
