@@ -3,7 +3,6 @@
 """
 Handler para RunPod Serverless - Módulo de IA de Prensai
 """
-
 import runpod
 import sys
 import os
@@ -54,20 +53,42 @@ def handler(event):
         elif endpoint == '/procesar-noticias':
             print("✅ Ejecutando procesar_noticias")
             # Importar las funciones correctas de api_flask
-            from api_flask import procesar_noticias_con_ia, validar_parametros_noticias
+            from api_flask import procesar_noticias_con_ia
             
             # Obtener datos del request
             data = input_data.get('data', {})
             
-            # Validar parámetros
-            validacion_ok, error_response, datos_validados = validar_parametros_noticias(data)
+            # Validación manual (sin contexto Flask)
+            urls = data.get('urls', [])
+            activar_gpt = data.get('activar_gpt', False)
+            limite_texto = data.get('limite_texto', 14900)
             
-            if not validacion_ok:
+            # Validar URLs
+            if not urls:
+                error_response = {"error": "No se proporcionaron URLs"}
+                result = (error_response, 400)
+            elif not isinstance(urls, list):
+                error_response = {"error": "URLs debe ser una lista"}
+                result = (error_response, 400)
+            elif len(urls) == 0:
+                error_response = {"error": "La lista de URLs no puede estar vacía"}
                 result = (error_response, 400)
             else:
+                # Validar límite de texto
+                if not isinstance(limite_texto, (int, float)) or limite_texto <= 0:
+                    limite_texto = 14900
+                
+                # Validar activar_gpt
+                if not isinstance(activar_gpt, bool):
+                    activar_gpt = False
+                
                 # Procesar noticias
-                resultado, status_code = procesar_noticias_con_ia(**datos_validados)
-                result = (resultado, status_code)
+                try:
+                    resultado, status_code = procesar_noticias_con_ia(urls, activar_gpt, limite_texto)
+                    result = (resultado, status_code)
+                except Exception as e:
+                    error_response = {"error": f"Error procesando noticias: {str(e)}"}
+                    result = (error_response, 500)
                 
             print(f"📤 Resultado procesar_noticias: {result}")
             return result
