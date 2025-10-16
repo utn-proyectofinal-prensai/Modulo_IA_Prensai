@@ -53,7 +53,22 @@ def handler(event):
             return result
         elif endpoint == '/procesar-noticias':
             print("✅ Ejecutando procesar_noticias")
-            result = procesar_noticias(input_data.get('data', {}))
+            # Importar las funciones correctas de api_flask
+            from api_flask import procesar_noticias_con_ia, validar_parametros_noticias
+            
+            # Obtener datos del request
+            data = input_data.get('data', {})
+            
+            # Validar parámetros
+            validacion_ok, error_response, datos_validados = validar_parametros_noticias(data)
+            
+            if not validacion_ok:
+                result = (error_response, 400)
+            else:
+                # Procesar noticias
+                resultado, status_code = procesar_noticias_con_ia(**datos_validados)
+                result = (resultado, status_code)
+                
             print(f"📤 Resultado procesar_noticias: {result}")
             return result
         elif endpoint == '/procesar-noticias-export-excel':
