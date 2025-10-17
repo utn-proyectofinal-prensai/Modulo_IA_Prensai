@@ -107,7 +107,7 @@ def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Option
         api_key (str, optional): API key de OpenAI. Si no se proporciona, busca en variables de entorno.
     
     Returns:
-        str: "NEGATIVO", "NO_NEGATIVO", "OTRO" o None si falla
+        str: "NEGATIVA", "NO_NEGATIVA" o None si falla
     """
     # Obtener API key
     if not api_key:
@@ -373,10 +373,6 @@ def _fallback_a_ollama_tema(texto: str, lista_temas: List[str], tipo_publicacion
         return clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion)
     except Exception as e:
         logging.error(f"❌ Fallback Ollama tema falló: {e}")
-        return tema_default
-
-    except Exception as e:
-        logging.error(f"Error inesperado en clasificar_tema_con_gpt: {e}")
         return tema_default
 
 
@@ -928,6 +924,460 @@ def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str, mini
         logging.error(f"Error en clasificar_tipo_publicacion_con_ia: {e}")
         # Fallback seguro
         return "Nota"
+
+
+# =============================================================================
+# EXTRACCIÓN DE ENTREVISTADO (GPT con fallback a Ollama)
+# =============================================================================
+
+def extraer_entrevistado_con_gpt(texto: str, gpt_active: bool = True) -> Optional[str]:
+    """
+    Extrae el nombre completo del entrevistado usando GPT-3.5-turbo.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+        gpt_active (bool): No usado, mantenido por compatibilidad
+    
+    Returns:
+        str: Nombre completo del entrevistado o None si no se identifica
+    """
+    try:
+        api_key = leer_api_key_desde_env()
+        
+        if not api_key:
+            logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
+            return _fallback_a_ollama_entrevistado(texto)
+        
+        # Prompt para extraer entrevistado (igual que Ollama)
+        prompt = f"""
+        Identificá quién está siendo entrevistado en la siguiente noticia.
+
+        TEXTO DE LA NOTICIA:
+        {texto}
+
+        IMPORTANTE:
+        - Extraé ÚNICAMENTE el NOMBRE COMPLETO (nombre + apellido)
+        - NO agregues explicaciones, títulos, cargos ni texto adicional
+        - Si no hay entrevistado claro, respondé 'No identificado'
+        - Si hay múltiples entrevistados, elegí el principal
+
+        NOMBRE COMPLETO DEL ENTREVISTADO:
+        """
+        
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": GPT_MODEL,  # Usar modelo por defecto (gpt-3.5-turbo)
+            "messages": [
+                {"role": "system", "content": "Eres un extractor especializado en identificar entrevistados en noticias. Responde solo con el nombre completo."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0,  # Baja temperatura para respuestas más consistentes
+            "max_tokens": 50
+        }
+        
+        response = _gpt_request_with_retry(headers, data)
+        
+        if response:
+            result = response.json()
+            content = result['choices'][0]['message']['content'].strip()
+            
+            # Limpiar respuesta
+            if content and content.lower() not in ["no identificado", "no hay entrevistado", "ninguno", "n/a"]:
+                logging.info(f"Entrevistado: {GPT_MODEL} -> {content}")
+                return content
+            else:
+                logging.info(f"Entrevistado: {GPT_MODEL} -> No identificado")
+                return None
+                
+        else:
+            logging.warning(f"{GPT_MODEL} falló al extraer entrevistado.")
+            return _fallback_a_ollama_entrevistado(texto)
+            
+    except Exception as e:
+        logging.error(f"Error en extraer_entrevistado_con_gpt: {e}. Usando fallback a Ollama.")
+        return _fallback_a_ollama_entrevistado(texto)
+
+
+def _fallback_a_ollama_entrevistado(texto: str) -> Optional[str]:
+    """
+    Función de fallback que usa Ollama cuando GPT falla para extraer entrevistado.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+    
+    Returns:
+        str: Nombre completo del entrevistado o None si no se identifica
+    """
+    try:
+        logging.info("🔄 Usando fallback a Ollama para extracción de entrevistado...")
+        
+        # Importar aquí para evitar dependencias circulares
+        from O_Utils_Ollama import extraer_entrevistado_con_ollama
+        
+        resultado_ollama = extraer_entrevistado_con_ollama(texto)
+        
+        if resultado_ollama:
+            logging.info(f"✅ Fallback Ollama -> Entrevistado: {resultado_ollama}")
+        else:
+            logging.info(f"✅ Fallback Ollama -> Entrevistado: No identificado")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"❌ Fallback a Ollama también falló: {e}")
+        # En caso extremo, devolver None
+        logging.warning("⚠️ Devolviendo None por defecto (no se pudo identificar)")
+        return None
+
+
+def extraer_entrevistado_con_ia(texto: str, gpt_active: bool = False) -> Optional[str]:
+    """
+    Función unificada para extraer entrevistado con GPT y fallback a Ollama.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+        gpt_active (bool): Si usar GPT o ir directo a Ollama
+    
+    Returns:
+        str: Nombre completo del entrevistado o None si no se identifica
+    """
+    try:
+        if not texto or pd.isna(texto):
+            return None
+        
+        if gpt_active:
+            resultado_gpt = extraer_entrevistado_con_gpt(texto, gpt_active=True)
+            
+            # GPT puede devolver None (no identificado) o un nombre
+            # Solo fallback a Ollama si hay error de API (resultado_gpt sería None por excepción)
+            if resultado_gpt is not None or resultado_gpt == "":
+                return resultado_gpt
+        
+        # Fallback a Ollama (cuando gpt_active=False o GPT falló por error)
+        from O_Utils_Ollama import extraer_entrevistado_con_ollama
+        resultado_ollama = extraer_entrevistado_con_ollama(texto)
+        
+        if resultado_ollama:
+            logging.info(f"Entrevistado: Ollama -> {resultado_ollama}")
+        else:
+            logging.info(f"Entrevistado: Ollama -> No identificado")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"Error en extraer_entrevistado_con_ia: {e}")
+        # Fallback seguro
+        return None
+
+
+# =============================================================================
+# DETECCIÓN DE FACTOR POLÍTICO (GPT con fallback a Ollama)
+# =============================================================================
+
+def detectar_factor_politico_con_gpt(texto: str, gpt_active: bool = True) -> str:
+    """
+    Detecta si la noticia tiene contenido político usando GPT-3.5-turbo.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+        gpt_active (bool): No usado, mantenido por compatibilidad
+    
+    Returns:
+        str: "SI" si tiene factor político, "NO" si no
+    """
+    try:
+        api_key = leer_api_key_desde_env()
+        
+        if not api_key:
+            logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
+            return _fallback_a_ollama_factor_politico(texto)
+        
+        # Prompt para detectar factor político (igual que Ollama)
+        prompt = f"""
+        Analizá el siguiente texto y determiná si tiene FACTOR POLÍTICO.
+
+        TEXTO DE LA NOTICIA:
+        {texto}
+
+        CRITERIO PARA CONSIDERARLO POLÍTICO:
+        - Menciona elecciones, campaña electoral, candidatos políticos
+        - Habla de encuestas electorales o medición de candidatos
+        - Se refiere a procesos electorales, votaciones, partidos políticos
+        - Contenido relacionado con campañas políticas o propaganda electoral
+
+        IMPORTANTE:
+        - Si NO menciona estos temas, es NO POLÍTICO
+        - Respondé únicamente con SI o NO
+        - NO agregues explicaciones ni texto adicional
+
+        RESPUESTA:
+        """
+        
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": GPT_MODEL,  # Usar modelo por defecto (gpt-3.5-turbo)
+            "messages": [
+                {"role": "system", "content": "Eres un clasificador especializado en detectar contenido político en noticias. Responde solo con SI o NO."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0,  # Baja temperatura para respuestas más consistentes
+            "max_tokens": 10
+        }
+        
+        response = _gpt_request_with_retry(headers, data)
+        
+        if response:
+            result = response.json()
+            content = result['choices'][0]['message']['content'].strip().upper()
+            
+            # Normalizar respuesta
+            if content in ['SI', 'SÍ', 'YES', 'TRUE', 'VERDADERO']:
+                resultado = "SI"
+            elif content in ['NO', 'FALSE', 'FALSO']:
+                resultado = "NO"
+            else:
+                # Validación adicional por palabras clave
+                if any(palabra in content for palabra in ["ELECCION", "CANDIDAT", "CAMPAÑA", "ENCUESTA", "VOTACION", "PARTIDO", "POLITIC"]):
+                    resultado = "SI"
+                else:
+                    resultado = "NO"
+            
+            logging.info(f"Factor Político: {GPT_MODEL} -> {resultado}")
+            return resultado
+                
+        else:
+            logging.warning(f"{GPT_MODEL} falló al detectar factor político.")
+            return _fallback_a_ollama_factor_politico(texto)
+            
+    except Exception as e:
+        logging.error(f"Error en detectar_factor_politico_con_gpt: {e}. Usando fallback a Ollama.")
+        return _fallback_a_ollama_factor_politico(texto)
+
+
+def _fallback_a_ollama_factor_politico(texto: str) -> str:
+    """
+    Función de fallback que usa Ollama cuando GPT falla para detectar factor político.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+    
+    Returns:
+        str: "SI" si tiene factor político, "NO" si no
+    """
+    try:
+        logging.info("🔄 Usando fallback a Ollama para detección de factor político...")
+        
+        # Importar aquí para evitar dependencias circulares
+        from O_Utils_Ollama import detectar_factor_politico_con_ollama
+        
+        resultado_ollama = detectar_factor_politico_con_ollama(texto)
+        logging.info(f"✅ Fallback Ollama -> Factor Político: {resultado_ollama}")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"❌ Fallback a Ollama también falló: {e}")
+        # En caso extremo, devolver "NO" (conservador)
+        logging.warning("⚠️ Devolviendo NO por defecto (ante la duda, NO es político)")
+        return "NO"
+
+
+def detectar_factor_politico_con_ia(texto: str, gpt_active: bool = False) -> str:
+    """
+    Función unificada para detectar factor político con GPT y fallback a Ollama.
+    
+    Args:
+        texto (str): Texto plano de la noticia
+        gpt_active (bool): Si usar GPT o ir directo a Ollama
+    
+    Returns:
+        str: "SI" si tiene factor político, "NO" si no
+    """
+    try:
+        if not texto or pd.isna(texto):
+            return "NO"
+        
+        if gpt_active:
+            resultado_gpt = detectar_factor_politico_con_gpt(texto, gpt_active=True)
+            
+            # GPT siempre devuelve "SI" o "NO"
+            if resultado_gpt is not None:
+                return resultado_gpt
+        
+        # Fallback a Ollama (cuando gpt_active=False o GPT falló por error)
+        from O_Utils_Ollama import detectar_factor_politico_con_ollama
+        resultado_ollama = detectar_factor_politico_con_ollama(texto)
+        logging.info(f"Factor Político: Ollama -> {resultado_ollama}")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"Error en detectar_factor_politico_con_ia: {e}")
+        # Fallback seguro
+        return "NO"
+
+
+# =============================================================================
+# GENERACIÓN DE INFORMES (GPT con fallback a Ollama)
+# =============================================================================
+
+def generar_informe_con_gpt(metricas: dict, contexto: dict = None, modelo: str = None, gpt_active: bool = True) -> dict:
+    """
+    Genera un informe profesional de análisis de medios usando GPT-3.5-turbo.
+    
+    Args:
+        metricas (dict): Métricas del clipping con estructura idéntica a Ollama
+        contexto (dict, optional): Contexto adicional (no utilizado actualmente)
+        modelo (str, optional): No usado, mantenido por compatibilidad
+        gpt_active (bool): No usado, mantenido por compatibilidad
+    
+    Returns:
+        dict: Estructura idéntica a generar_informe_con_ollama
+    """
+    try:
+        api_key = leer_api_key_desde_env()
+        
+        if not api_key:
+            logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
+            return _fallback_a_ollama_informe(metricas, contexto, modelo)
+        
+        # PASO 1: Generar el prompt usando la misma función auxiliar de Ollama
+        from O_Utils_Ollama import _generar_prompt_informe
+        prompt = _generar_prompt_informe(metricas, contexto or {})
+        
+        # PASO 2: Preparar request para GPT
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": GPT_MODEL,  # Usar modelo por defecto (gpt-3.5-turbo)
+            "messages": [
+                {"role": "system", "content": "Eres un analista de comunicación política experto en análisis de medios. SIEMPRE respondes en ESPAÑOL."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.1,  # Baja temperatura para respuestas consistentes (igual que Ollama)
+            "max_tokens": 2000   # Máximo de tokens a generar (igual que Ollama)
+        }
+        
+        # PASO 3: Enviar request a GPT con retry y timeout
+        inicio = time.time()
+        response = _gpt_request_with_retry(headers, data, max_retries=3, timeout=60)
+        tiempo_transcurrido = time.time() - inicio
+        
+        if response and response.status_code == 200:
+            # PASO 4: Procesar respuesta exitosa
+            result = response.json()
+            informe_texto = result['choices'][0]['message']['content'].strip()
+            
+            # PASO 5: Limpiar el texto del informe (usar función de Ollama)
+            from O_Utils_Ollama import _limpiar_texto_informe
+            informe_limpio = _limpiar_texto_informe(informe_texto)
+            
+            # PASO 6: Construir respuesta exitosa (formato idéntico a Ollama)
+            total_tokens = result['usage']['total_tokens']
+            
+            logging.info(f"[Informe] ✅ {GPT_MODEL} generó informe exitosamente | Tokens: {total_tokens} | Tiempo: {tiempo_transcurrido:.1f}s")
+            
+            return {
+                "informe": informe_limpio,
+                "modelo_usado": GPT_MODEL,
+                "metricas_utilizadas": metricas,
+                "contexto_utilizado": contexto,
+                "metadatos": {
+                    "total_tokens": total_tokens,
+                    "tiempo_generacion": tiempo_transcurrido,
+                    "fecha_generacion": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
+            }
+        else:
+            # Error HTTP de GPT
+            error_msg = f"Error en GPT: Status code {response.status_code if response else 'None'}"
+            logging.error(f"[Informe] ❌ {error_msg}")
+            return _fallback_a_ollama_informe(metricas, contexto, modelo)
+            
+    except Exception as e:
+        error_msg = f"Error generando informe con GPT: {str(e)}"
+        logging.error(f"[Informe] ❌ {error_msg}")
+        return _fallback_a_ollama_informe(metricas, contexto, modelo)
+
+
+def _fallback_a_ollama_informe(metricas: dict, contexto: dict = None, modelo: str = None) -> dict:
+    """
+    Función de fallback que usa Ollama cuando GPT falla para generar informe.
+    
+    Args:
+        metricas (dict): Métricas del clipping
+        contexto (dict, optional): Contexto adicional
+        modelo (str, optional): Modelo (se ignora en Ollama, usa su propio modelo)
+    
+    Returns:
+        dict: Resultado de generar_informe_con_ollama
+    """
+    try:
+        logging.info("🔄 Usando fallback a Ollama para generación de informe...")
+        
+        # Importar aquí para evitar dependencias circulares
+        from O_Utils_Ollama import generar_informe_con_ollama
+        
+        resultado_ollama = generar_informe_con_ollama(metricas, contexto, modelo)
+        logging.info(f"✅ Fallback Ollama -> Informe generado exitosamente")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"❌ Fallback a Ollama también falló: {e}")
+        # En caso extremo, devolver error
+        return {
+            "error": f"Error generando informe: Tanto GPT como Ollama fallaron. {str(e)}"
+        }
+
+
+def generar_informe_con_ia(metricas: dict, contexto: dict = None, modelo: str = None, gpt_active: bool = False) -> dict:
+    """
+    Función unificada para generar informes con GPT y fallback a Ollama.
+    
+    Args:
+        metricas (dict): Métricas del clipping con estructura idéntica a Ollama
+        contexto (dict, optional): Contexto adicional
+        modelo (str, optional): Modelo a usar (GPT o Ollama según gpt_active)
+        gpt_active (bool): Si usar GPT o ir directo a Ollama
+    
+    Returns:
+        dict: Diccionario con informe generado y metadatos
+    """
+    try:
+        if gpt_active:
+            resultado_gpt = generar_informe_con_gpt(metricas, contexto, modelo, gpt_active=True)
+            
+            # Si GPT devolvió un informe válido (sin campo "error"), retornarlo
+            if "informe" in resultado_gpt and "error" not in resultado_gpt:
+                return resultado_gpt
+            else:
+                logging.info("GPT falló, usando fallback a Ollama...")
+        
+        # Fallback a Ollama (cuando gpt_active=False o GPT falló)
+        from O_Utils_Ollama import generar_informe_con_ollama
+        resultado_ollama = generar_informe_con_ollama(metricas, contexto, modelo)
+        logging.info(f"Informe: Ollama -> Generado exitosamente")
+        
+        return resultado_ollama
+        
+    except Exception as e:
+        logging.error(f"Error en generar_informe_con_ia: {e}")
+        # Fallback seguro
+        return {
+            "error": f"Error generando informe: {str(e)}"
+        }
 
 
 if __name__ == "__main__":
