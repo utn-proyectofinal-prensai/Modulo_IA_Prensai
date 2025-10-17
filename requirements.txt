@@ -1,5 +1,5 @@
 # =============================================================================
-# DEPENDENCIAS PARA EL PROYECTO PRENSAI
+# DEPENDENCIAS PARA EL PROYECTO PRENSAI (LOCAL + OLLAMA)
 # =============================================================================
 
 # Procesamiento de datos
@@ -27,6 +27,9 @@ python-dotenv>=1.0.0
 
 # API Web
 flask>=3.0.0
+
+# OpenAI API (para GPT)
+openai>=1.12.0
 
 # =============================================================================
 # DEPENDENCIAS OPCIONALES (para desarrollo)
@@ -56,5 +59,11 @@ ipykernel>=6.25.0
 # 
 # Para desarrollo (con testing y linting):
 # pip install -r requirements.txt
+# 
+# NOTA SOBRE OLLAMA:
+# - Ollama se instala por separado (no está en pip)
+# - Solo necesario para PC local con GPU
+# - Para cloud (sin GPU), usar requirements-cloud.txt
+# - El proyecto funciona sin Ollama si gpt_active=True
 # 
 # =============================================================================

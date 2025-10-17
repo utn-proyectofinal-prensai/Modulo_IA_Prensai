@@ -1,0 +1,56 @@
+# =============================================================================
+# DEPENDENCIAS PARA DEPLOYMENT EN CLOUD (Sin Ollama)
+# =============================================================================
+# 
+# Este archivo contiene las dependencias necesarias para ejecutar el proyecto
+# en la nube (Render, Railway, Fly.io, etc.) donde NO hay GPU ni Ollama.
+# 
+# El proyecto funcionará 100% con GPT (OpenAI API).
+# 
+# Para instalar:
+# pip install -r requirements-cloud.txt
+# 
+# =============================================================================
+
+# Procesamiento de datos
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Web scraping y parsing HTML
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Detección de encoding
+chardet>=5.2.0
+
+# Procesamiento de texto y regex
+regex>=2023.0.0
+
+# Manejo de archivos Excel
+openpyxl>=3.1.0
+xlrd>=2.0.0
+
+# Logging y utilidades del sistema
+python-dateutil>=2.8.0
+python-dotenv>=1.0.0
+
+# API Web
+flask>=3.0.0
+
+# OpenAI API (obligatorio para cloud)
+openai>=1.12.0
+
+# =============================================================================
+# NOTAS IMPORTANTES
+# =============================================================================
+# 
+# ✅ NO incluye ollama (solo para local con GPU)
+# ✅ Incluye todas las dependencias para scraping y procesamiento
+# ✅ Funciona con gpt_active=True automáticamente
+# 
+# Variables de entorno requeridas en cloud:
+# - OPENAI_API_KEY=tu_api_key_aqui
+# 
+# =============================================================================
+

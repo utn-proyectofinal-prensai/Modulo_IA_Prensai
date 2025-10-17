@@ -371,6 +371,12 @@ def _fallback_a_ollama_tema(texto: str, lista_temas: List[str], tipo_publicacion
     try:
         from O_Utils_Ollama import clasificar_tema_ollama
         return clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion)
+    except requests.exceptions.ConnectionError:
+        logging.warning("⚠️ Ollama no disponible (servicio no accesible). Usando tema por defecto.")
+        return tema_default
+    except requests.exceptions.Timeout:
+        logging.warning("⚠️ Ollama timeout (servicio no responde). Usando tema por defecto.")
+        return tema_default
     except Exception as e:
         logging.error(f"❌ Fallback Ollama tema falló: {e}")
         return tema_default
@@ -532,7 +538,13 @@ def _fallback_a_ollama_entrevista(texto: str) -> bool:
         logging.info(f"✅ Fallback Ollama -> No_Entrevista -> Siguiente: Nota")
         
         return resultado_ollama
-        
+    
+    except requests.exceptions.ConnectionError:
+        logging.warning("⚠️ Ollama no disponible (servicio no accesible). Asumiendo NO es entrevista.")
+        return False
+    except requests.exceptions.Timeout:
+        logging.warning("⚠️ Ollama timeout (servicio no responde). Asumiendo NO es entrevista.")
+        return False
     except Exception as e:
         logging.error(f"❌ Fallback a Ollama también falló: {e}")
         # En caso extremo, devolver False (ante la duda, NO es entrevista)
@@ -648,7 +660,13 @@ def _fallback_a_ollama_agenda(texto: str) -> bool:
         logging.info(f"✅ Fallback Ollama -> No_Agenda -> Siguiente: Entrevista")
         
         return resultado_ollama
-        
+    
+    except requests.exceptions.ConnectionError:
+        logging.warning("⚠️ Ollama no disponible (servicio no accesible). Asumiendo NO es agenda.")
+        return False
+    except requests.exceptions.Timeout:
+        logging.warning("⚠️ Ollama timeout (servicio no responde). Asumiendo NO es agenda.")
+        return False
     except Exception as e:
         logging.error(f"❌ Fallback a Ollama también falló: {e}")
         # En caso extremo, devolver False (ante la duda, NO es agenda)
@@ -833,7 +851,13 @@ def _fallback_a_ollama_declaracion(texto: str, ministro_key_words, ministerios_k
         logging.info(f"✅ Fallback Ollama -> No_Declaración -> Siguiente: Agenda")
         
         return resultado_ollama
-        
+    
+    except requests.exceptions.ConnectionError:
+        logging.warning("⚠️ Ollama no disponible (servicio no accesible). Asumiendo NO es declaración.")
+        return False
+    except requests.exceptions.Timeout:
+        logging.warning("⚠️ Ollama timeout (servicio no responde). Asumiendo NO es declaración.")
+        return False
     except Exception as e:
         logging.error(f"❌ Fallback a Ollama también falló: {e}")
         # En caso extremo, devolver False (ante la duda, NO es declaración)
@@ -1026,7 +1050,13 @@ def _fallback_a_ollama_entrevistado(texto: str) -> Optional[str]:
             logging.info(f"✅ Fallback Ollama -> Entrevistado: No identificado")
         
         return resultado_ollama
-        
+    
+    except requests.exceptions.ConnectionError:
+        logging.warning("⚠️ Ollama no disponible (servicio no accesible). No se pudo identificar entrevistado.")
+        return None
+    except requests.exceptions.Timeout:
+        logging.warning("⚠️ Ollama timeout (servicio no responde). No se pudo identificar entrevistado.")
+        return None
     except Exception as e:
         logging.error(f"❌ Fallback a Ollama también falló: {e}")
         # En caso extremo, devolver None
@@ -1190,7 +1220,13 @@ def _fallback_a_ollama_factor_politico(texto: str) -> str:
         logging.info(f"✅ Fallback Ollama -> Factor Político: {resultado_ollama}")
         
         return resultado_ollama
-        
+    
+    except requests.exceptions.ConnectionError:
+        logging.warning("⚠️ Ollama no disponible (servicio no accesible). Asumiendo NO es político.")
+        return "NO"
+    except requests.exceptions.Timeout:
+        logging.warning("⚠️ Ollama timeout (servicio no responde). Asumiendo NO es político.")
+        return "NO"
     except Exception as e:
         logging.error(f"❌ Fallback a Ollama también falló: {e}")
         # En caso extremo, devolver "NO" (conservador)
@@ -1341,7 +1377,17 @@ def _fallback_a_ollama_informe(metricas: dict, contexto: dict = None, modelo: st
         logging.info(f"✅ Fallback Ollama -> Informe generado exitosamente")
         
         return resultado_ollama
-        
+    
+    except requests.exceptions.ConnectionError:
+        logging.warning("⚠️ Ollama no disponible (servicio no accesible). No se pudo generar informe.")
+        return {
+            "error": "Error generando informe: Ollama no está disponible (servicio no accesible)"
+        }
+    except requests.exceptions.Timeout:
+        logging.warning("⚠️ Ollama timeout (servicio no responde). No se pudo generar informe.")
+        return {
+            "error": "Error generando informe: Ollama timeout (servicio no responde)"
+        }
     except Exception as e:
         logging.error(f"❌ Fallback a Ollama también falló: {e}")
         # En caso extremo, devolver error
