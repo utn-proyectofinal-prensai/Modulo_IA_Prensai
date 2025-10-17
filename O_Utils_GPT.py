@@ -1096,25 +1096,33 @@ def detectar_factor_politico_con_gpt(texto: str, gpt_active: bool = True) -> str
             logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
             return _fallback_a_ollama_factor_politico(texto)
         
-        # Prompt para detectar factor político (igual que Ollama)
+        # Prompt ultra-estricto para detectar factor político electoral
         prompt = f"""
-        Analizá el siguiente texto y determiná si tiene FACTOR POLÍTICO.
+        ¿El siguiente texto menciona ELECCIONES, CAMPAÑA ELECTORAL o CANDIDATOS?
 
-        TEXTO DE LA NOTICIA:
+        TEXTO:
         {texto}
 
-        CRITERIO PARA CONSIDERARLO POLÍTICO:
-        - Menciona elecciones, campaña electoral, candidatos políticos
-        - Habla de encuestas electorales o medición de candidatos
-        - Se refiere a procesos electorales, votaciones, partidos políticos
-        - Contenido relacionado con campañas políticas o propaganda electoral
+        MARCA "SI" SOLO SI EL TEXTO MENCIONA:
+        - Elecciones (presidenciales, legislativas, provinciales, municipales)
+        - Campaña electoral o actos de campaña
+        - Candidatos que se postulan a cargos electivos
+        - Encuestas electorales o intención de voto
+        - Debates entre candidatos
+        - Propaganda electoral
 
-        IMPORTANTE:
-        - Si NO menciona estos temas, es NO POLÍTICO
-        - Respondé únicamente con SI o NO
-        - NO agregues explicaciones ni texto adicional
+        MARCA "NO" SI EL TEXTO HABLA DE:
+        - Funcionarios, ministros, autoridades (sin elecciones)
+        - Gobierno, gestión pública, políticas públicas
+        - Inauguraciones, eventos, anuncios culturales
+        - Reclamos o críticas al gobierno
+        - Periodismo, poder, instituciones (sin elecciones)
+        - Debates académicos sobre política
 
-        RESPUESTA:
+        IMPORTANTE: Solo marca SI si menciona EXPLÍCITAMENTE elecciones o campaña.
+        Si NO menciona elecciones/campaña, es NO.
+
+        Responde SOLO: SI o NO
         """
         
         headers = {
