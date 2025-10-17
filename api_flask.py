@@ -240,7 +240,7 @@ def procesar_noticias_con_ia(
         df_contenido_valido['FACTOR POLITICO'] = df_contenido_valido.apply(
             lambda row: Z.marcar_o_valorar_con_ia(
                 row['TEXTO_PLANO'], 
-                Oll.detectar_factor_politico_con_ollama, 
+                lambda t: Gpt.detectar_factor_politico_con_ia(t, gpt_active=gpt_active), 
                 limite_texto,
                 row['LINK']
             ),
@@ -279,7 +279,7 @@ def procesar_noticias_con_ia(
         df_contenido_valido['ENTREVISTADO'] = df_contenido_valido.apply(
             lambda row: Z.marcar_o_valorar_con_ia(
                 row['TEXTO_PLANO'], 
-                lambda t: Oll.extraer_entrevistado_con_ollama(t) if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
+                lambda t: Gpt.extraer_entrevistado_con_ia(t, gpt_active=gpt_active) if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
                 limite_texto,
                 row['LINK']
             ) if row['TIPO PUBLICACION'] == 'Entrevista' else None,
@@ -754,18 +754,22 @@ def generate_informe():
         contexto = data.get('contexto', None)
         modelo = data.get('modelo', None)
         
+        # Obtener configuración de GPT desde runtime
+        gpt_active = RUNTIME_CONFIG['gpt_active']
+        
         # Logging de inicio (una línea con info esencial)
         tema = metricas.get('temaSeleccionado', 'N/A')
         total_noticias = metricas.get('totalNoticias', 0)
-        modelo_solicitado = modelo if modelo else "llama3.1:8b"
+        modelo_solicitado = modelo if modelo else ("gpt-3.5-turbo" if gpt_active else "llama3.1:8b")
         
-        logging.info(f"[Informe] 🚀 Iniciando | Tema: \"{tema}\" | Noticias: {total_noticias} | Modelo: {modelo_solicitado}")
+        logging.info(f"[Informe] 🚀 Iniciando | Tema: \"{tema}\" | Noticias: {total_noticias} | Modelo: {modelo_solicitado} | GPT: {gpt_active}")
         
-        # Llamar a la función de generación de informes
-        resultado = Oll.generar_informe_con_ollama(
+        # Llamar a la función unificada de generación de informes
+        resultado = Gpt.generar_informe_con_ia(
             metricas=metricas,
             contexto=contexto,
-            modelo=modelo
+            modelo=modelo,
+            gpt_active=gpt_active
         )
         
         # Verificar si hay error
