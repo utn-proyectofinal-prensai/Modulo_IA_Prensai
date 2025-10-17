@@ -800,6 +800,9 @@ if __name__ == '__main__':
     # Configurar logger al inicio de la API para todos los endpoints
     Z.setup_logger('Procesamiento_Noticias_API.log')
     
+    # Puerto: usar variable de entorno PORT (para cloud) o 5000 (para local)
+    port = int(os.environ.get('PORT', 5000))
+    
     print("🚀 Iniciando API de Prensai IA...")
     print("📡 Endpoint principal: POST /procesar-noticias")
     print("📊 Exportar a Excel: POST /procesar-noticias-export-excel")
@@ -808,6 +811,6 @@ if __name__ == '__main__':
     print("⚙️  Configuración: POST /config/limite-texto, POST /config/gpt-active")
     print("📋 Consultar logs: GET /logs")
     print("📊 Estado config: GET /config/estado")
-    print("🔧 Puerto: 5000")
+    print(f"🔧 Puerto: {port}")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=port)
