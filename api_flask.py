@@ -55,7 +55,7 @@ def require_api_key(f):
 # Las menciones pueden venir vacías
 # Configuración configurable en runtime (se puede modificar via endpoints)
 RUNTIME_CONFIG = {
-    'gpt_active': False,
+    'gpt_active': True,
     'limite_texto': 14900
 }
 
