@@ -1324,8 +1324,8 @@ def generar_informe_con_gpt(metricas: dict, contexto: dict = None, modelo: str =
             informe_texto = result['choices'][0]['message']['content'].strip()
             
             # PASO 5: Limpiar el texto del informe (usar función de Ollama)
-            from O_Utils_Ollama import _limpiar_texto_informe
-            informe_limpio = _limpiar_texto_informe(informe_texto)
+            #from O_Utils_Ollama import _limpiar_texto_informe
+            #informe_limpio = _limpiar_texto_informe(informe_texto)
             
             # PASO 6: Construir respuesta exitosa (formato idéntico a Ollama)
             total_tokens = result['usage']['total_tokens']
@@ -1333,7 +1333,7 @@ def generar_informe_con_gpt(metricas: dict, contexto: dict = None, modelo: str =
             logging.info(f"[Informe] ✅ {GPT_MODEL} generó informe exitosamente | Tokens: {total_tokens} | Tiempo: {tiempo_transcurrido:.1f}s")
             
             return {
-                "informe": informe_limpio,
+                "informe": informe_texto,
                 "modelo_usado": GPT_MODEL,
                 "metricas_utilizadas": metricas,
                 "contexto_utilizado": contexto,

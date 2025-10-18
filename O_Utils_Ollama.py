@@ -756,6 +756,7 @@ Crea un informe profesional y conciso basado en las metricas de un clipping de n
 7. NO incluyas recomendaciones detalladas
 8. Manten un tono profesional y objetivo
 9. **OBLIGATORIO: Escribe TODO en ESPAÑOL. NUNCA uses inglés.**
+10. **FORMATO: Usa formato Markdown con encabezados (##), listas (-), y negritas (**) para estructurar el informe.**
 
 Genera el informe ahora:
 """
