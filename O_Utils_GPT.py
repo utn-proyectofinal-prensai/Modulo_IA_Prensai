@@ -125,7 +125,9 @@ def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Option
     {texto}
 
     INSTRUCCIONES:
-    1. Analiza el contenido de la noticia
+    1. Analiza el tono GLOBAL de la noticia, no fragmentos aislados.
+       Si el conflicto aparece solo como anécdota, contexto histórico o cita aislada,
+       considerá la noticia como NO_NEGATIVA.
     2. Clasifica como:
        - "NEGATIVA" si la noticia es negativa, crítica, problemática, conflictiva
        - "NO_NEGATIVA" si la noticia es positiva, neutral, informativa, constructiva
