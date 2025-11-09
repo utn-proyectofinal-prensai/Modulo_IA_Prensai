@@ -320,7 +320,7 @@ def get_titulo_from_html_obj(html_obj):
         # Primero busca el título de la nota (más relevante para prensa)
         tag = html_obj.find("span", class_="titulo")
         if tag:
-            return tag.get_text(strip=True)
+            return tag.get_text(separator=" ", strip=True)
 
         # Si no lo encuentra, busca el <title> de la página
         title_tag = html_obj.find('title')
