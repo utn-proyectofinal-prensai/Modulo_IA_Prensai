@@ -229,7 +229,13 @@ def procesar_noticias_con_ia(
         df_contenido_valido['TIPO PUBLICACION'] = df_contenido_valido.apply(
             lambda row: Z.marcar_o_valorar_con_ia(
                 row['TEXTO_PLANO'], 
-                lambda t: Gpt.clasificar_tipo_publicacion_con_ia(t, ministro_key_words, ministerios_key_words, gpt_active), 
+                lambda t, link=row['LINK']: Gpt.clasificar_tipo_publicacion_con_ia(
+                    t,
+                    ministro_key_words,
+                    ministerios_key_words,
+                    gpt_active,
+                    url_id=link
+                ), 
                 limite_texto,
                 row['LINK']
             ),
@@ -240,7 +246,11 @@ def procesar_noticias_con_ia(
         df_contenido_valido['FACTOR POLITICO'] = df_contenido_valido.apply(
             lambda row: Z.marcar_o_valorar_con_ia(
                 row['TEXTO_PLANO'], 
-                lambda t: Gpt.detectar_factor_politico_con_ia(t, gpt_active=gpt_active), 
+                lambda t, link=row['LINK']: Gpt.detectar_factor_politico_con_ia(
+                    t,
+                    gpt_active=gpt_active,
+                    url_id=link
+                ), 
                 limite_texto,
                 row['LINK']
             ),
@@ -251,7 +261,13 @@ def procesar_noticias_con_ia(
         df_contenido_valido['VALORACION'] = df_contenido_valido.apply(
             lambda row: Z.marcar_o_valorar_con_ia(
                 row['TEXTO_PLANO'], 
-                lambda t: Gpt.valorar_con_ia(t, ministro_key_words=ministro_key_words, ministerios_key_words=ministerios_key_words, gpt_active=gpt_active), 
+                lambda t, link=row['LINK']: Gpt.valorar_con_ia(
+                    t,
+                    ministro_key_words=ministro_key_words,
+                    ministerios_key_words=ministerios_key_words,
+                    gpt_active=gpt_active,
+                    url_id=link
+                ), 
                 limite_texto,
                 row['LINK']
             ),
@@ -267,7 +283,8 @@ def procesar_noticias_con_ia(
                     lista_temas=temas,
                     tipo_publicacion=row['TIPO PUBLICACION'],
                     gpt_active=gpt_active,
-                    tema_default=tema_default
+                    tema_default=tema_default,
+                    url_id=row['LINK']
                 ), 
                 limite_texto,
                 row['LINK']
@@ -279,7 +296,11 @@ def procesar_noticias_con_ia(
         df_contenido_valido['ENTREVISTADO'] = df_contenido_valido.apply(
             lambda row: Z.marcar_o_valorar_con_ia(
                 row['TEXTO_PLANO'], 
-                lambda t: Gpt.extraer_entrevistado_con_ia(t, gpt_active=gpt_active) if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
+                lambda t, link=row['LINK']: Gpt.extraer_entrevistado_con_ia(
+                    t,
+                    gpt_active=gpt_active,
+                    url_id=link
+                ) if row['TIPO PUBLICACION'] == 'Entrevista' else None, 
                 limite_texto,
                 row['LINK']
             ) if row['TIPO PUBLICACION'] == 'Entrevista' else None,

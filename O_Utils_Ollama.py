@@ -10,6 +10,18 @@ MODELO_OLLAMA = "llama3.1:8b"
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 
+# Utilidad para logs compactos
+def _obtener_display_id(url_id):
+    if not url_id:
+        return url_id
+    if isinstance(url_id, str) and "id=" in url_id:
+        try:
+            return url_id.split("id=")[-1]
+        except Exception:
+            return url_id
+    return url_id
+
+
 # Control para imprimir el estado del servicio solo una vez
 _ollama_estado_reportado = False
 
@@ -366,7 +378,7 @@ def clasificar_tipo_publicacion_unificado(texto, ministro_key_words="Gabriela Ri
 # FUNCIONES DE CLASIFICACIÓN DE TEMAS
 # ============================================================================
 
-def clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion=None):
+def clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion=None, url_id=None):
     """
     Clasifica una noticia en un tema específico usando heurísticas + IA.
     Combina coincidencias exactas, reglas de negocio y consulta a Ollama.
@@ -385,7 +397,7 @@ def clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion=No
 
     # 1. PRIORIDAD MÁXIMA: Fallback por tipo de publicación (Agenda)
     if tipo_publicacion == "Agenda":
-        logging.info(f"Tema: Ollama -> Heurística (Agenda) asignó tema {tema_default}")
+        logging.info(f"Tema: Ollama -> Heurística (Agenda) asignó tema {tema_default} (ID: {_obtener_display_id(url_id)})")
         return tema_default
 
     # 2. Heurísticas muy estrictas para coincidencias exactas
@@ -393,14 +405,14 @@ def clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion=No
     for tema in lista_temas:
         tema_lower = tema.lower()
         if tema_lower in texto_lower or texto_lower.count(tema_lower) > 0:
-            logging.info(f"Tema: Ollama -> Heurística (coincidencia exacta) asignó tema {tema}")
+            logging.info(f"Tema: Ollama -> Heurística (coincidencia exacta) asignó tema {tema} (ID: {_obtener_display_id(url_id)})")
             return tema
 
     # 3. Consulta a IA si las heurísticas fallan
-    return _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_default)
+    return _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_default, url_id=url_id)
 
 #Funcion privada aux para Tema_ollama
-def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_default):
+def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_default, url_id=None):
     """
     Función privada que consulta a Ollama para clasificar el tema.
     Construye el prompt y maneja la respuesta de la IA.
@@ -436,22 +448,22 @@ def _promptear_clasificacion_tema_ollama(texto, lista_temas, tema_default):
         
         # Validar que el tema asignado esté en la lista
         if tema_asignado in temas_disponibles:
-            logging.info(f"Tema: Ollama -> Ollama (IA) asignó tema {tema_asignado}")
+            logging.info(f"Tema: Ollama -> Ollama (IA) asignó tema {tema_asignado} (ID: {_obtener_display_id(url_id)})")
             return tema_asignado
         else:
-            logging.info(f"Tema: Ollama -> Ollama (fallback) asignó tema {tema_default}")
+            logging.info(f"Tema: Ollama -> Ollama (fallback) asignó tema {tema_default} (ID: {_obtener_display_id(url_id)})")
             return tema_default  # Fallback
             
     except Exception as e:
         logging.error(f"[Ollama] Error clasificando tema: {repr(e)} | Texto: {texto[:120]}...")
-        logging.info(f"Tema: Ollama -> Ollama (excepción) asignó tema {tema_default}")
+        logging.info(f"Tema: Ollama -> Ollama (excepción) asignó tema {tema_default} (ID: {_obtener_display_id(url_id)})")
         return tema_default  # Fallback
 
 # ============================================================================
 # FUNCIONES DE EXTRACCIÓN
 # ============================================================================
 
-def extraer_entrevistado_con_ollama(texto):
+def extraer_entrevistado_con_ollama(texto, url_id=None):
     """
     Extrae el nombre completo del entrevistado usando Ollama.
     """
@@ -474,22 +486,22 @@ def extraer_entrevistado_con_ollama(texto):
         
         # Limpiar respuesta
         if entrevistado and entrevistado.lower() not in ["no identificado", "no hay entrevistado"]:
-            logging.info(f"Entrevistado: Ollama -> {entrevistado}")
+            logging.info(f"Entrevistado: Ollama -> {entrevistado} (ID: {_obtener_display_id(url_id)})")
             return entrevistado
         else:
-            logging.info(f"Entrevistado: Ollama -> No identificado")
+            logging.info(f"Entrevistado: Ollama -> No identificado (ID: {_obtener_display_id(url_id)})")
             return None
             
     except Exception as e:
         logging.error(f"[Ollama] Error extrayendo entrevistado: {repr(e)} | Texto: {texto[:120]}...")
-        logging.info(f"Entrevistado: Ollama -> Error")
+        logging.info(f"Entrevistado: Ollama -> Error (ID: {_obtener_display_id(url_id)})")
         return None
 
 # ============================================================================
 # FUNCIONES DE DETECCIÓN FACTOR POLÍTICO
 # ============================================================================
 
-def detectar_factor_politico_con_ollama(texto):
+def detectar_factor_politico_con_ollama(texto, url_id=None):
     """
     Detecta si la noticia tiene contenido político (elecciones, campaña, candidatos).
     """
@@ -525,12 +537,12 @@ def detectar_factor_politico_con_ollama(texto):
                 resultado = "NO"
         
         # Loggear el resultado
-        logging.info(f"Factor Político: Ollama -> {resultado}")
+        logging.info(f"Factor Político: Ollama -> {resultado} (ID: {_obtener_display_id(url_id)})")
         return resultado
                 
     except Exception as e:
         logging.error(f"[Ollama] Error detectando factor político: {repr(e)} | Texto: {texto[:120]}...")
-        logging.info(f"Factor Político: Ollama -> NO (error)")
+        logging.info(f"Factor Político: Ollama -> NO (error) (ID: {_obtener_display_id(url_id)})")
         return "NO"
 
 # ============================================================================

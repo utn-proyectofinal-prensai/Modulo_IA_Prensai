@@ -23,7 +23,23 @@ def switch_4o(gpt_active: bool) -> str:
     """
     if not gpt_active:
         return "gpt-3.5-turbo"  # Valor por defecto, se ignora si va a Ollama
-    return "gpt-4o"  # Modelo premium para funciones críticas
+    return "gpt-4.1-mini"  # Modelo premium para funciones críticas
+
+
+def _obtener_display_id(url_id):
+    """
+    Obtiene una versión compacta del identificador de la noticia para logging.
+    Si la URL contiene 'id=', devuelve solo ese valor; en caso contrario,
+    retorna el identificador original.
+    """
+    if not url_id:
+        return url_id
+    if isinstance(url_id, str) and "id=" in url_id:
+        try:
+            return url_id.split("id=")[-1]
+        except Exception:
+            return url_id
+    return url_id
 
 def _gpt_request_with_retry(headers: Dict, data: Dict, max_retries: int = 3, timeout: int = 15):
     """
@@ -98,7 +114,7 @@ def leer_api_key_desde_env() -> Optional[str]:
 # VALORACIÓN  (GPT con fallback a Ollama)
 # =============================================================================
 
-def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Optional[str]:
+def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None, url_id: Optional[str] = None) -> Optional[str]:
     """
     Valora una noticia usando la API de GPT.
     
@@ -115,6 +131,7 @@ def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Option
     
     if not api_key:
         logging.warning("No se encontró API key de OpenAI en .env. Usando fallback a Ollama.")
+        logging.warning(f"GPT falló al valorar noticia. Usando fallback a Ollama. (ID: {_obtener_display_id(url_id)})")
         return None
     
     # Prompt para GPT
@@ -173,7 +190,14 @@ def valorar_noticia_con_gpt(texto: str, api_key: Optional[str] = None) -> Option
         logging.warning("GPT falló al valorar noticia. Usando fallback a Ollama.")
         return None
 
-def valorar_con_ia(texto: str, api_key: Optional[str] = None, ministro_key_words: Optional[str] = None, ministerios_key_words: Optional[str] = None, gpt_active: bool = True) -> str:
+def valorar_con_ia(
+    texto: str,
+    api_key: Optional[str] = None,
+    ministro_key_words: Optional[str] = None,
+    ministerios_key_words: Optional[str] = None,
+    gpt_active: bool = True,
+    url_id: str = None
+) -> str:
     """
     Función unificada para valorar noticias con IA.
     Decide internamente si usar GPT o Ollama según configuración y disponibilidad.
@@ -193,13 +217,15 @@ def valorar_con_ia(texto: str, api_key: Optional[str] = None, ministro_key_words
     valoracion_base = None
     modelo_usado = None
     
+    display_id = _obtener_display_id(url_id)
+
     if gpt_active:
         # Intentar con GPT primero
-        valoracion_base = valorar_noticia_con_gpt(texto, api_key)
+        valoracion_base = valorar_noticia_con_gpt(texto, api_key, url_id=url_id)
         if valoracion_base is not None:
             modelo_usado = f"GPT-{GPT_MODEL}"  # Mostrar modelo específico
         else:
-            logging.info("GPT falló, usando Ollama")
+            logging.info(f"GPT falló, usando Ollama (ID: {display_id})")
     
     # Si GPT no está activo o falló, usar Ollama
     if valoracion_base is None:
@@ -213,20 +239,20 @@ def valorar_con_ia(texto: str, api_key: Optional[str] = None, ministro_key_words
     
     if valoracion_base == "NEGATIVA":
         resultado_final = "NEGATIVA"
-        logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (sin heurística)")
+        logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (sin heurística) (ID: {display_id})")
     elif valoracion_base == "NO_NEGATIVA":
         # Aplicar heurística si se proporciona al menos uno (ministro_key_words o ministerios_key_words)
         if (ministro_key_words or ministerios_key_words):
             from Z_Utils import aplicar_heuristica_valoracion
             resultado_final = aplicar_heuristica_valoracion(valoracion_base, texto, ministro_key_words, ministerios_key_words)
-            logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (heurística aplicada)")
+            logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (heurística aplicada) (ID: {display_id})")
         else:
             resultado_final = "NEUTRA"
-            logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (sin heurística)")
+            logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (sin heurística) (ID: {display_id})")
     else:
         # Fallback conservador
         resultado_final = "NEUTRA"
-        logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (fallback)")
+        logging.info(f"Valoración: {modelo_usado} → {valoracion_base} → {resultado_final} (fallback) (ID: {display_id})")
     
     return resultado_final
  
@@ -241,6 +267,7 @@ def clasificar_tema_con_gpt(
     tipo_publicacion: Optional[str] = None,
     gpt_active: bool = True,
     tema_default: str = None,
+    url_id: str = None,
 ) -> str:
     """
     Clasifica una noticia en un tema específico usando GPT-4o.
@@ -261,20 +288,22 @@ def clasificar_tema_con_gpt(
             return tema_default
         
         # Regla especial: si es Agenda, usar tema_default
+        display_id = _obtener_display_id(url_id)
+
         if tipo_publicacion == "Agenda":
-            logging.info(f"Tema: GPT -> Heurística (Agenda) asignó tema {tema_default}")
+            logging.info(f"Tema: GPT -> Heurística (Agenda) asignó tema {tema_default} (ID: {display_id})")
             return tema_default
         
         # Solo proceder si GPT está activo
         if not gpt_active:
-            logging.info("🔄 GPT desactivado, usando fallback a Ollama...")
-            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_default)
+            logging.info(f"🔄 GPT desactivado, usando fallback a Ollama... (ID: {display_id})")
+            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_default, url_id=display_id)
         
         # Verificar API key
         api_key = leer_api_key_desde_env()
         if not api_key:
-            logging.warning("⚠️ No se encontró API key de OpenAI. Usando fallback a Ollama...")
-            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_default)
+            logging.warning(f"⚠️ No se encontró API key de OpenAI. Usando fallback a Ollama... (ID: {display_id})")
+            return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_default, url_id=display_id)
         
         # Usar GPT-4o para clasificación (activando el switch)
         GPT_MODEL = switch_4o(gpt_active)
@@ -339,48 +368,56 @@ def clasificar_tema_con_gpt(
                 # Validar que el tema esté en la lista
                 if content in temas_disponibles:
                     modelo_display = GPT_MODEL.replace("gpt-", "GPT-").replace("-turbo", "").replace("-4o", "-4o")
-                    logging.info(f"Tema: {modelo_display} -> {content}")
+                    logging.info(f"Tema: {modelo_display} -> {content} (ID: {display_id})")
                     return content
                 
                 # Intento de match por casefold (sin sensibilidad a mayúsculas)
                 mapeo_lower = {t.casefold(): t for t in temas_disponibles}
                 if content.casefold() in mapeo_lower:
                     tema_correcto = mapeo_lower[content.casefold()]
-                    logging.info(f"🔄 Aplicando casefold matching: '{content}' → '{tema_correcto}'")
+                    logging.info(f"🔄 Aplicando casefold matching: '{content}' → '{tema_correcto}' (ID: {display_id})")
                     return tema_correcto
                 
                 # Si no es válido, loggear y usar fallback
-                logging.warning(f"⚠️ {GPT_MODEL} devolvió tema inválido: '{content}'. Usando fallback...")
+                logging.warning(f"⚠️ {GPT_MODEL} devolvió tema inválido: '{content}'. Usando fallback... (ID: {display_id})")
                 
             except Exception as e:
-                logging.error(f"❌ Error procesando respuesta de {GPT_MODEL}: {e}")
+                logging.error(f"❌ Error procesando respuesta de {GPT_MODEL}: {e} (ID: {display_id})")
         else:
-            logging.warning(f"⚠️ {GPT_MODEL} falló al clasificar tema. Usando fallback...")
+            logging.warning(f"⚠️ {GPT_MODEL} falló al clasificar tema. Usando fallback... (ID: {display_id})")
         
         # Fallback a Ollama
-        logging.info("🔄 GPT falló, usando fallback a Ollama...")
-        return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_default)
+        logging.info(f"🔄 GPT falló, usando fallback a Ollama... (ID: {display_id})")
+        return _fallback_a_ollama_tema(texto, lista_temas, tipo_publicacion, tema_default, url_id=display_id)
         
     except Exception as e:
-        logging.error(f"❌ Error inesperado en clasificar_tema_con_gpt: {e}")
+        logging.error(f"❌ Error inesperado en clasificar_tema_con_gpt: {e} (ID: {display_id})")
         return tema_default
 
 
-def _fallback_a_ollama_tema(texto: str, lista_temas: List[str], tipo_publicacion: Optional[str] = None, tema_default: str = None) -> str:
+def _fallback_a_ollama_tema(
+    texto: str,
+    lista_temas: List[str],
+    tipo_publicacion: Optional[str] = None,
+    tema_default: str = None,
+    url_id: str = None
+) -> str:
     """
     Función auxiliar para fallback a Ollama cuando GPT falla.
     """
     try:
         from O_Utils_Ollama import clasificar_tema_ollama
-        return clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion)
+        resultado = clasificar_tema_ollama(texto, lista_temas, tema_default, tipo_publicacion, url_id=url_id)
+        logging.info(f"Tema: Ollama -> {resultado} (ID: {_obtener_display_id(url_id)})")
+        return resultado
     except requests.exceptions.ConnectionError:
-        logging.warning("⚠️ Ollama no disponible (servicio no accesible). Usando tema por defecto.")
+        logging.warning(f"⚠️ Ollama no disponible (servicio no accesible). Usando tema por defecto. (ID: {_obtener_display_id(url_id)})")
         return tema_default
     except requests.exceptions.Timeout:
-        logging.warning("⚠️ Ollama timeout (servicio no responde). Usando tema por defecto.")
+        logging.warning(f"⚠️ Ollama timeout (servicio no responde). Usando tema por defecto. (ID: {_obtener_display_id(url_id)})")
         return tema_default
     except Exception as e:
-        logging.error(f"❌ Fallback Ollama tema falló: {e}")
+        logging.error(f"❌ Fallback Ollama tema falló: {e} (ID: {_obtener_display_id(url_id)})")
         return tema_default
 
 
@@ -390,6 +427,7 @@ def clasificar_tema_con_ia(
     tipo_publicacion: Optional[str] = None,
     gpt_active: bool = True,
     tema_default: str = None,
+    url_id: str = None,
 ) -> str:
     """
     Interfaz unificada para clasificación de temas:
@@ -400,6 +438,8 @@ def clasificar_tema_con_ia(
         if not texto or not lista_temas:
             return tema_default
 
+        display_id = _obtener_display_id(url_id)
+
         if gpt_active:
             resultado = clasificar_tema_con_gpt(
                 texto=texto,
@@ -407,17 +447,18 @@ def clasificar_tema_con_ia(
                 tipo_publicacion=tipo_publicacion,
                 gpt_active=True,
                 tema_default=tema_default,
+                url_id=url_id,
             )
             if resultado:
                 return resultado
 
         # Fallback a Ollama
-        from O_Utils_Ollama import clasificar_tema_ollama
-        return clasificar_tema_ollama(
-            texto=texto,
-            lista_temas=lista_temas,
-            tema_default=tema_default,
+        return _fallback_a_ollama_tema(
+            texto,
+            lista_temas,
             tipo_publicacion=tipo_publicacion,
+            tema_default=tema_default,
+            url_id=url_id
         )
     except Exception as e:
         logging.error(f"❌ clasificar_tema_con_ia error: {e}")
@@ -867,7 +908,7 @@ def _fallback_a_ollama_declaracion(texto: str, ministro_key_words, ministerios_k
         return False
 
 
-def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_key_words: str, ministerios_key_words: str, gpt_active: bool) -> str:
+def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_key_words: str, ministerios_key_words: str, gpt_active: bool, url_id: str = None) -> str:
     """
     Clasifica el tipo de publicación usando funciones GPT especializadas.
     Procesa secuencialmente: Declaración → Agenda → Entrevista → Nota (por defecto)
@@ -884,37 +925,38 @@ def clasificar_tipo_publicacion_con_gpt(texto: str, ministro_key_words: str, min
         # Obtener modelo real para logs
         GPT_MODEL = switch_4o(gpt_active)
         modelo_display = GPT_MODEL.replace("gpt-", "GPT-").replace("-turbo", "").replace("-4o", "-4o")
+        display_id = _obtener_display_id(url_id)
         
         # 1. DECLARACIÓN (primera prioridad - más específica, evita falsos positivos)
         if es_declaracion_con_gpt(texto, ministro_key_words, ministerios_key_words, gpt_active=True):
-            logging.info(f"Tipo Publicación: {modelo_display} -> Declaración")
+            logging.info(f"Tipo Publicación: {modelo_display} -> Declaración (ID: {display_id})")
             time.sleep(1.5)  # Delay para evitar rate limiting
             return "Declaración"
         
         # 2. AGENDA (segunda prioridad - más frecuente, regla clara)
         if es_agenda_con_gpt(texto, gpt_active=True):
-            logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> Agenda")
+            logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> Agenda (ID: {display_id})")
             time.sleep(1.5)  # Delay para evitar rate limiting
             return "Agenda"
         
         # 3. ENTREVISTA (tercera prioridad - formato distintivo)
         if es_entrevista_con_gpt(texto, gpt_active=True):
-            logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> NO_Agenda -> Entrevista")
+            logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> NO_Agenda -> Entrevista (ID: {display_id})")
             time.sleep(1.5)  # Delay para evitar rate limiting
             return "Entrevista"
         
         # 4. NOTA (por defecto - lo que no cabe claramente en otras categorías)
-        logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> NO_Agenda -> NO_Entrevista -> Nota")
+        logging.info(f"Tipo Publicación: {modelo_display} -> NO_Declaración -> NO_Agenda -> NO_Entrevista -> Nota (ID: {display_id})")
         time.sleep(1.5)  # Delay para evitar rate limiting
         return "Nota"
         
     except Exception as e:
-        logging.error(f"❌ Error en clasificar_tipo_publicacion_con_gpt: {e}")
+        logging.error(f"❌ Error en clasificar_tipo_publicacion_con_gpt: {e} (ID: {display_id})")
         # En caso de error, devolver "Nota" como fallback seguro
         return "Nota"
 
 
-def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str, ministerios_key_words: str = None, gpt_active: bool = False) -> str:
+def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str, ministerios_key_words: str = None, gpt_active: bool = False, url_id: str = None) -> str:
     """
     Función unificada para clasificar tipo de publicación con GPT y fallback a Ollama.
     
@@ -931,23 +973,31 @@ def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str, mini
         # Importar aquí para evitar dependencias circulares
         from O_Utils_Ollama import clasificar_tipo_publicacion_unificado
         
+        display_id = _obtener_display_id(url_id)
+
         if gpt_active:
-            resultado_gpt = clasificar_tipo_publicacion_con_gpt(texto, ministro_key_words, ministerios_key_words, gpt_active)
+            resultado_gpt = clasificar_tipo_publicacion_con_gpt(
+                texto,
+                ministro_key_words,
+                ministerios_key_words,
+                gpt_active,
+                url_id=url_id
+            )
             
             # GPT siempre devuelve algo (Agenda, Entrevista, Declaración, o Nota)
             # Solo fallback a Ollama si hay error de API o excepción
             if resultado_gpt is not None:
                 return resultado_gpt
             else:
-                logging.info("GPT falló por error de API, usando fallback a Ollama...")
+                logging.info(f"GPT falló por error de API, usando fallback a Ollama... (ID: {display_id})")
         
         # Fallback a Ollama (cuando gpt_active=False o GPT falló por error)
         resultado_ollama = clasificar_tipo_publicacion_unificado(texto, ministro_key_words, ministerios_key_words)
-        logging.info(f"Tipo Publicación: Ollama -> {resultado_ollama}")
+        logging.info(f"Tipo Publicación: Ollama -> {resultado_ollama} (ID: {display_id})")
         return resultado_ollama
         
     except Exception as e:
-        logging.error(f"Error en clasificar_tipo_publicacion_con_ia: {e}")
+        logging.error(f"Error en clasificar_tipo_publicacion_con_ia: {e} (ID: {display_id})")
         # Fallback seguro
         return "Nota"
 
@@ -956,7 +1006,7 @@ def clasificar_tipo_publicacion_con_ia(texto: str, ministro_key_words: str, mini
 # EXTRACCIÓN DE ENTREVISTADO (GPT con fallback a Ollama)
 # =============================================================================
 
-def extraer_entrevistado_con_gpt(texto: str, gpt_active: bool = True) -> Optional[str]:
+def extraer_entrevistado_con_gpt(texto: str, gpt_active: bool = True, url_id: str = None) -> Optional[str]:
     """
     Extrae el nombre completo del entrevistado usando GPT-3.5-turbo.
     
@@ -969,6 +1019,7 @@ def extraer_entrevistado_con_gpt(texto: str, gpt_active: bool = True) -> Optiona
     """
     try:
         api_key = leer_api_key_desde_env()
+        display_id = _obtener_display_id(url_id)
         
         if not api_key:
             logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
@@ -1013,22 +1064,22 @@ def extraer_entrevistado_con_gpt(texto: str, gpt_active: bool = True) -> Optiona
             
             # Limpiar respuesta
             if content and content.lower() not in ["no identificado", "no hay entrevistado", "ninguno", "n/a"]:
-                logging.info(f"Entrevistado: {GPT_MODEL} -> {content}")
+                logging.info(f"Entrevistado: {GPT_MODEL} -> {content} (ID: {display_id})")
                 return content
             else:
-                logging.info(f"Entrevistado: {GPT_MODEL} -> No identificado")
+                logging.info(f"Entrevistado: {GPT_MODEL} -> No identificado (ID: {display_id})")
                 return None
                 
         else:
-            logging.warning(f"{GPT_MODEL} falló al extraer entrevistado.")
-            return _fallback_a_ollama_entrevistado(texto)
+            logging.warning(f"{GPT_MODEL} falló al extraer entrevistado. (ID: {display_id})")
+            return _fallback_a_ollama_entrevistado(texto, url_id=url_id)
             
     except Exception as e:
         logging.error(f"Error en extraer_entrevistado_con_gpt: {e}. Usando fallback a Ollama.")
-        return _fallback_a_ollama_entrevistado(texto)
+        return _fallback_a_ollama_entrevistado(texto, url_id=url_id)
 
 
-def _fallback_a_ollama_entrevistado(texto: str) -> Optional[str]:
+def _fallback_a_ollama_entrevistado(texto: str, url_id: str = None) -> Optional[str]:
     """
     Función de fallback que usa Ollama cuando GPT falla para extraer entrevistado.
     
@@ -1039,17 +1090,17 @@ def _fallback_a_ollama_entrevistado(texto: str) -> Optional[str]:
         str: Nombre completo del entrevistado o None si no se identifica
     """
     try:
-        logging.info("🔄 Usando fallback a Ollama para extracción de entrevistado...")
+        logging.info(f"🔄 Usando fallback a Ollama para extracción de entrevistado... (ID: {_obtener_display_id(url_id)})")
         
         # Importar aquí para evitar dependencias circulares
         from O_Utils_Ollama import extraer_entrevistado_con_ollama
         
-        resultado_ollama = extraer_entrevistado_con_ollama(texto)
+        resultado_ollama = extraer_entrevistado_con_ollama(texto, url_id=url_id)
         
         if resultado_ollama:
-            logging.info(f"✅ Fallback Ollama -> Entrevistado: {resultado_ollama}")
+            logging.info(f"✅ Fallback Ollama -> Entrevistado: {resultado_ollama} (ID: {_obtener_display_id(url_id)})")
         else:
-            logging.info(f"✅ Fallback Ollama -> Entrevistado: No identificado")
+            logging.info(f"✅ Fallback Ollama -> Entrevistado: No identificado (ID: {_obtener_display_id(url_id)})")
         
         return resultado_ollama
     
@@ -1066,7 +1117,7 @@ def _fallback_a_ollama_entrevistado(texto: str) -> Optional[str]:
         return None
 
 
-def extraer_entrevistado_con_ia(texto: str, gpt_active: bool = False) -> Optional[str]:
+def extraer_entrevistado_con_ia(texto: str, gpt_active: bool = False, url_id: str = None) -> Optional[str]:
     """
     Función unificada para extraer entrevistado con GPT y fallback a Ollama.
     
@@ -1081,8 +1132,9 @@ def extraer_entrevistado_con_ia(texto: str, gpt_active: bool = False) -> Optiona
         if not texto or pd.isna(texto):
             return None
         
+        display_id = _obtener_display_id(url_id)
         if gpt_active:
-            resultado_gpt = extraer_entrevistado_con_gpt(texto, gpt_active=True)
+            resultado_gpt = extraer_entrevistado_con_gpt(texto, gpt_active=True, url_id=url_id)
             
             # GPT puede devolver None (no identificado) o un nombre
             # Solo fallback a Ollama si hay error de API (resultado_gpt sería None por excepción)
@@ -1091,12 +1143,12 @@ def extraer_entrevistado_con_ia(texto: str, gpt_active: bool = False) -> Optiona
         
         # Fallback a Ollama (cuando gpt_active=False o GPT falló por error)
         from O_Utils_Ollama import extraer_entrevistado_con_ollama
-        resultado_ollama = extraer_entrevistado_con_ollama(texto)
+        resultado_ollama = extraer_entrevistado_con_ollama(texto, url_id=url_id)
         
         if resultado_ollama:
-            logging.info(f"Entrevistado: Ollama -> {resultado_ollama}")
+            logging.info(f"Entrevistado: Ollama -> {resultado_ollama} (ID: {display_id})")
         else:
-            logging.info(f"Entrevistado: Ollama -> No identificado")
+            logging.info(f"Entrevistado: Ollama -> No identificado (ID: {display_id})")
         
         return resultado_ollama
         
@@ -1110,7 +1162,7 @@ def extraer_entrevistado_con_ia(texto: str, gpt_active: bool = False) -> Optiona
 # DETECCIÓN DE FACTOR POLÍTICO (GPT con fallback a Ollama)
 # =============================================================================
 
-def detectar_factor_politico_con_gpt(texto: str, gpt_active: bool = True) -> str:
+def detectar_factor_politico_con_gpt(texto: str, gpt_active: bool = True, url_id: str = None) -> str:
     """
     Detecta si la noticia tiene contenido político usando GPT-3.5-turbo.
     
@@ -1123,6 +1175,7 @@ def detectar_factor_politico_con_gpt(texto: str, gpt_active: bool = True) -> str
     """
     try:
         api_key = leer_api_key_desde_env()
+        display_id = _obtener_display_id(url_id)
         
         if not api_key:
             logging.warning("No se encontró API key de OpenAI. Usando fallback a Ollama.")
@@ -1190,19 +1243,19 @@ def detectar_factor_politico_con_gpt(texto: str, gpt_active: bool = True) -> str
                 else:
                     resultado = "NO"
             
-            logging.info(f"Factor Político: {GPT_MODEL} -> {resultado}")
+            logging.info(f"Factor Político: {GPT_MODEL} -> {resultado} (ID: {display_id})")
             return resultado
                 
         else:
-            logging.warning(f"{GPT_MODEL} falló al detectar factor político.")
-            return _fallback_a_ollama_factor_politico(texto)
+            logging.warning(f"{GPT_MODEL} falló al detectar factor político. (ID: {display_id})")
+            return _fallback_a_ollama_factor_politico(texto, url_id=url_id)
             
     except Exception as e:
         logging.error(f"Error en detectar_factor_politico_con_gpt: {e}. Usando fallback a Ollama.")
-        return _fallback_a_ollama_factor_politico(texto)
+        return _fallback_a_ollama_factor_politico(texto, url_id=url_id)
 
 
-def _fallback_a_ollama_factor_politico(texto: str) -> str:
+def _fallback_a_ollama_factor_politico(texto: str, url_id: str = None) -> str:
     """
     Función de fallback que usa Ollama cuando GPT falla para detectar factor político.
     
@@ -1213,13 +1266,13 @@ def _fallback_a_ollama_factor_politico(texto: str) -> str:
         str: "SI" si tiene factor político, "NO" si no
     """
     try:
-        logging.info("🔄 Usando fallback a Ollama para detección de factor político...")
+        logging.info(f"🔄 Usando fallback a Ollama para detección de factor político... (ID: {_obtener_display_id(url_id)})")
         
         # Importar aquí para evitar dependencias circulares
         from O_Utils_Ollama import detectar_factor_politico_con_ollama
         
-        resultado_ollama = detectar_factor_politico_con_ollama(texto)
-        logging.info(f"✅ Fallback Ollama -> Factor Político: {resultado_ollama}")
+        resultado_ollama = detectar_factor_politico_con_ollama(texto, url_id=url_id)
+        logging.info(f"✅ Fallback Ollama -> Factor Político: {resultado_ollama} (ID: {_obtener_display_id(url_id)})")
         
         return resultado_ollama
     
@@ -1236,7 +1289,7 @@ def _fallback_a_ollama_factor_politico(texto: str) -> str:
         return "NO"
 
 
-def detectar_factor_politico_con_ia(texto: str, gpt_active: bool = False) -> str:
+def detectar_factor_politico_con_ia(texto: str, gpt_active: bool = False, url_id: str = None) -> str:
     """
     Función unificada para detectar factor político con GPT y fallback a Ollama.
     
@@ -1251,8 +1304,10 @@ def detectar_factor_politico_con_ia(texto: str, gpt_active: bool = False) -> str
         if not texto or pd.isna(texto):
             return "NO"
         
+        display_id = _obtener_display_id(locals().get('url_id', None))
+        display_id = _obtener_display_id(url_id)
         if gpt_active:
-            resultado_gpt = detectar_factor_politico_con_gpt(texto, gpt_active=True)
+            resultado_gpt = detectar_factor_politico_con_gpt(texto, gpt_active=True, url_id=url_id)
             
             # GPT siempre devuelve "SI" o "NO"
             if resultado_gpt is not None:
@@ -1260,8 +1315,8 @@ def detectar_factor_politico_con_ia(texto: str, gpt_active: bool = False) -> str
         
         # Fallback a Ollama (cuando gpt_active=False o GPT falló por error)
         from O_Utils_Ollama import detectar_factor_politico_con_ollama
-        resultado_ollama = detectar_factor_politico_con_ollama(texto)
-        logging.info(f"Factor Político: Ollama -> {resultado_ollama}")
+        resultado_ollama = detectar_factor_politico_con_ollama(texto, url_id=url_id)
+        logging.info(f"Factor Político: Ollama -> {resultado_ollama} (ID: {display_id})")
         
         return resultado_ollama
         
