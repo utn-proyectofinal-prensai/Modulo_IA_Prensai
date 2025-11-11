@@ -795,7 +795,9 @@ def es_declaracion_con_gpt(texto: str, ministro_key_words, ministerios_key_words
         ✅ Debe contener verbos de comunicación/acción (dijo, anunció, informó, explicaron, señaló, etc.)
         ✅ Una noticia puede contener MÚLTIPLES declaraciones de diferentes actores
         ✅ Las citas pueden ser extensas y detalladas
-        ✅ Solo importa que esté entre comillas y atribuida a un actor
+        ✅ Debe existir una cita entre comillas y estar atribuida explícitamente a un actor (antes o después de la cita)
+        ❌ NO cuentes cartas, pedidos, reclamos o menciones al ministerio si NO hay comillas con palabras textuales del actor
+        ❌ Aunque se mencione a la ministra o ministerio, si no hay cita textual entre comillas atribuida a ellos, NO es declaración
 
         EJEMPLOS CLAROS DE DECLARACIÓN:
         - 'Estamos trabajando en el proyecto', dijo Gabriela Ricardes
@@ -814,12 +816,13 @@ def es_declaracion_con_gpt(texto: str, ministro_key_words, ministerios_key_words
         - Se realizó una conferencia (sin cita ni actor)
         - La funcionaria asistió al evento (sin cita)
         - Se anunció la nueva política (sin cita textual)
+        - La asociación envió una carta a la ministra reclamando medidas (sin cita textual)
 
         IMPORTANTE: 
         - Si hay AL MENOS UNA cita textual atribuida a un actor, es DECLARACIÓN
         - Analiza TODO el texto completo, no solo el inicio
         - Las declaraciones tienen citas textuales entre comillas
-        - Debe haber atribución clara a alguno de los actores listados
+        - Debe haber atribución clara a alguno de los actores listados (aunque la atribución esté fuera de las comillas, en la misma oración o en la inmediatamente siguiente)
 
         RESPONDE SOLO: "SI" si es declaración, "NO" si no lo es.
         """
