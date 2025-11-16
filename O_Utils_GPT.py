@@ -2,6 +2,7 @@ import requests
 import logging
 import os
 import time
+import re
 from typing import Optional, Dict, List
 import pandas as pd
 from dotenv import load_dotenv
@@ -309,9 +310,12 @@ def clasificar_tema_con_gpt(
         GPT_MODEL = switch_4o(gpt_active)
         
         # Construir lista de temas para el prompt (incluyendo tema_default si no está)
-        temas_disponibles = lista_temas.copy()
-        if tema_default and tema_default not in temas_disponibles:
-            temas_disponibles.append(tema_default)
+        # Normalizar temas: limpiar espacios al inicio/final y normalizar espacios múltiples
+        temas_disponibles = [re.sub(r'\s+', ' ', t.strip()) for t in lista_temas.copy()]
+        if tema_default:
+            tema_default_normalizado = re.sub(r'\s+', ' ', tema_default.strip())
+            if tema_default_normalizado not in temas_disponibles:
+                temas_disponibles.append(tema_default_normalizado)
         
         temas_str = "\n".join([f"- {t}" for t in temas_disponibles])
         logging.debug(f"📋 Temas disponibles: {temas_disponibles}")
@@ -364,6 +368,8 @@ def clasificar_tema_con_gpt(
                 
                 # Saneo básico de la respuesta
                 content = content.strip().strip('"').strip("'").rstrip(".").strip()
+                # Normalizar espacios múltiples a uno solo
+                content = re.sub(r'\s+', ' ', content).strip()
                 
                 # Validar que el tema esté en la lista
                 if content in temas_disponibles:
@@ -373,13 +379,16 @@ def clasificar_tema_con_gpt(
                 
                 # Intento de match por casefold (sin sensibilidad a mayúsculas)
                 mapeo_lower = {t.casefold(): t for t in temas_disponibles}
-                if content.casefold() in mapeo_lower:
-                    tema_correcto = mapeo_lower[content.casefold()]
+                content_casefold = content.casefold()
+                if content_casefold in mapeo_lower:
+                    tema_correcto = mapeo_lower[content_casefold]
                     logging.info(f"🔄 Aplicando casefold matching: '{content}' → '{tema_correcto}' (ID: {display_id})")
                     return tema_correcto
                 
-                # Si no es válido, loggear y usar fallback
-                logging.warning(f"⚠️ {GPT_MODEL} devolvió tema inválido: '{content}'. Usando fallback... (ID: {display_id})")
+                # Si no es válido, loggear detalles y usar fallback
+                logging.warning(f"⚠️ {GPT_MODEL} devolvió tema inválido: '{content}' (ID: {display_id})")
+                logging.warning(f"🔍 DEBUG: content='{content}', content_casefold='{content_casefold}', temas_disponibles={temas_disponibles[:10]}... (ID: {display_id})")
+                logging.warning(f"🔍 Usando fallback... (ID: {display_id})")
                 
             except Exception as e:
                 logging.error(f"❌ Error procesando respuesta de {GPT_MODEL}: {e} (ID: {display_id})")
