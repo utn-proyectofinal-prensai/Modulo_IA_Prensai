@@ -309,16 +309,23 @@ def clasificar_tema_con_gpt(
         # Usar GPT-4o para clasificación (activando el switch)
         GPT_MODEL = switch_4o(gpt_active)
         
-        # Construir lista de temas para el prompt (incluyendo tema_default si no está)
-        # Normalizar temas: limpiar espacios al inicio/final y normalizar espacios múltiples
-        temas_disponibles = [re.sub(r'\s+', ' ', t.strip()) for t in lista_temas.copy()]
-        if tema_default:
-            tema_default_normalizado = re.sub(r'\s+', ' ', tema_default.strip())
-            if tema_default_normalizado not in temas_disponibles:
-                temas_disponibles.append(tema_default_normalizado)
+        # Construir lista de temas ORIGINALES (sin modificar) para devolver el valor exacto
+        temas_originales = lista_temas.copy()
+        if tema_default and tema_default not in temas_originales:
+            temas_originales.append(tema_default)
         
-        temas_str = "\n".join([f"- {t}" for t in temas_disponibles])
-        logging.debug(f"📋 Temas disponibles: {temas_disponibles}")
+        # Crear mapeo: tema_normalizado -> tema_original (para comparar pero devolver el original)
+        mapeo_normalizado = {}
+        for tema_orig in temas_originales:
+            tema_norm = re.sub(r'\s+', ' ', tema_orig.strip())
+            # Si hay duplicados normalizados, mantener el primero
+            if tema_norm not in mapeo_normalizado:
+                mapeo_normalizado[tema_norm] = tema_orig
+        
+        # Lista normalizada SOLO para el prompt (para que GPT vea versiones limpias)
+        temas_para_prompt = list(mapeo_normalizado.keys())
+        temas_str = "\n".join([f"- {t}" for t in temas_para_prompt])
+        logging.debug(f"📋 Temas originales: {temas_originales}, Temas para prompt: {temas_para_prompt}")
         
         # PROMPT REFINADO CON PRIORIDADES CLARAS
         system_msg = (
@@ -368,26 +375,33 @@ def clasificar_tema_con_gpt(
                 
                 # Saneo básico de la respuesta
                 content = content.strip().strip('"').strip("'").rstrip(".").strip()
-                # Normalizar espacios múltiples a uno solo
-                content = re.sub(r'\s+', ' ', content).strip()
+                # Normalizar espacios múltiples a uno solo (para comparar)
+                content_normalizado = re.sub(r'\s+', ' ', content).strip()
                 
-                # Validar que el tema esté en la lista
-                if content in temas_disponibles:
+                # Validar que el tema esté en la lista (comparar con versión normalizada)
+                if content_normalizado in mapeo_normalizado:
+                    tema_original = mapeo_normalizado[content_normalizado]
                     modelo_display = GPT_MODEL.replace("gpt-", "GPT-").replace("-turbo", "").replace("-4o", "-4o")
-                    logging.info(f"Tema: {modelo_display} -> {content} (ID: {display_id})")
-                    return content
+                    logging.info(f"Tema: {modelo_display} -> {tema_original} (ID: {display_id})")
+                    return tema_original  # Devolver el tema ORIGINAL, no el normalizado
                 
                 # Intento de match por casefold (sin sensibilidad a mayúsculas)
-                mapeo_lower = {t.casefold(): t for t in temas_disponibles}
-                content_casefold = content.casefold()
-                if content_casefold in mapeo_lower:
-                    tema_correcto = mapeo_lower[content_casefold]
-                    logging.info(f"🔄 Aplicando casefold matching: '{content}' → '{tema_correcto}' (ID: {display_id})")
-                    return tema_correcto
+                mapeo_casefold = {}
+                for tema_norm, tema_orig in mapeo_normalizado.items():
+                    tema_norm_casefold = tema_norm.casefold()
+                    # Si hay duplicados casefold, mantener el primero
+                    if tema_norm_casefold not in mapeo_casefold:
+                        mapeo_casefold[tema_norm_casefold] = tema_orig
+                
+                content_casefold = content_normalizado.casefold()
+                if content_casefold in mapeo_casefold:
+                    tema_original = mapeo_casefold[content_casefold]
+                    logging.info(f"🔄 Aplicando casefold matching: '{content}' → '{tema_original}' (ID: {display_id})")
+                    return tema_original  # Devolver el tema ORIGINAL
                 
                 # Si no es válido, loggear detalles y usar fallback
                 logging.warning(f"⚠️ {GPT_MODEL} devolvió tema inválido: '{content}' (ID: {display_id})")
-                logging.warning(f"🔍 DEBUG: content='{content}', content_casefold='{content_casefold}', temas_disponibles={temas_disponibles[:10]}... (ID: {display_id})")
+                logging.warning(f"🔍 DEBUG: content='{content}', content_normalizado='{content_normalizado}', temas_originales={temas_originales[:10]}... (ID: {display_id})")
                 logging.warning(f"🔍 Usando fallback... (ID: {display_id})")
                 
             except Exception as e:
